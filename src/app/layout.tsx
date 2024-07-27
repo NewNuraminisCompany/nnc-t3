@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider"
 import NavBar from "../components/NavBar";
 import SessionProvider from "../components/SessionProvider";
-import { GeistSans } from "geist/font/sans";
+import { Inter } from "next/font/google";
 import { type Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,11 +11,13 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+const inter = Inter({ subsets: ["latin"] });
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html lang="en" className={inter.className}>
       <body>
         <SessionProvider>
           <ThemeProvider
@@ -28,7 +30,6 @@ export default function RootLayout({
             <main className="container mx-auto pt-[10vh] w-full">{children}</main>
           </ThemeProvider>
         </SessionProvider>
-
       </body>
     </html >
   );
