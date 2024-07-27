@@ -1,37 +1,55 @@
 "use client";
 
 import * as React from "react";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { 
-  Command, 
-  CommandEmpty, 
-  CommandGroup, 
-  CommandInput, 
-  CommandItem 
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from "@/components/ui/command";
-import { 
-  Popover, 
-  PopoverContent, 
-  PopoverTrigger 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
-import { db } from "@/server/db";
-import { tornei } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { getTornei} from "./actions.ts"
 
-export function ComboBoxDashboard() {
+// Define the type for the options used in the combobox
+type ComboboxOption = {
+  value: string;
+  label: string;
+};
+
+export default function ComboboxDemo() {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState<string | null>(null);
-  const [tournaments, setTournaments] = React.useState<{ idTorneo: string, nome: string }[]>([]);
+  const [value, setValue] = React.useState<string>("");
+  const [torneiOptions, setTorneiOptions] = React.useState<ComboboxOption[]>([]);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const fetchTournaments = async () => {
-      const torneoData = await db.select().from(tornei);
-      setTournaments(torneoData);
-    };
+    async function fetchData() {
+      try {
+        const data = await getTornei();
+        console.log(data)
+        // Transform the data to the required format
+        const options = data.map((t) => ({
+          value: t.idTorneo,
+          label: t.nome,
+        }));
+        setTorneiOptions(options);
+      } catch (error) {
+        console.error("Failed to fetch tornei:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-    fetchTournaments();
+    fetchData();
   }, []);
 
   return (
@@ -44,39 +62,43 @@ export function ComboBoxDashboard() {
           className="w-[200px] justify-between"
         >
           {value
-            ? tournaments.find((tournament) => tournament.idTorneo === value)?.nome
-            : "Select tournament..."}
-          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            ? torneiOptions.find((torneo) => torneo.value === value)?.label
+            : "Select torneo..."}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search tournament..." className="h-9" />
-          <CommandEmpty>No tournament found.</CommandEmpty>
-          <CommandGroup>
-            {tournaments.map((tournament) => (
-              <CommandItem
-                key={tournament.idTorneo}
-                value={tournament.idTorneo}
-                onSelect={(currentValue) => {
-                  setValue(currentValue === value ? "" : currentValue);
-                  setOpen(false);
-                }}
-              >
-                {tournament.nome}
-                <CheckIcon
-                  className={cn(
-                    "ml-auto h-4 w-4",
-                    value === tournament.idTorneo ? "opacity-100" : "opacity-0"
-                  )}
-                />
-              </CommandItem>
-            ))}
-          </CommandGroup>
+          <CommandInput placeholder="Search torneo..." />
+          <CommandEmpty>No torneo found.</CommandEmpty>
+          <CommandList>
+            <CommandGroup>
+              {loading ? (
+                <CommandItem>Loading...</CommandItem>
+              ) : (
+                torneiOptions.map((torneo) => (
+                  <CommandItem
+                    key={torneo.value}
+                    value={torneo.value}
+                    onSelect={(currentValue) => {
+                      setValue(currentValue === value ? "" : currentValue);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        value === torneo.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {torneo.label}
+                  </CommandItem>
+                ))
+              )}
+            </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
   );
 }
-
-export default ComboBoxDashboard
