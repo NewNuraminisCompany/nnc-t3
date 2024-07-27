@@ -9,7 +9,7 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 
 type propsType = {
-  id: string | null;
+  id: string;
   nome: string | null;
   descrizione: string | null;
 };

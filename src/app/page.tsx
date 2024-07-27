@@ -3,6 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
+import { Bento } from '@/components/Bento'
 
 const Home = async () => {
   const session = await getServerSession()
@@ -12,7 +13,7 @@ const Home = async () => {
   return (
 
     <div> 
-      <h1>Coddadi</h1>
+      <Bento />
     </div>
   )
 }

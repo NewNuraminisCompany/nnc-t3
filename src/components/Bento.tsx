@@ -1,34 +1,34 @@
 import React from "react";
-import { createClient } from "@/utils/supabase/server";
+import { db } from "@/server/db"; // Import your Drizzle ORM setup
+import { tornei } from "@/server/db/schema"; // Import the schema
 import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
+import { desc, eq, limit } from "drizzle-orm";
 
-const supabase = createClient();
-
-// Define the structure of a torneo item
+// Define the structure of a Torneo item
 interface Torneo {
-  idtorneo: number;
+  idTorneo: string; // Assuming idTorneo is a string based on the schema
   nome: string | null;
   descrizione: string | null;
-  data: string; // Assuming the date is stored as a string in ISO format
+  dataInizio: Date; // Assuming dataInizio is a Date object
 }
 
 export async function Bento() {
-  const { data: torneos, error } = await supabase
-    .from("torneo")
-    .select("*")
-    .order('datainizio', { ascending: false }) // Order by date, most recent first
-    .limit(4) // Limit to 4 results
-    .returns<Torneo[]>();
+  // Fetch tornei data using Drizzle ORM
+  const torneiData = await db
+    .select()
+    .from(tornei)
+    .orderBy(desc(tornei.dataInizio)) // Order by dataInizio descending
+    .limit(4); // Limit to 4 results
 
-  if (error) {
-    console.error("Error fetching data:", error);
+  if (!torneiData) {
+    console.error("Error fetching data");
     return <div>Error loading events</div>;
   }
 
-  const features = torneos.map((torneo, index) => ({
+  const features = torneiData.map((torneo, index) => ({
     name: torneo.nome ?? `Evento ${index + 1}`, // Fallback if nome is null
     description: torneo.descrizione ?? "Descrizione non disponibile",
-    href: `/eventi/${torneo.idtorneo}`,
+    href: `/eventi/${torneo.idTorneo}`,
     cta: "Scopri",
     color: "bg-card",
     background: (
@@ -54,3 +54,4 @@ export async function Bento() {
     </BentoGrid>
   );
 }
+

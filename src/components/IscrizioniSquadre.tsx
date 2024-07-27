@@ -218,7 +218,7 @@ const SoccerTeamRegistrationForm = ({ onSubmit }) => {
                 {newPlayerErrors.playerSurname && <p className="text-sm text-red-500">{newPlayerErrors.playerSurname}</p>}
               </FormItem>
               <FormItem>
-                <FormLabel>ID giocatore</FormLabel>
+                <FormLabel>C.F. giocatore</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Inserisci l'ID del giocatore"
