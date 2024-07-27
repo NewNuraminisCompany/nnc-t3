@@ -1,6 +1,7 @@
 import React from 'react'
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
+import ComboBoxDashboard from '@/components/ComboBoxDashboard';
 
 
 const Dashboard = async () => {
@@ -10,7 +11,7 @@ const Dashboard = async () => {
   }
 
   return (
-    <div>Dashboard</div>
+    <ComboBoxDashboard />
   )
 }
 
