@@ -19,6 +19,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { X } from "lucide-react";
+import { DatePicker } from "./DatePicker";
 
 // Define schemas
 const TeamSchema = z.object({
@@ -31,7 +32,10 @@ const PlayerSchema = z.object({
   playerName: z.string().min(2, { message: "Player name must be at least 2 characters." }),
   playerSurname: z.string().min(2, { message: "Player surname must be at least 2 characters." }),
   playerID: z.string().length(16, { message: "Player ID must be exactly 16 characters." }),
-  dateOfBirth: z.string().regex(/^\d{2}-\d{2}-\d{4}$/, { message: "Date of birth must be in DD-MM-YYYY format." }),
+  dateOfBirth: z.date({
+    required_error: "Please select a date of birth.",
+    invalid_type_error: "That's not a valid date!",
+  }),
 });
 
 const RegistrationSchema = z.object({
@@ -46,7 +50,7 @@ const PlayerCard = ({ player, onRemove }: { player: z.infer<typeof PlayerSchema>
       <div>
         <p className="font-semibold">{player.playerName} {player.playerSurname}</p>
         <p>ID: {player.playerID}</p>
-        <p>DoB: {player.dateOfBirth}</p>
+        <p>DoB: {player.dateOfBirth.toLocaleDateString()}</p>
       </div>
       <Button variant="ghost" size="icon" onClick={onRemove}>
         <X className="h-4 w-4" />
@@ -64,7 +68,7 @@ const SoccerTeamRegistrationForm = ({ onSubmit }: { onSubmit: (data: z.infer<typ
     playerName: "",
     playerSurname: "",
     playerID: "",
-    dateOfBirth: ""
+    dateOfBirth: new Date()
   });
   const [newPlayerErrors, setNewPlayerErrors] = useState<{ [key in keyof z.infer<typeof PlayerSchema>]: string }>({
     playerName: "",
@@ -150,7 +154,7 @@ const SoccerTeamRegistrationForm = ({ onSubmit }: { onSubmit: (data: z.infer<typ
           playerName: "",
           playerSurname: "",
           playerID: "",
-          dateOfBirth: ""
+          dateOfBirth: new Date()
         });
         setNewPlayerErrors({
           playerName: "",
@@ -253,7 +257,7 @@ const SoccerTeamRegistrationForm = ({ onSubmit }: { onSubmit: (data: z.infer<typ
                 <FormLabel>C.F. giocatore</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Inserisci l'ID del giocatore"
+                    placeholder="Inserisci il codice fiscale del giocatore"
                     value={newPlayer.playerID}
                     onChange={(e) => setNewPlayer({ ...newPlayer, playerID: e.target.value })}
                     maxLength={16}
@@ -264,10 +268,9 @@ const SoccerTeamRegistrationForm = ({ onSubmit }: { onSubmit: (data: z.infer<typ
               <FormItem>
                 <FormLabel>Data di nascita</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="DD-MM-YYYY"
-                    value={newPlayer.dateOfBirth}
-                    onChange={(e) => setNewPlayer({ ...newPlayer, dateOfBirth: e.target.value })}
+                  <DatePicker
+                    selected={newPlayer.dateOfBirth}
+                    onSelect={(date) => setNewPlayer({ ...newPlayer, dateOfBirth: date || new Date() })}
                   />
                 </FormControl>
                 {newPlayerErrors.dateOfBirth && <p className="text-sm text-red-500">{newPlayerErrors.dateOfBirth}</p>}
@@ -303,8 +306,8 @@ const SoccerTeamRegistrationForm = ({ onSubmit }: { onSubmit: (data: z.infer<typ
             <ul>
               {players.map((player, index) => (
                 <li key={index}>
-                  {player.playerName} {player.playerSurname} - ID: {player.playerID}, DoB: {player.dateOfBirth}
-                </li>
+                {player.playerName} {player.playerSurname} - ID: {player.playerID}, DoB: {player.dateOfBirth.toLocaleDateString()}
+              </li>
               ))}
             </ul>
           </div>
