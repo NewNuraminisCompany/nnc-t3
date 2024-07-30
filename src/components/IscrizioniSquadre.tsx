@@ -23,17 +23,17 @@ import { cn } from "@/lib/utils";
 const codiceFiscaleRegex = /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/;
 
 const teamFormSchema = z.object({
-  teamName: z.string().min(1, "Nome Squadra is required").max(255),
-  teamColor: z.string().min(1, "Colore is required").max(255),
-  myNumber: z.string().regex(/^\+?[0-9]{6,14}$/, "Invalid phone number format"),
+  teamName: z.string().min(1, "Inserire il nome della squadra").max(255),
+  teamColor: z.string().min(1, "Inserire il colore della squadra").max(255),
+  myNumber: z.string().regex(/^\+?[0-9]{6,14}$/, "Inserire un numero di telefono della squadra"),
 });
 
 const playerFormSchema = z.object({
-  playerName: z.string().min(1, "Nome is required").max(255),
-  playerSurname: z.string().min(1, "Cognome is required").max(255),
-  playerID: z.string().regex(codiceFiscaleRegex, "Invalid Codice Fiscale format"),
+  playerName: z.string().min(1, "Inserire il nome del giocatore").max(255),
+  playerSurname: z.string().min(1, "Inserire il cognome del giocatore").max(255),
+  playerID: z.string().regex(codiceFiscaleRegex, "Codice fiscale non valido"),
   playerDateOfBirth: z.date().refine(date => date <= new Date(), {
-    message: "Date of birth cannot be in the future",
+    message: "La data di nascita non può essere futura",
   }),
 });
 
@@ -100,7 +100,7 @@ export default function IscrizioniSquadre() {
               name="teamName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome Squadra</FormLabel>
+                  <FormLabel>Nome squadra</FormLabel>
                   <FormControl>
                     <Input placeholder="Nome Squadra" {...field} />
                   </FormControl>
@@ -113,7 +113,7 @@ export default function IscrizioniSquadre() {
               name="teamColor"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Colore</FormLabel>
+                  <FormLabel>Colore squadra</FormLabel>
                   <FormControl>
                     <Input placeholder="Colore" {...field} />
                   </FormControl>
@@ -126,7 +126,7 @@ export default function IscrizioniSquadre() {
               name="myNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Telefono Squadra</FormLabel>
+                  <FormLabel>Telefono squadra</FormLabel>
                   <FormControl>
                     <Input type="tel" placeholder="Numero di Telefono" {...field} />
                   </FormControl>
@@ -134,7 +134,7 @@ export default function IscrizioniSquadre() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Next</Button>
+            <Button type="submit">Avanti</Button>
           </form>
         </Form>
       )}
@@ -143,14 +143,14 @@ export default function IscrizioniSquadre() {
         <Form {...playerForm}>
           <form onSubmit={playerForm.handleSubmit(onPlayerSubmit)} className="space-y-8">
             <div className="mb-4">
-              <h3 className="text-lg font-bold">Players List ({players.length}/10)</h3>
+              <h3 className="text-lg font-bold">Lista Giocatori ({players.length}/10)</h3>
               <ul>
                 {players.map((player, index) => (
                   <li key={index} className="flex justify-between items-center">
                     <span>{player.playerName} {player.playerSurname}</span>
                     {players.length > 5 && (
                       <Button type="button" onClick={() => removePlayer(index)} variant="destructive" size="sm">
-                        Remove
+                        Rimuovi
                       </Button>
                     )}
                   </li>
@@ -189,7 +189,7 @@ export default function IscrizioniSquadre() {
               name="playerID"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>C.F. Giocatore</FormLabel>
+                  <FormLabel>Codice Fiscale</FormLabel>
                   <FormControl>
                     <Input placeholder="Codice Fiscale" {...field} />
                   </FormControl>
@@ -213,7 +213,7 @@ export default function IscrizioniSquadre() {
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                          {field.value ? format(field.value, "PPP") : <span>Seleziona una data</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
@@ -235,10 +235,10 @@ export default function IscrizioniSquadre() {
             />
             <div className="flex justify-between">
               <Button type="submit" disabled={players.length >= 10}>
-                {players.length < 5 ? `Add Player (${5 - players.length} more required)` : 'Add Player'}
+                {players.length < 5 ? `Aggiungi giocatore (minimo ${5 - players.length} richiesti)` : 'Aggiungi giocatore'}
               </Button>
               <Button type="button" onClick={goToReview} disabled={!canProceedToReview}>
-                Review
+                Rivedi
               </Button>
             </div>
           </form>
@@ -247,28 +247,28 @@ export default function IscrizioniSquadre() {
 
       {step === 2 && (
         <div>
-          <h2 className="text-xl font-semibold">Review & Submit</h2>
-          <p><strong>Nome Squadra:</strong> {teamInfo?.teamName}</p>
-          <p><strong>Colore:</strong> {teamInfo?.teamColor}</p>
-          <p><strong>Telefono Squadra:</strong> {teamInfo?.myNumber}</p>
+          <h2 className="text-xl font-semibold">Rivedi e Invia</h2>
+          <p><strong>Nome squadra:</strong> {teamInfo?.teamName}</p>
+          <p><strong>Colore squadra:</strong> {teamInfo?.teamColor}</p>
+          <p><strong>Telefono squadra:</strong> {teamInfo?.myNumber}</p>
           {players.map((player, index) => (
             <div key={index} className="border p-4 mb-4">
-              <h3 className="text-lg font-bold">Player {index + 1}</h3>
+              <h3 className="text-lg font-bold">Giocatore {index + 1}</h3>
               <p><strong>Nome:</strong> {player.playerName}</p>
               <p><strong>Cognome:</strong> {player.playerSurname}</p>
-              <p><strong>C.F. Giocatore:</strong> {player.playerID}</p>
+              <p><strong>Codice Fiscale:</strong> {player.playerID}</p>
               <p><strong>Data di nascita:</strong> {format(player.playerDateOfBirth, "PPP")}</p>
             </div>
           ))}
           <Button type="button" onClick={() => console.log({ team: teamInfo, players })}>
-            Submit
+            Invia
           </Button>
         </div>
       )}
 
       {step > 0 && (
         <Button type="button" onClick={() => setStep(prev => prev - 1)}>
-          Back
+          Indietro
         </Button>
       )}
     </div>
