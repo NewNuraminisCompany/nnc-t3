@@ -9,8 +9,11 @@ import {
   timestamp,
   varchar,
   date,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
+import { createId } from '@paralleldrive/cuid2';
+
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -138,14 +141,17 @@ export const tornei = createTable("torneo", {
   descrizione: varchar("descrizione").notNull(),
   dataInizio: date("data_inizio").notNull(),
   dataFine: date("data_fine").notNull(),
+  stato: varchar('stato', {enum: ["programmato", "inCorso", "terminato"] })
 });
 
 export const squadre = createTable("squadre", {
-  idSquadra: varchar("id_squadra").primaryKey(),
+  idSquadra: varchar("id_squadra").primaryKey().$defaultFn(() => createId()),
   nome: varchar("nome").notNull(),
   colore: varchar("colore").notNull(),
   cellulare: integer("cellulare").notNull(),
+  statoAccettazione: boolean('statoAccettazione')
 });
+
 
 export const giocatori = createTable("giocatori", {
   cf: varchar("cf").primaryKey(),
@@ -214,3 +220,4 @@ export const gapRelations = relations(gap, ({ one }) => ({
     references: [avvenimenti.tipo, avvenimenti.minuto],
   }),
 }));
+
