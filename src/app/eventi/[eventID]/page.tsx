@@ -48,9 +48,6 @@ const Evento = async ({ params }: { params: { eventID: string } }) => {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-y-4 w-full">
-          <Button>
-            <Link href={`/eventi/${event.idTorneo}`}>Scopri</Link>
-          </Button>
         </CardContent>
       </Card>
     </div>

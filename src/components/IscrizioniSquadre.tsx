@@ -22,10 +22,13 @@ import { cn } from "@/lib/utils";
 
 const codiceFiscaleRegex = /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/;
 
-const formSchema = z.object({
+const teamFormSchema = z.object({
   teamName: z.string().min(1, "Nome Squadra is required").max(255),
   teamColor: z.string().min(1, "Colore is required").max(255),
   myNumber: z.string().regex(/^\+?[0-9]{6,14}$/, "Invalid phone number format"),
+});
+
+const playerFormSchema = z.object({
   playerName: z.string().min(1, "Nome is required").max(255),
   playerSurname: z.string().min(1, "Cognome is required").max(255),
   playerID: z.string().regex(codiceFiscaleRegex, "Invalid Codice Fiscale format"),
@@ -34,50 +37,45 @@ const formSchema = z.object({
   }),
 });
 
-type FormData = z.infer<typeof formSchema>;
+type TeamFormData = z.infer<typeof teamFormSchema>;
+type PlayerFormData = z.infer<typeof playerFormSchema>;
 
-type Player = {
-  playerName: string;
-  playerSurname: string;
-  playerID: string;
-  playerDateOfBirth: Date;
-};
+type Player = PlayerFormData;
 
 export default function IscrizioniSquadre() {
   const [step, setStep] = useState(0);
   const [players, setPlayers] = useState<Player[]>([]);
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const [teamInfo, setTeamInfo] = useState<TeamFormData | null>(null);
+  
+  const teamForm = useForm<TeamFormData>({
+    resolver: zodResolver(teamFormSchema),
     defaultValues: {
       teamName: "",
       teamColor: "",
       myNumber: "",
+    },
+    mode: "onBlur",
+  });
+
+  const playerForm = useForm<PlayerFormData>({
+    resolver: zodResolver(playerFormSchema),
+    defaultValues: {
       playerName: "",
       playerSurname: "",
       playerID: "",
       playerDateOfBirth: new Date(),
     },
-    mode: "all",
+    mode: "onBlur",
   });
 
-  const onSubmit: SubmitHandler<FormData> = (values) => {
-    if (step === 0) {
-      setStep(1);
-    } else if (step === 1) {
-      const newPlayer = {
-        playerName: values.playerName,
-        playerSurname: values.playerSurname,
-        playerID: values.playerID,
-        playerDateOfBirth: values.playerDateOfBirth,
-      };
-      setPlayers([...players, newPlayer]);
-      form.reset({
-        playerName: "",
-        playerSurname: "",
-        playerID: "",
-        playerDateOfBirth: new Date(),
-      });
-    }
+  const onTeamSubmit: SubmitHandler<TeamFormData> = (values) => {
+    setTeamInfo(values);
+    setStep(1);
+  };
+
+  const onPlayerSubmit: SubmitHandler<PlayerFormData> = (values) => {
+    setPlayers([...players, values]);
+    playerForm.reset();
   };
 
   const removePlayer = (index: number) => {
@@ -93,12 +91,12 @@ export default function IscrizioniSquadre() {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {step === 0 && (
-          <>
+    <div>
+      {step === 0 && (
+        <Form {...teamForm}>
+          <form onSubmit={teamForm.handleSubmit(onTeamSubmit)} className="space-y-8">
             <FormField
-              control={form.control}
+              control={teamForm.control}
               name="teamName"
               render={({ field }) => (
                 <FormItem>
@@ -110,9 +108,8 @@ export default function IscrizioniSquadre() {
                 </FormItem>
               )}
             />
-
             <FormField
-              control={form.control}
+              control={teamForm.control}
               name="teamColor"
               render={({ field }) => (
                 <FormItem>
@@ -124,9 +121,8 @@ export default function IscrizioniSquadre() {
                 </FormItem>
               )}
             />
-
             <FormField
-              control={form.control}
+              control={teamForm.control}
               name="myNumber"
               render={({ field }) => (
                 <FormItem>
@@ -138,11 +134,14 @@ export default function IscrizioniSquadre() {
                 </FormItem>
               )}
             />
-          </>
-        )}
+            <Button type="submit">Next</Button>
+          </form>
+        </Form>
+      )}
 
-        {step === 1 && (
-          <>
+      {step === 1 && (
+        <Form {...playerForm}>
+          <form onSubmit={playerForm.handleSubmit(onPlayerSubmit)} className="space-y-8">
             <div className="mb-4">
               <h3 className="text-lg font-bold">Players List ({players.length}/10)</h3>
               <ul>
@@ -160,7 +159,7 @@ export default function IscrizioniSquadre() {
             </div>
 
             <FormField
-              control={form.control}
+              control={playerForm.control}
               name="playerName"
               render={({ field }) => (
                 <FormItem>
@@ -172,9 +171,8 @@ export default function IscrizioniSquadre() {
                 </FormItem>
               )}
             />
-
             <FormField
-              control={form.control}
+              control={playerForm.control}
               name="playerSurname"
               render={({ field }) => (
                 <FormItem>
@@ -186,9 +184,8 @@ export default function IscrizioniSquadre() {
                 </FormItem>
               )}
             />
-
             <FormField
-              control={form.control}
+              control={playerForm.control}
               name="playerID"
               render={({ field }) => (
                 <FormItem>
@@ -200,9 +197,8 @@ export default function IscrizioniSquadre() {
                 </FormItem>
               )}
             />
-
             <FormField
-              control={form.control}
+              control={playerForm.control}
               name="playerDateOfBirth"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
@@ -237,53 +233,44 @@ export default function IscrizioniSquadre() {
                 </FormItem>
               )}
             />
-          </>
-        )}
-
-        {step === 2 && (
-          <div>
-            <h2 className="text-xl font-semibold">Review & Submit</h2>
-            <p><strong>Nome Squadra:</strong> {form.getValues("teamName")}</p>
-            <p><strong>Colore:</strong> {form.getValues("teamColor")}</p>
-            <p><strong>Telefono Squadra:</strong> {form.getValues("myNumber")}</p>
-            {players.map((player, index) => (
-              <div key={index} className="border p-4 mb-4">
-                <h3 className="text-lg font-bold">Player {index + 1}</h3>
-                <p><strong>Nome:</strong> {player.playerName}</p>
-                <p><strong>Cognome:</strong> {player.playerSurname}</p>
-                <p><strong>C.F. Giocatore:</strong> {player.playerID}</p>
-                <p><strong>Data di nascita:</strong> {format(player.playerDateOfBirth, "PPP")}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="flex justify-between">
-          {step > 0 && (
-            <Button type="button" onClick={() => setStep(prev => prev - 1)}>
-              Back
-            </Button>
-          )}
-          {step === 0 && (
-            <Button type="submit" onClick={() => setStep(prev => prev + 1)}>Next</Button>
-          )}
-          {step === 1 && (
-            <>
+            <div className="flex justify-between">
               <Button type="submit" disabled={players.length >= 10}>
                 {players.length < 5 ? `Add Player (${5 - players.length} more required)` : 'Add Player'}
               </Button>
               <Button type="button" onClick={goToReview} disabled={!canProceedToReview}>
                 Review
               </Button>
-            </>
-          )}
-          {step === 2 && (
-            <Button type="button" onClick={() => console.log({ team: form.getValues(), players })}>
-              Submit
-            </Button>
-          )}
+            </div>
+          </form>
+        </Form>
+      )}
+
+      {step === 2 && (
+        <div>
+          <h2 className="text-xl font-semibold">Review & Submit</h2>
+          <p><strong>Nome Squadra:</strong> {teamInfo?.teamName}</p>
+          <p><strong>Colore:</strong> {teamInfo?.teamColor}</p>
+          <p><strong>Telefono Squadra:</strong> {teamInfo?.myNumber}</p>
+          {players.map((player, index) => (
+            <div key={index} className="border p-4 mb-4">
+              <h3 className="text-lg font-bold">Player {index + 1}</h3>
+              <p><strong>Nome:</strong> {player.playerName}</p>
+              <p><strong>Cognome:</strong> {player.playerSurname}</p>
+              <p><strong>C.F. Giocatore:</strong> {player.playerID}</p>
+              <p><strong>Data di nascita:</strong> {format(player.playerDateOfBirth, "PPP")}</p>
+            </div>
+          ))}
+          <Button type="button" onClick={() => console.log({ team: teamInfo, players })}>
+            Submit
+          </Button>
         </div>
-      </form>
-    </Form>
+      )}
+
+      {step > 0 && (
+        <Button type="button" onClick={() => setStep(prev => prev - 1)}>
+          Back
+        </Button>
+      )}
+    </div>
   );
 }

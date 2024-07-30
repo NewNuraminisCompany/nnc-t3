@@ -1,17 +1,25 @@
 import React from 'react'
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
-import ComboBoxDashboard from '@/components/ComboBoxDashboard';
-
+import NewEventCard from '@/components/NewEventCard'
+import EditEventCard from '@/components/EditEventCard'
 
 const Dashboard = async () => {
-  const session = await getServerSession();
+  const session = await getServerSession()
+
   if (!session?.user?.name) {
     redirect('/')
   }
 
   return (
-    <ComboBoxDashboard />
+    <div className="flex h-screen">
+      <div className="w-1/2 p-4">
+        <NewEventCard />
+      </div>
+      <div className="w-1/2 p-4">
+        <EditEventCard />
+      </div>
+    </div>
   )
 }
 
