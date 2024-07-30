@@ -148,7 +148,7 @@ export const squadre = createTable("squadre", {
   idSquadra: varchar("id_squadra").primaryKey().$defaultFn(() => createId()),
   nome: varchar("nome").notNull(),
   colore: varchar("colore").notNull(),
-  cellulare: integer("cellulare").notNull(),
+  cellulare: varchar("cellulare", {length: 11}).notNull(),
   statoAccettazione: boolean('statoAccettazione')
 });
 

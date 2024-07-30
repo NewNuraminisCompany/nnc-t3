@@ -36,6 +36,13 @@
       "when": 1722359047860,
       "tag": "0004_broken_queen_noir",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1722360945453,
+      "tag": "0005_flat_salo",
+      "breakpoints": true
     }
   ]
 }

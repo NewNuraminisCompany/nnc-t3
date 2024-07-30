@@ -4,6 +4,7 @@ import NavBar from "../components/NavBar";
 import SessionProvider from "../components/SessionProvider";
 import { Inter } from "next/font/google";
 import { type Metadata } from "next";
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
   title: "NNC",
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en" className={inter.className}>
       <body>
         <SessionProvider>
+          
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -28,6 +30,7 @@ export default function RootLayout({
           >
             <NavBar />
             <main className="container mx-auto pt-[10vh] w-full">{children}</main>
+            <Toaster />
           </ThemeProvider>
         </SessionProvider>
       </body>

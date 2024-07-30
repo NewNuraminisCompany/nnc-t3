@@ -2,7 +2,7 @@ import React from "react";
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
 import { tornei } from "@/server/db/schema"; // Import the schema
 import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
-import { desc, eq, limit } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 // Define the structure of a Torneo item
 interface Torneo {

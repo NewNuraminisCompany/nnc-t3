@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -17,22 +17,34 @@ import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { submitTeamAndPlayers } from "./actions";
+import { toast } from "sonner";
+import { Card } from "./ui/card";
 
 const codiceFiscaleRegex = /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/;
 
 const teamFormSchema = z.object({
   teamName: z.string().min(1, "Inserire il nome della squadra").max(255),
   teamColor: z.string().min(1, "Inserire il colore della squadra").max(255),
-  myNumber: z.string().regex(/^\+?[0-9]{6,14}$/, "Inserire un numero di telefono della squadra"),
+  myNumber: z
+    .string()
+    .regex(/^\+?[0-9]{6,14}$/, "Inserire un numero di telefono della squadra"),
 });
 
 const playerFormSchema = z.object({
   playerName: z.string().min(1, "Inserire il nome del giocatore").max(255),
-  playerSurname: z.string().min(1, "Inserire il cognome del giocatore").max(255),
+  playerSurname: z
+    .string()
+    .min(1, "Inserire il cognome del giocatore")
+    .max(255),
   playerID: z.string().regex(codiceFiscaleRegex, "Codice fiscale non valido"),
-  playerDateOfBirth: z.date().refine(date => date <= new Date(), {
+  playerDateOfBirth: z.date().refine((date) => date <= new Date(), {
     message: "La data di nascita non può essere futura",
   }),
 });
@@ -46,7 +58,8 @@ export default function IscrizioniSquadre() {
   const [step, setStep] = useState(0);
   const [players, setPlayers] = useState<Player[]>([]);
   const [teamInfo, setTeamInfo] = useState<TeamFormData | null>(null);
-  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const teamForm = useForm<TeamFormData>({
     resolver: zodResolver(teamFormSchema),
     defaultValues: {
@@ -90,11 +103,48 @@ export default function IscrizioniSquadre() {
     }
   };
 
+  const handleFinalSubmit = async () => {
+    if (!teamInfo) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const result = await submitTeamAndPlayers({
+        team: {
+          nome: teamInfo.teamName,
+          colore: teamInfo.teamColor,
+          cellulare: teamInfo.myNumber,
+        },
+        players: players.map((player) => ({
+          cf: player.playerID,
+          nome: player.playerName,
+          cognome: player.playerSurname,
+          dataNascita: format(player.playerDateOfBirth, "yyyy-MM-dd"),
+        })),
+      });
+
+      if (result.success) {
+        console.log("Data submitted successfully");
+        toast.success("Iscrizione effettuata con successo");
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      toast.error("Errore nell&apos;invio dei dati");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div>
       {step === 0 && (
         <Form {...teamForm}>
-          <form onSubmit={teamForm.handleSubmit(onTeamSubmit)} className="space-y-8">
+          <form
+            onSubmit={teamForm.handleSubmit(onTeamSubmit)}
+            className="space-y-8"
+          >
             <FormField
               control={teamForm.control}
               name="teamName"
@@ -128,7 +178,11 @@ export default function IscrizioniSquadre() {
                 <FormItem>
                   <FormLabel>Telefono squadra</FormLabel>
                   <FormControl>
-                    <Input type="tel" placeholder="Numero di Telefono" {...field} />
+                    <Input
+                      type="tel"
+                      placeholder="Numero di Telefono"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -141,15 +195,27 @@ export default function IscrizioniSquadre() {
 
       {step === 1 && (
         <Form {...playerForm}>
-          <form onSubmit={playerForm.handleSubmit(onPlayerSubmit)} className="space-y-8">
+          <form
+            onSubmit={playerForm.handleSubmit(onPlayerSubmit)}
+            className="space-y-8"
+          >
             <div className="mb-4">
-              <h3 className="text-lg font-bold">Lista Giocatori ({players.length}/10)</h3>
+              <h3 className="text-lg font-bold">
+                Lista Giocatori ({players.length}/10)
+              </h3>
               <ul>
                 {players.map((player, index) => (
-                  <li key={index} className="flex justify-between items-center">
-                    <span>{player.playerName} {player.playerSurname}</span>
+                  <li key={index} className="flex items-center justify-between">
+                    <span>
+                      {player.playerName} {player.playerSurname}
+                    </span>
                     {players.length > 5 && (
-                      <Button type="button" onClick={() => removePlayer(index)} variant="destructive" size="sm">
+                      <Button
+                        type="button"
+                        onClick={() => removePlayer(index)}
+                        variant="destructive"
+                        size="sm"
+                      >
                         Rimuovi
                       </Button>
                     )}
@@ -210,10 +276,14 @@ export default function IscrizioniSquadre() {
                           variant={"outline"}
                           className={cn(
                             "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                         >
-                          {field.value ? format(field.value, "PPP") : <span>Seleziona una data</span>}
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Seleziona una data</span>
+                          )}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
@@ -235,9 +305,15 @@ export default function IscrizioniSquadre() {
             />
             <div className="flex justify-between">
               <Button type="submit" disabled={players.length >= 10}>
-                {players.length < 5 ? `Aggiungi giocatore (minimo ${5 - players.length} richiesti)` : 'Aggiungi giocatore'}
+                {players.length < 5
+                  ? `Aggiungi giocatore (minimo ${5 - players.length} richiesti)`
+                  : "Aggiungi giocatore"}
               </Button>
-              <Button type="button" onClick={goToReview} disabled={!canProceedToReview}>
+              <Button
+                type="button"
+                onClick={goToReview}
+                disabled={!canProceedToReview}
+              >
                 Rivedi
               </Button>
             </div>
@@ -248,26 +324,45 @@ export default function IscrizioniSquadre() {
       {step === 2 && (
         <div>
           <h2 className="text-xl font-semibold">Rivedi e Invia</h2>
-          <p><strong>Nome squadra:</strong> {teamInfo?.teamName}</p>
-          <p><strong>Colore squadra:</strong> {teamInfo?.teamColor}</p>
-          <p><strong>Telefono squadra:</strong> {teamInfo?.myNumber}</p>
+          <p>
+            <strong>Nome squadra:</strong> {teamInfo?.teamName}
+          </p>
+          <p>
+            <strong>Colore squadra:</strong> {teamInfo?.teamColor}
+          </p>
+          <p>
+            <strong>Telefono squadra:</strong> {teamInfo?.myNumber}
+          </p>
           {players.map((player, index) => (
-            <div key={index} className="border p-4 mb-4">
+            <Card key={index} className="mb-4">
               <h3 className="text-lg font-bold">Giocatore {index + 1}</h3>
-              <p><strong>Nome:</strong> {player.playerName}</p>
-              <p><strong>Cognome:</strong> {player.playerSurname}</p>
-              <p><strong>Codice Fiscale:</strong> {player.playerID}</p>
-              <p><strong>Data di nascita:</strong> {format(player.playerDateOfBirth, "PPP")}</p>
-            </div>
+              <p>
+                <strong>Nome:</strong> {player.playerName}
+              </p>
+              <p>
+                <strong>Cognome:</strong> {player.playerSurname}
+              </p>
+              <p>
+                <strong>Codice Fiscale:</strong> {player.playerID}
+              </p>
+              <p>
+                <strong>Data di nascita:</strong>{" "}
+                {format(player.playerDateOfBirth, "PPP")}
+              </p>
+            </Card>
           ))}
-          <Button type="button" onClick={() => console.log({ team: teamInfo, players })}>
-            Invia
+          <Button
+            type="button"
+            onClick={handleFinalSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Invio in corso..." : "Invia"}
           </Button>
         </div>
       )}
 
       {step > 0 && (
-        <Button type="button" onClick={() => setStep(prev => prev - 1)}>
+        <Button type="button" onClick={() => setStep((prev) => prev - 1)}>
           Indietro
         </Button>
       )}
