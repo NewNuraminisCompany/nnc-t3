@@ -138,7 +138,7 @@ export default function IscrizioniSquadre() {
   };
 
   return (
-    <div>
+    <div> 
       {step === 0 && (
         <Form {...teamForm}>
           <form
