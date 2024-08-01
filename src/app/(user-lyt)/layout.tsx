@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider"
-import NavBar from "../components/NavBar";
-import SessionProvider from "../components/SessionProvider";
+import NavBar from "../../components/NavBar";
+import SessionProvider from "../../components/SessionProvider";
 import { Inter } from "next/font/google";
 import { type Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner"
