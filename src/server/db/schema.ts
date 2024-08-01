@@ -136,7 +136,7 @@ export const verificationTokens = createTable(
 // Nuove definizioni di tabelle
 
 export const tornei = createTable("torneo", {
-  idTorneo: varchar("id_torneo").primaryKey(),
+  idTorneo: varchar("id_torneo").primaryKey().$defaultFn(() => createId()),
   nome: varchar("nome").notNull(),
   descrizione: varchar("descrizione").notNull(),
   dataInizio: date("data_inizio").notNull(),
@@ -149,7 +149,8 @@ export const squadre = createTable("squadre", {
   nome: varchar("nome").notNull(),
   colore: varchar("colore").notNull(),
   cellulare: varchar("cellulare", {length: 11}).notNull(),
-  statoAccettazione: boolean('statoAccettazione')
+  statoAccettazione: boolean('statoAccettazione'),
+  idTorneo: varchar("id_torneo").notNull().references(() => tornei.idTorneo)
 });
 
 

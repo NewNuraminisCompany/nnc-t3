@@ -31,7 +31,7 @@ export default function ComboBoxDashboard() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       try {
         const data = await getTornei();
         const options = data.map((t) => ({
@@ -44,8 +44,9 @@ export default function ComboBoxDashboard() {
       } finally {
         setLoading(false);
       }
-    }
-    fetchData();
+    };
+
+    void fetchData();
   }, []);
 
   return (

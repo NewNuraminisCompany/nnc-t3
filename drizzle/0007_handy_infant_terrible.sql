@@ -1,0 +1,1 @@
+ALTER TABLE "nnc-sito-t3_squadre" ALTER COLUMN "id_torneo" DROP NOT NULL;
