@@ -73,7 +73,7 @@ export function DataTable<TData, TValue>({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
                           <DropdownMenuItem onClick={() => header.column.setFilterValue(undefined)}>
-                            All
+                            Tutti
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => header.column.setFilterValue("programmato")}>
                             Programmato

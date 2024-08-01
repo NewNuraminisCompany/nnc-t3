@@ -4,19 +4,16 @@ import { Button } from "@/components/ui/button"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
 
-export type Torneo = {
-    idTorneo: string
+export type Squadre = {
+    idSquadra: string
     nome: string
-    dataInizio: Date
-    dataFine: Date
-    stato: "programmato" | "inCorso" | "terminato"
+    colore: string
+    cellulare: string
+    statoAccettazione: boolean
+    idTorneo: string
 }
 
-export const columns: ColumnDef<Torneo>[] = [
-  {
-    accessorKey: "idTorneo",
-    header: "ID Torneo",
-  },
+export const columns: ColumnDef<Squadre>[] = [
   {
     accessorKey: "nome",
     header: ({ column }) => {
@@ -32,17 +29,20 @@ export const columns: ColumnDef<Torneo>[] = [
       },
   },
   {
-    accessorKey: "dataInizio",
-    header: "Data Inizio",
-    cell: ({ row }) => row.original.dataInizio.toLocaleDateString(),
+    accessorKey: "colore",
+    header: "Colore",
   },
   {
-    accessorKey: "dataFine",
-    header: "Data Fine",
-    cell: ({ row }) => row.original.dataFine.toLocaleDateString(),
+    accessorKey: "cellulare",
+    header: "Cellulare",
   },
   {
-    accessorKey: "stato",
+    accessorKey: "statoAccettazione",
     header: "Stato",
+    cell: ({ row }) => (row.getValue("statoAccettazione") ? "Approvata" : "Non approvata"),
+  },
+  {
+    accessorKey: "idTorneo",
+    header: "Torneo",
   },
 ]

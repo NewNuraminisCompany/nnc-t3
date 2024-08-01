@@ -26,7 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react"; // Assuming you're using lucide-react for icons
+import { ChevronDown } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -63,26 +63,23 @@ export function DataTable<TData, TValue>({
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>
-                    {header.column.id === 'stato' ? (
+                    {header.column.id === 'statoAccettazione' ? (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-full justify-start">
-                            {header.column.columnDef.header as string}
+                            Stato
                             <ChevronDown className="ml-2 h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
                           <DropdownMenuItem onClick={() => header.column.setFilterValue(undefined)}>
-                            All
+                            Tutti
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => header.column.setFilterValue("programmato")}>
-                            Programmato
+                          <DropdownMenuItem onClick={() => header.column.setFilterValue(true)}>
+                            Approvata
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => header.column.setFilterValue("inCorso")}>
-                            In Corso
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => header.column.setFilterValue("terminato")}>
-                            Terminato
+                          <DropdownMenuItem onClick={() => header.column.setFilterValue(false)}>
+                            Non approvata
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -107,7 +104,9 @@ export function DataTable<TData, TValue>({
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {cell.column.id === 'statoAccettazione'
+                      ? cell.getValue() ? 'Approvata' : 'Non approvata'
+                      : flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
               </TableRow>

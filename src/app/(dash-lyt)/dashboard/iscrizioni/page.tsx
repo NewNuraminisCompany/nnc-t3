@@ -1,37 +1,38 @@
 import React from "react";
 import { DataTable } from "./data-table";
-import { Torneo, columns } from "./columns";
+import { Squadre, columns } from "./columns";
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
-import { tornei } from "@/server/db/schema"; // Import the schema
+import { squadre } from "@/server/db/schema"; // Import the schema
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-async function getData(): Promise<Torneo[]> {
+async function getData(): Promise<Squadre[]> {
   try {
-    console.log("Attempting to fetch data from tornei table...");
-    const result = await db.select().from(tornei);
+    console.log("Attempting to fetch data from squadre table...");
+    const result = await db.select().from(squadre);
 
-    console.log(`Fetched ${result.length} records from tornei table.`);
+    console.log(`Fetched ${result.length} records from squadre table.`);
 
     if (result.length === 0) {
-      console.log("No records found in the tornei table.");
+      console.log("No records found in the squadre table.");
       return [];
     }
 
-    return result.map((torneo) => {
-      console.log("Processing torneo:", torneo);
+    return result.map((squadre) => {
+      console.log("Processing squadre:", squadre);
       return {
-        idTorneo: torneo.idTorneo,
-        nome: torneo.nome,
-        dataInizio: new Date(torneo.dataInizio),
-        dataFine: new Date(torneo.dataFine),
-        stato: torneo.stato as "programmato" | "inCorso" | "terminato",
+        idSquadra: squadre.idSquadra,
+        nome: squadre.nome,
+        colore: squadre.colore,
+        cellulare: squadre.cellulare,
+        statoAccettazione: squadre.statoAccettazione,
+        idTorneo: squadre.idTorneo
       };
     });
   } catch (error) {
-    console.error("Error fetching tornei:", error);
+    console.error("Error fetching squadre:", error);
     throw new Error(
-      `Failed to fetch tornei: ${error instanceof Error ? error.message : String(error)}`,
+      `Failed to fetch squadre: ${error instanceof Error ? error.message : String(error)}`,
     );
   }
 }
