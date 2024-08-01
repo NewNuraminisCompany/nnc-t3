@@ -17,15 +17,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getTornei} from "./actions.ts"
+import { getTornei } from "./actions";
 
-// Define the type for the options used in the combobox
 type ComboboxOption = {
   value: string;
   label: string;
 };
 
-export default function ComboboxDemo() {
+export default function ComboBoxDashboard() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState<string>("");
   const [torneiOptions, setTorneiOptions] = React.useState<ComboboxOption[]>([]);
@@ -35,8 +34,6 @@ export default function ComboboxDemo() {
     async function fetchData() {
       try {
         const data = await getTornei();
-        console.log(data)
-        // Transform the data to the required format
         const options = data.map((t) => ({
           value: t.idTorneo,
           label: t.nome,
@@ -48,7 +45,6 @@ export default function ComboboxDemo() {
         setLoading(false);
       }
     }
-
     fetchData();
   }, []);
 
@@ -79,9 +75,8 @@ export default function ComboboxDemo() {
                 torneiOptions.map((torneo) => (
                   <CommandItem
                     key={torneo.value}
-                    value={torneo.value}
-                    onSelect={(currentValue) => {
-                      setValue(currentValue === value ? "" : currentValue);
+                    onSelect={() => {
+                      setValue(torneo.value);
                       setOpen(false);
                     }}
                   >

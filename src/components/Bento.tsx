@@ -2,14 +2,14 @@ import React from "react";
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
 import { tornei } from "@/server/db/schema"; // Import the schema
 import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
-import { desc, eq } from "drizzle-orm";
+import { desc, sql } from "drizzle-orm";
 
 // Define the structure of a Torneo item
 interface Torneo {
-  idTorneo: string; // Assuming idTorneo is a string based on the schema
+  idTorneo: string;
   nome: string | null;
   descrizione: string | null;
-  dataInizio: Date; // Assuming dataInizio is a Date object
+  dataInizio: Date;
 }
 
 export async function Bento() {
@@ -17,16 +17,16 @@ export async function Bento() {
   const torneiData = await db
     .select()
     .from(tornei)
-    .orderBy(desc(tornei.dataInizio)) // Order by dataInizio descending
-    .limit(4); // Limit to 4 results
+    .orderBy(desc(tornei.dataInizio))
+    .where(sql`1=1 LIMIT 4`); // Using raw SQL for LIMIT
 
-  if (!torneiData) {
-    console.error("Error fetching data");
+  if (!torneiData || torneiData.length === 0) {
+    console.error("Error fetching data or no data available");
     return <div>Error loading events</div>;
   }
 
   const features = torneiData.map((torneo, index) => ({
-    name: torneo.nome ?? `Evento ${index + 1}`, // Fallback if nome is null
+    name: torneo.nome ?? `Evento ${index + 1}`,
     description: torneo.descrizione ?? "Descrizione non disponibile",
     href: `/eventi/${torneo.idTorneo}`,
     cta: "Scopri",
@@ -54,4 +54,3 @@ export async function Bento() {
     </BentoGrid>
   );
 }
-
