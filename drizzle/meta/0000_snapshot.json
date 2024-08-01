@@ -1,5 +1,5 @@
 {
-  "id": "1e4741aa-93c7-4185-b27f-2881e530b347",
+  "id": "2c5ac717-6844-4451-ab7b-bd37cc48bcd9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -108,6 +108,234 @@
           ]
         }
       },
+      "uniqueConstraints": {}
+    },
+    "public.nnc-sito-t3_avvenimento": {
+      "name": "nnc-sito-t3_avvenimento",
+      "schema": "",
+      "columns": {
+        "tipo": {
+          "name": "tipo",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "minuto": {
+          "name": "minuto",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "nnc-sito-t3_avvenimento_tipo_minuto_pk": {
+          "name": "nnc-sito-t3_avvenimento_tipo_minuto_pk",
+          "columns": [
+            "tipo",
+            "minuto"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.nnc-sito-t3_gap": {
+      "name": "nnc-sito-t3_gap",
+      "schema": "",
+      "columns": {
+        "cf": {
+          "name": "cf",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "minuto": {
+          "name": "minuto",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tipo": {
+          "name": "tipo",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_partita": {
+          "name": "id_partita",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nnc-sito-t3_gap_cf_nnc-sito-t3_giocatori_cf_fk": {
+          "name": "nnc-sito-t3_gap_cf_nnc-sito-t3_giocatori_cf_fk",
+          "tableFrom": "nnc-sito-t3_gap",
+          "tableTo": "nnc-sito-t3_giocatori",
+          "columnsFrom": [
+            "cf"
+          ],
+          "columnsTo": [
+            "cf"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "nnc-sito-t3_gap_id_partita_nnc-sito-t3_partite_id_partita_fk": {
+          "name": "nnc-sito-t3_gap_id_partita_nnc-sito-t3_partite_id_partita_fk",
+          "tableFrom": "nnc-sito-t3_gap",
+          "tableTo": "nnc-sito-t3_partite",
+          "columnsFrom": [
+            "id_partita"
+          ],
+          "columnsTo": [
+            "id_partita"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "nnc-sito-t3_gap_cf_minuto_tipo_id_partita_pk": {
+          "name": "nnc-sito-t3_gap_cf_minuto_tipo_id_partita_pk",
+          "columns": [
+            "cf",
+            "minuto",
+            "tipo",
+            "id_partita"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.nnc-sito-t3_giocatori": {
+      "name": "nnc-sito-t3_giocatori",
+      "schema": "",
+      "columns": {
+        "cf": {
+          "name": "cf",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "nome": {
+          "name": "nome",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cognome": {
+          "name": "cognome",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data_nascita": {
+          "name": "data_nascita",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_squadra": {
+          "name": "id_squadra",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nnc-sito-t3_giocatori_id_squadra_nnc-sito-t3_squadre_id_squadra_fk": {
+          "name": "nnc-sito-t3_giocatori_id_squadra_nnc-sito-t3_squadre_id_squadra_fk",
+          "tableFrom": "nnc-sito-t3_giocatori",
+          "tableTo": "nnc-sito-t3_squadre",
+          "columnsFrom": [
+            "id_squadra"
+          ],
+          "columnsTo": [
+            "id_squadra"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.nnc-sito-t3_partite": {
+      "name": "nnc-sito-t3_partite",
+      "schema": "",
+      "columns": {
+        "id_partita": {
+          "name": "id_partita",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "id_squadra1": {
+          "name": "id_squadra1",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_squadra2": {
+          "name": "id_squadra2",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "risultato_squadra1": {
+          "name": "risultato_squadra1",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "risultato_squadra2": {
+          "name": "risultato_squadra2",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data_ora": {
+          "name": "data_ora",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nnc-sito-t3_partite_id_squadra1_nnc-sito-t3_squadre_id_squadra_fk": {
+          "name": "nnc-sito-t3_partite_id_squadra1_nnc-sito-t3_squadre_id_squadra_fk",
+          "tableFrom": "nnc-sito-t3_partite",
+          "tableTo": "nnc-sito-t3_squadre",
+          "columnsFrom": [
+            "id_squadra1"
+          ],
+          "columnsTo": [
+            "id_squadra"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "nnc-sito-t3_partite_id_squadra2_nnc-sito-t3_squadre_id_squadra_fk": {
+          "name": "nnc-sito-t3_partite_id_squadra2_nnc-sito-t3_squadre_id_squadra_fk",
+          "tableFrom": "nnc-sito-t3_partite",
+          "tableTo": "nnc-sito-t3_squadre",
+          "columnsFrom": [
+            "id_squadra2"
+          ],
+          "columnsTo": [
+            "id_squadra"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "public.nnc-sito-t3_post": {
@@ -227,6 +455,112 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.nnc-sito-t3_squadre": {
+      "name": "nnc-sito-t3_squadre",
+      "schema": "",
+      "columns": {
+        "id_squadra": {
+          "name": "id_squadra",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "nome": {
+          "name": "nome",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "colore": {
+          "name": "colore",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cellulare": {
+          "name": "cellulare",
+          "type": "varchar(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statoAccettazione": {
+          "name": "statoAccettazione",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_torneo": {
+          "name": "id_torneo",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nnc-sito-t3_squadre_id_torneo_nnc-sito-t3_torneo_id_torneo_fk": {
+          "name": "nnc-sito-t3_squadre_id_torneo_nnc-sito-t3_torneo_id_torneo_fk",
+          "tableFrom": "nnc-sito-t3_squadre",
+          "tableTo": "nnc-sito-t3_torneo",
+          "columnsFrom": [
+            "id_torneo"
+          ],
+          "columnsTo": [
+            "id_torneo"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.nnc-sito-t3_torneo": {
+      "name": "nnc-sito-t3_torneo",
+      "schema": "",
+      "columns": {
+        "id_torneo": {
+          "name": "id_torneo",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "nome": {
+          "name": "nome",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "descrizione": {
+          "name": "descrizione",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data_inizio": {
+          "name": "data_inizio",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data_fine": {
+          "name": "data_fine",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stato": {
+          "name": "stato",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

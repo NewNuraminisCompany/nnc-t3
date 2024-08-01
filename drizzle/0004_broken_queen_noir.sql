@@ -1,1 +1,0 @@
-ALTER TABLE "nnc-sito-t3_squadre" RENAME COLUMN "boolean" TO "statoAccettazione";
