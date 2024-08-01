@@ -1,1 +1,0 @@
-ALTER TABLE "nnc-sito-t3_squadre" ALTER COLUMN "id_torneo" SET NOT NULL;
