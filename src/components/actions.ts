@@ -1,14 +1,13 @@
 "use server"
 
-import { db } from "@/server/db"; // Import your Drizzle ORM setup
-import { tornei, squadre, giocatori } from "@/server/db/schema"; // Import the schema
+import { db } from "@/server/db";
+import { tornei, squadre, giocatori } from "@/server/db/schema";
+import { createId } from '@paralleldrive/cuid2';
 
 export async function getTornei() {
   const result = await db.select().from(tornei);
   return result;
 }
-
-import { createId } from '@paralleldrive/cuid2';
 
 type TeamData = {
   nome: string;
@@ -23,7 +22,7 @@ type PlayerData = {
   dataNascita: string;
 };
 
-export async function submitTeamAndPlayers({ team, players }: { team: TeamData, players: PlayerData[] }) {
+export async function submitTeamAndPlayers({ team, players, idTorneo }: { team: TeamData, players: PlayerData[], idTorneo: string }) {
   try {
     const [insertedTeam] = await db.insert(squadre).values({
       idSquadra: createId(),
@@ -31,6 +30,7 @@ export async function submitTeamAndPlayers({ team, players }: { team: TeamData, 
       colore: team.colore,
       cellulare: team.cellulare,
       statoAccettazione: false,
+      idTorneo: idTorneo, // Add this line to include the idTorneo
     }).returning();
 
     if (!insertedTeam) {

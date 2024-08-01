@@ -19,16 +19,13 @@ async function getData(): Promise<Torneo[]> {
       return [];
     }
 
-    return result.map((torneo) => {
-      console.log("Processing torneo:", torneo);
-      return {
-        idTorneo: torneo.idTorneo,
-        nome: torneo.nome,
-        dataInizio: new Date(torneo.dataInizio),
-        dataFine: new Date(torneo.dataFine),
-        stato: torneo.stato as "programmato" | "inCorso" | "terminato",
-      };
-    });
+    return result.map((torneo) => ({
+      idTorneo: torneo.idTorneo,
+      nome: torneo.nome,
+      dataInizio: new Date(torneo.dataInizio),
+      dataFine: new Date(torneo.dataFine),
+      stato: torneo.stato ?? "programmato" // Provide a default value if stato is null
+    }));
   } catch (error) {
     console.error("Error fetching tornei:", error);
     throw new Error(
