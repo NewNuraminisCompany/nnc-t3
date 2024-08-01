@@ -149,7 +149,8 @@ export const squadre = createTable("squadre", {
   nome: varchar("nome").notNull(),
   colore: varchar("colore").notNull(),
   cellulare: varchar("cellulare", {length: 11}).notNull(),
-  statoAccettazione: boolean('statoAccettazione')
+  statoAccettazione: boolean('statoAccettazione'),
+  idTorneo: varchar("id_Torneo").notNull().references(() => tornei.idTorneo),
 });
 
 
