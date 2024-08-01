@@ -18,14 +18,14 @@ const NavBar = async () => {
           </span>
         </Link>
         <div className="hidden md:flex flex-row items-center gap-x-5">
-          <Button variant={"ghost"}>
-            <Link href={"/eventi"}>Eventi</Link>
+          <Button variant="ghost">
+            <Link href="/eventi">Eventi</Link>
           </Button>
-          <Button variant={"ghost"}>
-            <Link href={"/risultati"}>Risultati</Link>
+          <Button variant="ghost">
+            <Link href="/risultati">Risultati</Link>
           </Button>
-          <Button variant={"ghost"}>
-            <Link href={"/iscrizioni"}>Iscrizioni</Link>
+          <Button variant="ghost">
+            <Link href="/iscrizioni">Iscrizioni</Link>
           </Button>
         </div>
         <div className="flex items-center gap-x-5">

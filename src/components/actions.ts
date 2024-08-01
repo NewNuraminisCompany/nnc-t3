@@ -50,3 +50,20 @@ export async function submitTeamAndPlayers({ team, players }: { team: TeamData, 
     return { success: false, error: "Failed to submit team and players" };
   }
 }
+
+export async function submitTorneo({ nome, descrizione, dataInizio, dataFine }: { nome: string, descrizione: string, dataInizio: string, dataFine: string }) {
+  try {
+    await db.insert(tornei).values({
+      idTorneo: createId(),
+      nome,
+      descrizione,
+      dataInizio,
+      dataFine,
+      stato: 'programmato', // Initial state
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error in submitTorneo:", error);
+    return { success: false, error: "Failed to submit tournament" };
+  }
+}

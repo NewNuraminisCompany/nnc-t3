@@ -5,6 +5,7 @@ import { db } from "@/server/db"; // Import your Drizzle ORM setup
 import { tornei } from "@/server/db/schema"; // Import the schema
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AddTorneo } from "@/components/AddTorneo";
 
 async function getData(): Promise<Torneo[]> {
   try {
@@ -42,9 +43,7 @@ const Eventi = async () => {
     <div className="container mx-auto w-full pt-10">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-4xl font-bold tracking-tight">Eventi</h1>
-        <Button>
-          Aggiungi <Plus className="ml-2 h-4 w-4" />
-        </Button>
+        <AddTorneo />
       </div>
       <DataTable columns={columns} data={data} />
     </div>

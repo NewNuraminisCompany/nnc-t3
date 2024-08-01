@@ -21,21 +21,24 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={inter.className}>
-      <body>
+      <body className="bg-background">
         <SessionProvider>
-          <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-            <DashboardNav />
-          </aside>
-          <TopBar />
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <main className="container md:pl-14 mx-auto w-full">{children}</main>
-            <Toaster />
-          </ThemeProvider>
+          <div vaul-drawer-wrapper="" className="bg-background">
+            <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+              <DashboardNav />
+            </aside>
+            <TopBar />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+            >
+              <main className="container mx-auto w-full md:pl-14">
+                {children}
+              </main>
+              <Toaster />
+            </ThemeProvider>
+          </div>
         </SessionProvider>
       </body>
     </html>

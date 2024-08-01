@@ -18,15 +18,15 @@ async function getData(): Promise<Squadre[]> {
       return [];
     }
 
-    return result.map((squadre) => {
-      console.log("Processing squadre:", squadre);
+    return result.map((squadra) => {
+      console.log("Processing squadra:", squadra);
       return {
-        idSquadra: squadre.idSquadra,
-        nome: squadre.nome,
-        colore: squadre.colore,
-        cellulare: squadre.cellulare,
-        statoAccettazione: squadre.statoAccettazione,
-        idTorneo: squadre.idTorneo
+        idSquadra: squadra.idSquadra,
+        nome: squadra.nome,
+        colore: squadra.colore,
+        cellulare: squadra.cellulare,
+        statoAccettazione: squadra.statoAccettazione ?? false, // Convert null to false
+        idTorneo: squadra.idTorneo
       };
     });
   } catch (error) {

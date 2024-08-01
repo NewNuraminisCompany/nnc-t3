@@ -1,11 +1,11 @@
-'use client'
+"use client";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CalendarFold, Home, UserRoundPlus } from "lucide-react";
+import { CalendarFold, Home, LogOut, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils"; // Assuming classnames library is used for conditional classes
@@ -26,6 +26,11 @@ const navItems = [
     icon: UserRoundPlus,
     label: "Iscrizioni",
   },
+  {
+    href: "/api/auth/signout",
+    icon: LogOut,
+    label: "Esci"
+  },
 ];
 
 const DashboardNav = () => {
@@ -42,8 +47,8 @@ const DashboardNav = () => {
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
                   pathname === item.href
-                    ? "text-foreground font-semibold"
-                    : "text-muted-foreground"
+                    ? "font-semibold text-foreground"
+                    : "text-muted-foreground",
                 )}
               >
                 <item.icon className="h-5 w-5" />
@@ -54,6 +59,7 @@ const DashboardNav = () => {
           </Tooltip>
         ))}
       </nav>
+
     </TooltipProvider>
   );
 };
