@@ -1,10 +1,9 @@
 import React from "react";
-import { db } from "@/server/db"; // Import your Drizzle ORM setup
-import { tornei } from "@/server/db/schema"; // Import the schema
+import { db } from "@/server/db";
+import { tornei } from "@/server/db/schema";
 import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
-import { desc, sql } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 
-// Define the structure of a Torneo item
 interface Torneo {
   idTorneo: string;
   nome: string | null;
@@ -18,7 +17,7 @@ export async function Bento() {
     .select()
     .from(tornei)
     .orderBy(desc(tornei.dataInizio))
-    .where(sql`1=1 LIMIT 4`); // Using raw SQL for LIMIT
+    .limit(4);
 
   if (!torneiData || torneiData.length === 0) {
     console.error("Error fetching data or no data available");
@@ -33,7 +32,7 @@ export async function Bento() {
     color: "bg-card",
     background: (
       <img
-        src=""
+        src="/placeholder-image.jpg"  // Replace with actual image path
         className="absolute -right-20 -top-20 opacity-60"
         alt={torneo.nome || `Evento ${index + 1}`}
       />
