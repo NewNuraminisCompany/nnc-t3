@@ -20,7 +20,7 @@ const Dettagli = async ({ params }: { params: { idSquadra: string } }) => {
         
       </div>
       {players.map((player) => (
-        <Card key={player.cf} className="group relative mb-4 overflow-hidden rounded-lg">
+        <Card key={player.idGiocatore} className="group relative mb-4 overflow-hidden rounded-lg">
           <div className="flex items-center gap-4 p-4">
           <CircleUser className="h-12 w-12 rounded-full object-contain" />
             <div className="flex-1">

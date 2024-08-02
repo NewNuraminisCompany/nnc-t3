@@ -145,6 +145,8 @@ export const tornei = createTable("torneo", {
   stato: varchar("stato", { enum: ["programmato", "inCorso", "terminato"] }),
 });
 
+
+
 export const squadre = createTable("squadre", {
   idSquadra: varchar("id_squadra")
     .primaryKey()
@@ -159,7 +161,10 @@ export const squadre = createTable("squadre", {
 });
 
 export const giocatori = createTable("giocatori", {
-  cf: varchar("cf").primaryKey(),
+  idGiocatore: varchar("id_giocatore")
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  cf: varchar("cf").notNull(),
   nome: varchar("nome").notNull(),
   cognome: varchar("cognome").notNull(),
   dataNascita: date("data_nascita").notNull(),
@@ -169,7 +174,9 @@ export const giocatori = createTable("giocatori", {
 });
 
 export const partite = createTable("partite", {
-  idPartita: varchar("id_partita").primaryKey(),
+  idPartita: varchar("id_partita")
+    .primaryKey()
+    .$defaultFn(() => createId()),
   idSquadra1: varchar("id_squadra1")
     .notNull()
     .references(() => squadre.idSquadra),
@@ -181,9 +188,16 @@ export const partite = createTable("partite", {
   dataOra: timestamp("data_ora", { withTimezone: true }).notNull(),
 });
 
-export const avvenimenti = createTable(
-  "avvenimento",
-  {
+export const gironi = createTable("gironi", {
+  idGirone: varchar("id_girone")
+    .primaryKey()
+    .$defaultFn(() => createId()),
+    nome: varchar("nome").notNull(),
+  idSquadra: varchar("id_squadra").references(() => squadre.idSquadra),
+  idPartita: varchar("id_partita").references(() => partite.idPartita),
+});
+
+export const avvenimenti = createTable("avvenimento",{
     tipo: varchar("tipo").notNull(),
     minuto: integer("minuto").notNull(),
   },
@@ -195,9 +209,9 @@ export const avvenimenti = createTable(
 export const gap = createTable(
   "gap",
   {
-    cf: varchar("cf")
+    idGiocatore: varchar("id_giocatore")
       .notNull()
-      .references(() => giocatori.cf),
+      .references(() => giocatori.idGiocatore),
     minuto: integer("minuto").notNull(),
     tipo: varchar("tipo").notNull(),
     idPartita: varchar("id_partita")
@@ -206,12 +220,25 @@ export const gap = createTable(
   },
   (table) => ({
     pk: primaryKey({
-      columns: [table.cf, table.minuto, table.tipo, table.idPartita],
+      columns: [table.idGiocatore, table.minuto, table.tipo, table.idPartita],
     }),
   }),
 );
 
-// Relazioni per le nuove tabelle
+// Updated relations
+
+export const gironiRelations = relations(gironi, ({ many }) => ({
+  squadre: many(squadre),
+  partite: many(partite),
+}));
+
+export const squadreRelations = relations(squadre, ({ one, many }) => ({
+  torneo: one(tornei, {
+    fields: [squadre.idTorneo],
+    references: [tornei.idTorneo],
+  }),
+  giocatori: many(giocatori),
+}));
 
 export const giocatoriRelations = relations(giocatori, ({ one }) => ({
   squadra: one(squadre, {
@@ -233,8 +260,8 @@ export const partiteRelations = relations(partite, ({ one }) => ({
 
 export const gapRelations = relations(gap, ({ one }) => ({
   giocatore: one(giocatori, {
-    fields: [gap.cf],
-    references: [giocatori.cf],
+    fields: [gap.idGiocatore],
+    references: [giocatori.idGiocatore],
   }),
   partita: one(partite, {
     fields: [gap.idPartita],

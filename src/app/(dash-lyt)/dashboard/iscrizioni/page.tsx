@@ -2,7 +2,7 @@ import React from "react";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { db } from "@/server/db";
-import { squadre, tornei } from "@/server/db/schema";
+import { squadre, tornei, gironi } from "@/server/db/schema";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { eq } from "drizzle-orm";
@@ -11,13 +11,14 @@ import { eq } from "drizzle-orm";
 import { Squadre as ImportedSquadre } from "./columns";
 
 // Definisci un nuovo tipo che estende quello importato
-type SquadreWithTorneo = ImportedSquadre & {
+type SquadreWithTorneoAndGirone = ImportedSquadre & {
   nomeTorneo: string;
+  nomeGirone: string;
 };
 
-async function getData(): Promise<SquadreWithTorneo[]> {
+async function getData(): Promise<SquadreWithTorneoAndGirone[]> {
   try {
-    console.log("Attempting to fetch data from squadre and tornei tables...");
+    console.log("Fetching data from squadre, tornei, and gironi tables...");
     const result = await db
       .select({
         idSquadra: squadre.idSquadra,
@@ -27,10 +28,11 @@ async function getData(): Promise<SquadreWithTorneo[]> {
         statoAccettazione: squadre.statoAccettazione,
         idTorneo: squadre.idTorneo,
         nomeTorneo: tornei.nome,
+        nomeGirone: gironi.nome,
       })
       .from(squadre)
-      .leftJoin(tornei, eq(squadre.idTorneo, tornei.idTorneo));
-
+      .leftJoin(tornei, eq(squadre.idTorneo, tornei.idTorneo))
+      .leftJoin(gironi, eq(squadre.idSquadra, gironi.idSquadra));
     console.log(`Fetched ${result.length} records from squadre table.`);
 
     if (result.length === 0) {
@@ -46,6 +48,7 @@ async function getData(): Promise<SquadreWithTorneo[]> {
       statoAccettazione: record.statoAccettazione ?? false,
       idTorneo: record.idTorneo,
       nomeTorneo: record.nomeTorneo ?? "Torneo sconosciuto",
+      nomeGirone: record.nomeGirone ?? "Girone non assegnato",
     }));
   } catch (error) {
     console.error("Error fetching squadre:", error);

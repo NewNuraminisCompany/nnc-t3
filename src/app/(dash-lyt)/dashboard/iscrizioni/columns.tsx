@@ -29,13 +29,14 @@ import { revalidatePath } from "next/cache";
 import Link from "next/link";
 
 export type Squadre = {
-    idSquadra: string
-    nome: string
-    colore: string
-    cellulare: string
-    statoAccettazione: boolean
-    idTorneo: string
-    nomeTorneo: string
+  idSquadra: string
+  nome: string
+  colore: string
+  cellulare: string
+  statoAccettazione: boolean
+  idTorneo: string
+  nomeTorneo: string
+  nomeGirone: string  // New field
 }
 
 export const columns: ColumnDef<Squadre>[] = [
@@ -76,6 +77,20 @@ export const columns: ColumnDef<Squadre>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Torneo
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    accessorKey: "nomeGirone",  // New column for Girone
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Girone
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
