@@ -11,6 +11,7 @@ export type Squadre = {
     cellulare: string
     statoAccettazione: boolean
     idTorneo: string
+    nomeTorneo: string
 }
 
 export const columns: ColumnDef<Squadre>[] = [
@@ -22,7 +23,7 @@ export const columns: ColumnDef<Squadre>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Nome
+            Nome Squadre
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -42,7 +43,17 @@ export const columns: ColumnDef<Squadre>[] = [
     cell: ({ row }) => (row.getValue("statoAccettazione") ? "Approvata" : "Non approvata"),
   },
   {
-    accessorKey: "idTorneo",
-    header: "Torneo",
+    accessorKey: "nomeTorneo",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Torneo
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
 ]

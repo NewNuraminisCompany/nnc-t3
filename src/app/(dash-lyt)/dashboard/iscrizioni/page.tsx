@@ -1,15 +1,35 @@
 import React from "react";
 import { DataTable } from "./data-table";
-import { Squadre, columns } from "./columns";
-import { db } from "@/server/db"; // Import your Drizzle ORM setup
-import { squadre } from "@/server/db/schema"; // Import the schema
+import { columns } from "./columns";
+import { db } from "@/server/db";
+import { squadre, tornei } from "@/server/db/schema";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { eq } from "drizzle-orm";
 
-async function getData(): Promise<Squadre[]> {
+// Rinomina il tipo importato per evitare conflitti
+import { Squadre as ImportedSquadre } from "./columns";
+
+// Definisci un nuovo tipo che estende quello importato
+type SquadreWithTorneo = ImportedSquadre & {
+  nomeTorneo: string;
+};
+
+async function getData(): Promise<SquadreWithTorneo[]> {
   try {
-    console.log("Attempting to fetch data from squadre table...");
-    const result = await db.select().from(squadre);
+    console.log("Attempting to fetch data from squadre and tornei tables...");
+    const result = await db
+      .select({
+        idSquadra: squadre.idSquadra,
+        nome: squadre.nome,
+        colore: squadre.colore,
+        cellulare: squadre.cellulare,
+        statoAccettazione: squadre.statoAccettazione,
+        idTorneo: squadre.idTorneo,
+        nomeTorneo: tornei.nome,
+      })
+      .from(squadre)
+      .leftJoin(tornei, eq(squadre.idTorneo, tornei.idTorneo));
 
     console.log(`Fetched ${result.length} records from squadre table.`);
 
@@ -18,17 +38,15 @@ async function getData(): Promise<Squadre[]> {
       return [];
     }
 
-    return result.map((squadra) => {
-      console.log("Processing squadra:", squadra);
-      return {
-        idSquadra: squadra.idSquadra,
-        nome: squadra.nome,
-        colore: squadra.colore,
-        cellulare: squadra.cellulare,
-        statoAccettazione: squadra.statoAccettazione ?? false, // Convert null to false
-        idTorneo: squadra.idTorneo
-      };
-    });
+    return result.map((record) => ({
+      idSquadra: record.idSquadra,
+      nome: record.nome,
+      colore: record.colore,
+      cellulare: record.cellulare,
+      statoAccettazione: record.statoAccettazione ?? false,
+      idTorneo: record.idTorneo,
+      nomeTorneo: record.nomeTorneo ?? "Torneo sconosciuto",
+    }));
   } catch (error) {
     console.error("Error fetching squadre:", error);
     throw new Error(
