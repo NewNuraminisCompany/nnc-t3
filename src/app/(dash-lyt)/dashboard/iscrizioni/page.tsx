@@ -42,7 +42,7 @@ const Iscrizioni = async () => {
   return (
     <div className="container mx-auto w-full pt-10">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-4xl font-bold tracking-tight">Iscrizioni</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Iscrizioni Squadre</h1>
       </div>
       <DataTable columns={columns} data={data} />
     </div>

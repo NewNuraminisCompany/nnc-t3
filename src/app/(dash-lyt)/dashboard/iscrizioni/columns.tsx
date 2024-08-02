@@ -26,6 +26,7 @@ import { deleteSquadra, updateSquadra } from "@/components/actions";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 
 export type Squadre = {
   idSquadra: string;
@@ -102,14 +103,14 @@ export const columns: ColumnDef<Squadre>[] = [
               >
                 Copia ID
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(squadra.idSquadra)}
-              >
-                Mostra squadra
+              <DropdownMenuItem>
+                <Link
+                  href={`/dashboard/iscrizioni/${squadra.idSquadra}`}
+                >Mostra squadra</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="text-destructive flex flex-row justify-between items-center"
+                className="flex flex-row items-center justify-between text-destructive"
                 onClick={() => handleDelete(squadra)}
               >
                 Elimina
@@ -143,7 +144,6 @@ function EditSquadraForm({ squadra }: { squadra: Squadre }) {
       const result = await updateSquadra(formData);
       if (result.success) {
         toast.success("Dati modificati con successo");
-        
       } else {
         toast.error("Non è stato possibile modificare i dati");
       }
@@ -226,5 +226,5 @@ async function handleDelete(squadra: Squadre) {
     revalidatePath("/dashboard/iscrizioni");
   } else {
     toast.error("Non è stato possibile eliminare la squadra");
-  }   
+  }
 }

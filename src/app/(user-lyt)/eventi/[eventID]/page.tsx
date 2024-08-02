@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,8 +8,6 @@ import {
 import { db } from "@/server/db"; // Assume this is where you've set up your Drizzle instance
 import { tornei } from "@/server/db/schema"; // Import the schema we just created
 import { eq } from "drizzle-orm";
-import Link from "next/link";
-import React from "react";
 
 const Evento = async ({ params }: { params: { eventID: string } }) => {
 
@@ -26,7 +23,7 @@ const Evento = async ({ params }: { params: { eventID: string } }) => {
   const event = torneoData[0];
 
   if (!event) {
-    return <div>Event not found</div>;
+    return <div>Evento non trovato</div>;
   }
 
   return (

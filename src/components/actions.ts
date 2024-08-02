@@ -54,6 +54,20 @@ export async function deleteSquadra(squadra: Squadre) {
   }
 }
 
+export async function fetchPlayers(squadraId: string) {
+  try {
+    const players = await db.query.giocatori.findMany({
+      where: eq(giocatori.idSquadra, squadraId),
+      with: {
+        squadra: true,
+      },
+    });
+    return players;
+  } catch (error) {
+    console.error("Error fetching players:", error);
+    throw new Error("Failed to fetch players");
+  }
+}
 
 export async function submitTeamAndPlayers({ team, players }: { team: TeamData, players: PlayerData[], idTorneo: string }) {
   try {
@@ -62,7 +76,7 @@ export async function submitTeamAndPlayers({ team, players }: { team: TeamData, 
       nome: team.nome,
       colore: team.colore,
       cellulare: team.cellulare,
-      idTorneo: team.idTorneo, // Ensure to include this field
+      idTorneo: team.idTorneo, 
       statoAccettazione: false,
     }).returning();
 
