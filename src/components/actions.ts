@@ -13,7 +13,6 @@ import { createId } from '@paralleldrive/cuid2';
 import { eq } from "drizzle-orm";
 
 type TeamData = {
-  idSquadra: string;
   nome: string;
   colore: string;
   cellulare: string;
@@ -56,7 +55,7 @@ export async function deleteSquadra(squadra: Squadre) {
 }
 
 
-export async function submitTeamAndPlayers({ team, players }: { team: TeamData, players: PlayerData[] }) {
+export async function submitTeamAndPlayers({ team, players }: { team: TeamData, players: PlayerData[], idTorneo: string }) {
   try {
     const [insertedTeam] = await db.insert(squadre).values({
       idSquadra: createId(),
