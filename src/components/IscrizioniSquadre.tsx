@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { submitTeamAndPlayers } from "./actions";
 import { toast } from "sonner";
 import { Card } from "./ui/card";
+import ComboBoxIscrizioni from "./ComboBoxIscrizioni";
 
 const codiceFiscaleRegex = /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/;
 
@@ -35,6 +36,7 @@ const teamFormSchema = z.object({
   myNumber: z
     .string()
     .regex(/^\+?[0-9]{6,14}$/, "Inserire un numero di telefono della squadra"),
+  tournamentId: z.string().min(1, "Seleziona un torneo"),
 });
 
 const playerFormSchema = z.object({
@@ -66,6 +68,7 @@ export default function IscrizioniSquadre() {
       teamName: "",
       teamColor: "",
       myNumber: "",
+      tournamentId: "",
     },
     mode: "onBlur",
   });
@@ -121,6 +124,7 @@ export default function IscrizioniSquadre() {
           cognome: player.playerSurname,
           dataNascita: format(player.playerDateOfBirth, "yyyy-MM-dd"),
         })),
+        idTorneo: teamInfo.tournamentId,
       });
 
       if (result.success) {
@@ -131,20 +135,36 @@ export default function IscrizioniSquadre() {
       }
     } catch (error) {
       console.error("Error submitting data:", error);
-      toast.error("Errore nell&apos;invio dei dati");
+      toast.error("Errore nell'invio dei dati");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div> 
+    <div>
       {step === 0 && (
         <Form {...teamForm}>
           <form
             onSubmit={teamForm.handleSubmit(onTeamSubmit)}
             className="space-y-8"
           >
+            <FormField
+              control={teamForm.control}
+              name="tournamentId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Seleziona Torneo</FormLabel>
+                  <FormControl>
+                    <ComboBoxIscrizioni
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={teamForm.control}
               name="teamName"
@@ -276,7 +296,7 @@ export default function IscrizioniSquadre() {
                           variant={"outline"}
                           className={cn(
                             "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
+                            !field.value && "text-muted-foreground"
                           )}
                         >
                           {field.value ? (
@@ -324,6 +344,9 @@ export default function IscrizioniSquadre() {
       {step === 2 && (
         <div>
           <h2 className="text-xl font-semibold">Rivedi e Invia</h2>
+          <p>
+            <strong>Torneo:</strong> {teamInfo?.tournamentId}
+          </p>
           <p>
             <strong>Nome squadra:</strong> {teamInfo?.teamName}
           </p>

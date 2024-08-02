@@ -24,9 +24,13 @@ type ComboboxOption = {
   label: string;
 };
 
-export default function ComboBoxDashboard() {
+interface ComboBoxIscrizioniProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export default function ComboBoxIscrizioni({ value, onChange }: ComboBoxIscrizioniProps) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState<string>("");
   const [torneiOptions, setTorneiOptions] = React.useState<ComboboxOption[]>([]);
   const [loading, setLoading] = React.useState(true);
 
@@ -34,10 +38,12 @@ export default function ComboBoxDashboard() {
     const fetchData = async () => {
       try {
         const data = await getTornei();
-        const options = data.map((t) => ({
-          value: t.idTorneo,
-          label: t.nome,
-        }));
+        const options = data
+          .filter((t) => t.stato === "programmato") // Filter tournaments with "programmato" state
+          .map((t) => ({
+            value: t.idTorneo,
+            label: t.nome,
+          }));
         setTorneiOptions(options);
       } catch (error) {
         console.error("Failed to fetch tornei:", error);
@@ -77,7 +83,7 @@ export default function ComboBoxDashboard() {
                   <CommandItem
                     key={torneo.value}
                     onSelect={() => {
-                      setValue(torneo.value);
+                      onChange(torneo.value);
                       setOpen(false);
                     }}
                   >
