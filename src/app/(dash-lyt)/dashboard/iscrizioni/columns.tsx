@@ -29,28 +29,29 @@ import { revalidatePath } from "next/cache";
 import Link from "next/link";
 
 export type Squadre = {
-  idSquadra: string;
-  nome: string;
-  colore: string;
-  cellulare: string;
-  statoAccettazione: boolean;
-  idTorneo: string;
-};
+    idSquadra: string
+    nome: string
+    colore: string
+    cellulare: string
+    statoAccettazione: boolean
+    idTorneo: string
+    nomeTorneo: string
+}
 
 export const columns: ColumnDef<Squadre>[] = [
   {
     accessorKey: "nome",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nome
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Nome Squadre
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
   },
   {
     accessorKey: "colore",
@@ -67,8 +68,18 @@ export const columns: ColumnDef<Squadre>[] = [
       row.getValue("statoAccettazione") ? "Approvata" : "Non approvata",
   },
   {
-    accessorKey: "idTorneo",
-    header: "Torneo",
+    accessorKey: "nomeTorneo",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Torneo
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     id: "actions",

@@ -14,10 +14,6 @@ export type Torneo = {
 
 export const columns: ColumnDef<Torneo>[] = [
   {
-    accessorKey: "idTorneo",
-    header: "ID Torneo",
-  },
-  {
     accessorKey: "nome",
     header: ({ column }) => {
         return (
@@ -25,7 +21,7 @@ export const columns: ColumnDef<Torneo>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Nome
+            Nome Torneo
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -44,5 +40,18 @@ export const columns: ColumnDef<Torneo>[] = [
   {
     accessorKey: "stato",
     header: "Stato",
+    cell: ({ row }) => {
+      const stato = row.original.stato
+      switch (stato) {
+        case "programmato":
+          return "Programmato"
+        case "inCorso":
+          return "In corso"
+        case "terminato":
+          return "Terminato"
+        default:
+          return stato
+      }
+    },
   },
 ]
