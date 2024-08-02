@@ -12,8 +12,7 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
-import { createId } from '@paralleldrive/cuid2';
-
+import { createId } from "@paralleldrive/cuid2";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -35,13 +34,13 @@ export const posts = createTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
+      () => new Date(),
     ),
   },
   (example) => ({
     createdByIdIdx: index("created_by_idx").on(example.createdById),
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
 );
 
 export const users = createTable("user", {
@@ -88,7 +87,7 @@ export const accounts = createTable(
       columns: [account.provider, account.providerAccountId],
     }),
     userIdIdx: index("account_user_id_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -111,7 +110,7 @@ export const sessions = createTable(
   },
   (session) => ({
     userIdIdx: index("session_user_id_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -130,62 +129,87 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  })
+  }),
 );
 
 // Nuove definizioni di tabelle
 
 export const tornei = createTable("torneo", {
-  idTorneo: varchar("id_torneo").primaryKey().$defaultFn(() => createId()),
+  idTorneo: varchar("id_torneo")
+    .primaryKey()
+    .$defaultFn(() => createId()),
   nome: varchar("nome").notNull(),
   descrizione: varchar("descrizione").notNull(),
   dataInizio: date("data_inizio").notNull(),
   dataFine: date("data_fine").notNull(),
-  stato: varchar('stato', {enum: ["programmato", "inCorso", "terminato"] })
+  stato: varchar("stato", { enum: ["programmato", "inCorso", "terminato"] }),
 });
 
 export const squadre = createTable("squadre", {
-  idSquadra: varchar("id_squadra").primaryKey().$defaultFn(() => createId()),
+  idSquadra: varchar("id_squadra")
+    .primaryKey()
+    .$defaultFn(() => createId()),
   nome: varchar("nome").notNull(),
   colore: varchar("colore").notNull(),
-  cellulare: varchar("cellulare", {length: 11}).notNull(),
-  statoAccettazione: boolean('statoAccettazione'),
-  idTorneo: varchar("id_torneo").notNull().references(() => tornei.idTorneo)
+  cellulare: varchar("cellulare", { length: 11 }).notNull(),
+  statoAccettazione: boolean("statoAccettazione"),
+  idTorneo: varchar("id_torneo")
+    .notNull()
+    .references(() => tornei.idTorneo),
 });
-
 
 export const giocatori = createTable("giocatori", {
   cf: varchar("cf").primaryKey(),
   nome: varchar("nome").notNull(),
   cognome: varchar("cognome").notNull(),
   dataNascita: date("data_nascita").notNull(),
-  idSquadra: varchar("id_squadra").notNull().references(() => squadre.idSquadra),
+  idSquadra: varchar("id_squadra")
+    .notNull()
+    .references(() => squadre.idSquadra, { onDelete: "cascade" }),
 });
 
 export const partite = createTable("partite", {
   idPartita: varchar("id_partita").primaryKey(),
-  idSquadra1: varchar("id_squadra1").notNull().references(() => squadre.idSquadra),
-  idSquadra2: varchar("id_squadra2").notNull().references(() => squadre.idSquadra),
+  idSquadra1: varchar("id_squadra1")
+    .notNull()
+    .references(() => squadre.idSquadra),
+  idSquadra2: varchar("id_squadra2")
+    .notNull()
+    .references(() => squadre.idSquadra),
   risultatoSquadra1: integer("risultato_squadra1").notNull(),
   risultatoSquadra2: integer("risultato_squadra2").notNull(),
   dataOra: timestamp("data_ora", { withTimezone: true }).notNull(),
 });
 
-export const avvenimenti = createTable("avvenimento", {
-  tipo: varchar("tipo").notNull(),
-  minuto: integer("minuto").notNull(),
-}, (table) => ({
-  pk: primaryKey({ columns: [table.tipo, table.minuto] }),
-}));
+export const avvenimenti = createTable(
+  "avvenimento",
+  {
+    tipo: varchar("tipo").notNull(),
+    minuto: integer("minuto").notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.tipo, table.minuto] }),
+  }),
+);
 
-export const gap = createTable("gap", {
-  cf: varchar("cf").notNull().references(() => giocatori.cf),
-  minuto: integer("minuto").notNull(),
-  tipo: varchar("tipo").notNull(),
-  idPartita: varchar("id_partita").notNull().references(() => partite.idPartita),
-}, (table) => ({
-  pk: primaryKey({ columns: [table.cf, table.minuto, table.tipo, table.idPartita] }),
-}));
+export const gap = createTable(
+  "gap",
+  {
+    cf: varchar("cf")
+      .notNull()
+      .references(() => giocatori.cf),
+    minuto: integer("minuto").notNull(),
+    tipo: varchar("tipo").notNull(),
+    idPartita: varchar("id_partita")
+      .notNull()
+      .references(() => partite.idPartita),
+  },
+  (table) => ({
+    pk: primaryKey({
+      columns: [table.cf, table.minuto, table.tipo, table.idPartita],
+    }),
+  }),
+);
 
 // Relazioni per le nuove tabelle
 
@@ -221,4 +245,3 @@ export const gapRelations = relations(gap, ({ one }) => ({
     references: [avvenimenti.tipo, avvenimenti.minuto],
   }),
 }));
-

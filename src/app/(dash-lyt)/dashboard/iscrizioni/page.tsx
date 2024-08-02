@@ -61,9 +61,6 @@ const Iscrizioni = async () => {
     <div className="container mx-auto w-full pt-10">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-4xl font-bold tracking-tight">Iscrizioni</h1>
-        <Button>
-          Aggiungi <Plus className="ml-2 h-4 w-4" />
-        </Button>
       </div>
       <DataTable columns={columns} data={data} />
     </div>

@@ -27,6 +27,7 @@ import { submitTeamAndPlayers } from "./actions";
 import { toast } from "sonner";
 import { Card } from "./ui/card";
 import ComboBoxIscrizioni from "./ComboBoxIscrizioni";
+import { createId } from "@paralleldrive/cuid2";
 
 const codiceFiscaleRegex = /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/;
 
@@ -51,7 +52,7 @@ const playerFormSchema = z.object({
   }),
 });
 
-type TeamFormData = z.infer<typeof teamFormSchema>;
+;type TeamFormData = z.infer<typeof teamFormSchema>
 type PlayerFormData = z.infer<typeof playerFormSchema>;
 
 type Player = PlayerFormData;
@@ -117,6 +118,8 @@ export default function IscrizioniSquadre() {
           nome: teamInfo.teamName,
           colore: teamInfo.teamColor,
           cellulare: teamInfo.myNumber,
+          statoAccettazione: false,
+          idTorneo: teamInfo.tournamentId,
         },
         players: players.map((player) => ({
           cf: player.playerID,

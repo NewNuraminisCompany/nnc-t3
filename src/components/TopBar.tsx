@@ -3,6 +3,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
     CalendarFold,
     Home,
+    LogOut,
     PanelLeft,
     UserRoundPlus
 } from "lucide-react";
@@ -40,6 +41,13 @@ const TopBar = () => {
             >
               <UserRoundPlus className="h-5 w-5" />
               Iscrizioni
+            </Link>
+            <Link
+              href="/api/auth/signout"
+              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-destructive"
+            >
+              <LogOut className="h-5 w-5" />
+              Esci
             </Link>
           </nav>
         </SheetContent>
