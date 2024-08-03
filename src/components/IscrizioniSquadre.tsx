@@ -1,10 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { useForm, SubmitHandler } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -14,20 +11,23 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
-  PopoverTrigger,
   PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { submitTeamAndPlayers } from "./actions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { redirect } from "next/navigation";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Card } from "./ui/card";
+import * as z from "zod";
+import { submitTeamAndPlayers } from "./actions";
 import ComboBoxIscrizioni from "./ComboBoxIscrizioni";
-import { createId } from "@paralleldrive/cuid2";
+import { Card } from "./ui/card";
 
 const codiceFiscaleRegex = /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/;
 
@@ -133,6 +133,7 @@ export default function IscrizioniSquadre() {
       if (result.success) {
         console.log("Data submitted successfully");
         toast.success("Iscrizione effettuata con successo");
+        redirect("/");
       } else {
         throw new Error(result.error);
       }
