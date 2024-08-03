@@ -1,5 +1,6 @@
 "use server"
 
+import { Torneo } from "@/app/(dash-lyt)/dashboard/eventi/columns";
 import { Squadre } from "@/app/(dash-lyt)/dashboard/iscrizioni/columns";
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
 import { tornei, squadre, giocatori } from "@/server/db/schema"; // Import the schema
@@ -112,5 +113,15 @@ export async function submitTorneo({ nome, descrizione, dataInizio, dataFine }: 
   } catch (error) {
     console.error("Error in submitTorneo:", error);
     return { success: false, error: "Failed to submit tournament" };
+  }
+}
+
+export async function deleteTorneo(Torneo: Torneo) {
+  try {
+    await db.delete(tornei).where(eq(tornei.idTorneo, tornei.idTorneo));
+    return { success: true };
+  } catch (error) {
+    console.error("Error in deleteTorneo:", error);
+    return { success: false, error: "Failed to delete torneo" };
   }
 }
