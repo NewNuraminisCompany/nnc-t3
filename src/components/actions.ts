@@ -1,6 +1,7 @@
 "use server";
 
 import { Giocatore } from "@/app/(dash-lyt)/dashboard/iscrizioni/[idSquadra]/page";
+import { Torneo } from "@/app/(dash-lyt)/dashboard/eventi/columns";
 import { Squadre } from "@/app/(dash-lyt)/dashboard/iscrizioni/columns";
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
 import { tornei, squadre, giocatori, gironi } from "@/server/db/schema"; // Import the schema
