@@ -15,6 +15,8 @@ export const metadata: Metadata = {
 };
 
 const inter = Inter({ subsets: ["latin"] });
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 export default function RootLayout({
   children,

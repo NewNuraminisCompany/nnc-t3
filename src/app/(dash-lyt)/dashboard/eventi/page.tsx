@@ -1,3 +1,5 @@
+'use server'
+
 import { fetchTorneo } from "@/components/actions";
 import { AddTorneo } from "@/components/AddTorneo";
 import { columns } from "./columns";
