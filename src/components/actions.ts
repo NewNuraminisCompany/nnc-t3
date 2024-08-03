@@ -1,11 +1,8 @@
 "use server";
 
-import { Giocatore } from "@/app/(dash-lyt)/dashboard/iscrizioni/[idSquadra]/page";
-import { Torneo } from "@/app/(dash-lyt)/dashboard/eventi/columns";
-import { Squadre } from "@/app/(dash-lyt)/dashboard/iscrizioni/columns";
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
-import { tornei, squadre, giocatori, gironi } from "@/server/db/schema"; // Import the schema
-
+import { giocatori, gironi, squadre, tornei } from "@/server/db/schema"; // Import the schema
+import type { EditPlayerData, EditTeamData, PlayerData, TeamData, TorneoData } from "@/types/db-types";
 export async function getTornei() {
   const result = await db.select().from(tornei);
   return result;
@@ -14,20 +11,6 @@ export async function getTornei() {
 import { createId } from "@paralleldrive/cuid2";
 import { eq } from "drizzle-orm";
 
-type TeamData = {
-  nome: string;
-  colore: string;
-  cellulare: string;
-  statoAccettazione: boolean;
-  idTorneo: string;
-};
-
-type PlayerData = {
-  cf: string;
-  nome: string;
-  cognome: string;
-  dataNascita: string;
-};
 
 export async function addGiocatori({
   idSquadra,
@@ -55,7 +38,7 @@ export async function addGiocatori({
   }
 }
 
-export async function updateGiocatore(giocatore: Giocatore) {
+export async function updateGiocatore(giocatore: PlayerData) {
   try {
     await db
       .update(giocatori)
@@ -73,7 +56,7 @@ export async function updateGiocatore(giocatore: Giocatore) {
   }
 }
 
-export async function updateSquadra(squadra: Squadre) {
+export async function updateSquadra(squadra: EditTeamData) {
   try {
     await db
       .update(squadre)
@@ -91,7 +74,7 @@ export async function updateSquadra(squadra: Squadre) {
   }
 }
 
-export async function deleteSquadra(squadra: Squadre) {
+export async function deleteSquadra(squadra: EditTeamData) {
   try {
     await db.delete(squadre).where(eq(squadre.idSquadra, squadra.idSquadra));
     return { success: true };
@@ -121,7 +104,7 @@ export async function submitTeamAndPlayers({
   players,
 }: {
   team: TeamData;
-  players: PlayerData[];
+  players: EditPlayerData[];
   idTorneo: string;
 }) {
   try {
@@ -222,5 +205,42 @@ export async function fetchSquadre() {
     throw new Error(
       `Failed to fetch squadre: ${error instanceof Error ? error.message : String(error)}`,
     );
+  }
+}
+
+export async function fetchTorneo() {
+  try {
+    console.log("Attempting to fetch data from tornei table...");
+    const result = await db.select().from(tornei);
+
+    console.log(`Fetched ${result.length} records from tornei table.`);
+
+    if (result.length === 0) {
+      console.log("No records found in the tornei table.");
+      return [];
+    }
+
+    return result.map((torneo) => ({
+      idTorneo: torneo.idTorneo,
+      nome: torneo.nome,
+      dataInizio: new Date(torneo.dataInizio),
+      dataFine: new Date(torneo.dataFine),
+      stato: torneo.stato ?? "programmato", // Provide a default value if stato is null
+    }));
+  } catch (error) {
+    console.error("Error fetching tornei:", error);
+    throw new Error(
+      `Failed to fetch tornei: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+
+}
+export async function deleteTorneo(Torneo: TorneoData) {
+  try {
+    await db.delete(tornei).where(eq(tornei.idTorneo, Torneo.idTorneo));
+    return { success: true };
+  } catch (error) {
+    console.error("Error in deleteTorneo:", error);
+    return { success: false, error: "Failed to delete torneo" };
   }
 }

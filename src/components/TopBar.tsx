@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
-    CalendarFold,
-    Home,
-    LogOut,
-    PanelLeft,
-    UserRoundPlus
+  CalendarFold,
+  Home,
+  LogOut,
+  PanelLeft,
+  UserRoundPlus,
 } from "lucide-react";
 import Link from "next/link";
 
 const TopBar = () => {
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 justify-between">
       <Sheet>
         <SheetTrigger asChild>
           <Button size="icon" variant="outline" className="sm:hidden">
@@ -42,16 +42,16 @@ const TopBar = () => {
               <UserRoundPlus className="h-5 w-5" />
               Iscrizioni
             </Link>
-            <Link
-              href="/api/auth/signout"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-destructive"
-            >
-              <LogOut className="h-5 w-5" />
-              Esci
-            </Link>
           </nav>
         </SheetContent>
       </Sheet>
+      <Link
+          href="/api/auth/signout"
+          className="md:hidden flex items-center gap-4 px-2.5 text-muted-foreground hover:text-destructive"
+        >
+          <LogOut className="h-5 w-5" />
+          Esci
+        </Link>
     </header>
   );
 };

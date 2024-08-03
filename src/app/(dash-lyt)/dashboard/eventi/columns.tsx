@@ -14,17 +14,9 @@ import { ArrowUpDown, MoreHorizontal, Trash2 } from "lucide-react";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { toast } from "sonner";
+import type { TorneoData } from "@/types/db-types";
 
-
-export type Torneo = {
-    idTorneo: string
-    nome: string
-    dataInizio: Date
-    dataFine: Date
-    stato: "programmato" | "inCorso" | "terminato"
-}
-
-export const columns: ColumnDef<Torneo>[] = [
+export const columns: ColumnDef<TorneoData>[] = [
   {
     accessorKey: "nome",
     header: ({ column }) => {
@@ -101,7 +93,7 @@ export const columns: ColumnDef<Torneo>[] = [
   },
   
 ]
-async function handleDelete(torneo: Torneo) {
+async function handleDelete(torneo: TorneoData) {
   console.log("Eliminazione torno:", torneo);
   const result = await deleteTorneo(torneo);
   if (result.success) {

@@ -1,13 +1,15 @@
+'use client'
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
 import { updateGiocatore } from "./actions";
-import { Giocatore } from "@/app/(dash-lyt)/dashboard/iscrizioni/[idSquadra]/page";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
+import type { PlayerData } from "@/types/db-types";
 
-export default function EditPlayer({ player }: { player: Giocatore }) {
+
+export default function EditPlayer({ player }: { player: PlayerData }) {
     const [formData, setFormData] = useState(player);
     const [isLoading, setIsLoading] = useState(false);
   

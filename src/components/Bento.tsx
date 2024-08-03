@@ -4,13 +4,6 @@ import { tornei } from "@/server/db/schema";
 import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
 import { desc } from "drizzle-orm";
 
-interface Torneo {
-  idTorneo: string;
-  nome: string | null;
-  descrizione: string | null;
-  dataInizio: Date;
-}
-
 export async function Bento() {
   // Fetch tornei data using Drizzle ORM
   const torneiData = await db

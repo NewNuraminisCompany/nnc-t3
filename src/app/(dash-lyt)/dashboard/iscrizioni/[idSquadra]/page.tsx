@@ -1,4 +1,4 @@
-"use client";
+
 import { fetchPlayers } from "@/components/actions";
 import EditPlayer from "@/components/EditPlayer";
 import { Button } from "@/components/ui/button";

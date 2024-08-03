@@ -1,6 +1,5 @@
 import React from "react";
 import { getServerSession } from "next-auth";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const Dashboard = async () => {
@@ -12,7 +11,7 @@ const Dashboard = async () => {
 
   return (
     <div className="container mx-auto w-full pt-10">
-      <h1 className="mb-6 text-4xl font-bold tracking-tight">Home</h1>
+      <h1 className="mb-6 text-2xl md:text-4xl font-bold tracking-tight">Home</h1>
     </div>
   );
 };

@@ -3,9 +3,8 @@ import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import React from "react";
 
-const data = await fetchSquadre();
-
 const Iscrizioni = async () => {
+  const data = await fetchSquadre();
   return (
     <div className="container mx-auto w-full pt-10">
       <div className="mb-6 flex items-center justify-between">

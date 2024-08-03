@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
+import React from "react";
 
 export type Squadre = {
   idSquadra: string

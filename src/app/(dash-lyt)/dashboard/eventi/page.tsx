@@ -1,38 +1,10 @@
+import { fetchTorneo } from "@/components/actions";
 import { AddTorneo } from "@/components/AddTorneo";
-import { db } from "@/server/db"; // Import your Drizzle ORM setup
-import { tornei } from "@/server/db/schema"; // Import the schema
-import { Torneo, columns } from "./columns";
+import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
-async function getData(): Promise<Torneo[]> {
-  try {
-    console.log("Attempting to fetch data from tornei table...");
-    const result = await db.select().from(tornei);
-
-    console.log(`Fetched ${result.length} records from tornei table.`);
-
-    if (result.length === 0) {
-      console.log("No records found in the tornei table.");
-      return [];
-    }
-
-    return result.map((torneo) => ({
-      idTorneo: torneo.idTorneo,
-      nome: torneo.nome,
-      dataInizio: new Date(torneo.dataInizio),
-      dataFine: new Date(torneo.dataFine),
-      stato: torneo.stato ?? "programmato" // Provide a default value if stato is null
-    }));
-  } catch (error) {
-    console.error("Error fetching tornei:", error);
-    throw new Error(
-      `Failed to fetch tornei: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
-}
-
 const Eventi = async () => {
-  const data = await getData();
+  const data = await fetchTorneo();
   return (
     <div className="container mx-auto w-full pt-10">
       <div className="mb-6 flex items-center justify-between">

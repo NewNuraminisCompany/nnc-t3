@@ -22,7 +22,7 @@ const MostraTorneo = async ({ params }: { params: { idTorneo: string } }) => {
   return (
     <div className="container mx-auto w-full pt-10">
       <h1 className="text-4xl font-bold tracking-tight">
-        Dettagli di {turnaments[0]?.nome || params.idTorneo}
+        Dettagli di {turnaments[0]?.nome ?? params.idTorneo}
       </h1>
       <div>
         <Card className="my-2 w-full items-center justify-between overflow-scroll rounded-xl">

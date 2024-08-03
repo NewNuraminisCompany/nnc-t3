@@ -33,7 +33,7 @@ export default function RootLayout({
               defaultTheme="system"
               enableSystem
             >
-              <main className="container mx-auto w-full md:pl-14">
+              <main className="flex flex-col md:container mx-auto w-full md:pl-14">
                 {children}
               </main>
               <Toaster />
