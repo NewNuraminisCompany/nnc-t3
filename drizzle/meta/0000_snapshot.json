@@ -1,5 +1,5 @@
 {
-  "id": "2c5ac717-6844-4451-ab7b-bd37cc48bcd9",
+  "id": "bb924067-a911-48b2-aa5d-65bc398ca37b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -144,8 +144,8 @@
       "name": "nnc-sito-t3_gap",
       "schema": "",
       "columns": {
-        "cf": {
-          "name": "cf",
+        "id_giocatore": {
+          "name": "id_giocatore",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -171,15 +171,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "nnc-sito-t3_gap_cf_nnc-sito-t3_giocatori_cf_fk": {
-          "name": "nnc-sito-t3_gap_cf_nnc-sito-t3_giocatori_cf_fk",
+        "nnc-sito-t3_gap_id_giocatore_nnc-sito-t3_giocatori_id_giocatore_fk": {
+          "name": "nnc-sito-t3_gap_id_giocatore_nnc-sito-t3_giocatori_id_giocatore_fk",
           "tableFrom": "nnc-sito-t3_gap",
           "tableTo": "nnc-sito-t3_giocatori",
           "columnsFrom": [
-            "cf"
+            "id_giocatore"
           ],
           "columnsTo": [
-            "cf"
+            "id_giocatore"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -199,10 +199,10 @@
         }
       },
       "compositePrimaryKeys": {
-        "nnc-sito-t3_gap_cf_minuto_tipo_id_partita_pk": {
-          "name": "nnc-sito-t3_gap_cf_minuto_tipo_id_partita_pk",
+        "nnc-sito-t3_gap_id_giocatore_minuto_tipo_id_partita_pk": {
+          "name": "nnc-sito-t3_gap_id_giocatore_minuto_tipo_id_partita_pk",
           "columns": [
-            "cf",
+            "id_giocatore",
             "minuto",
             "tipo",
             "id_partita"
@@ -215,10 +215,16 @@
       "name": "nnc-sito-t3_giocatori",
       "schema": "",
       "columns": {
+        "id_giocatore": {
+          "name": "id_giocatore",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
         "cf": {
           "name": "cf",
           "type": "varchar",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true
         },
         "nome": {
@@ -257,6 +263,67 @@
           ],
           "columnsTo": [
             "id_squadra"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.nnc-sito-t3_gironi": {
+      "name": "nnc-sito-t3_gironi",
+      "schema": "",
+      "columns": {
+        "id_girone": {
+          "name": "id_girone",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "nome": {
+          "name": "nome",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_squadra": {
+          "name": "id_squadra",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_partita": {
+          "name": "id_partita",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nnc-sito-t3_gironi_id_squadra_nnc-sito-t3_squadre_id_squadra_fk": {
+          "name": "nnc-sito-t3_gironi_id_squadra_nnc-sito-t3_squadre_id_squadra_fk",
+          "tableFrom": "nnc-sito-t3_gironi",
+          "tableTo": "nnc-sito-t3_squadre",
+          "columnsFrom": [
+            "id_squadra"
+          ],
+          "columnsTo": [
+            "id_squadra"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "nnc-sito-t3_gironi_id_partita_nnc-sito-t3_partite_id_partita_fk": {
+          "name": "nnc-sito-t3_gironi_id_partita_nnc-sito-t3_partite_id_partita_fk",
+          "tableFrom": "nnc-sito-t3_gironi",
+          "tableTo": "nnc-sito-t3_partite",
+          "columnsFrom": [
+            "id_partita"
+          ],
+          "columnsTo": [
+            "id_partita"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"

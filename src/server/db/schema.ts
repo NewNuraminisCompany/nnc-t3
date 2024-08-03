@@ -14,35 +14,10 @@ import {
 import { type AdapterAccount } from "next-auth/adapters";
 import { createId } from "@paralleldrive/cuid2";
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
+// Multi-project schema
 export const createTable = pgTableCreator((name) => `nnc-sito-t3_${name}`);
 
-export const posts = createTable(
-  "post",
-  {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
-    createdById: varchar("created_by", { length: 255 })
-      .notNull()
-      .references(() => users.id),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date(),
-    ),
-  },
-  (example) => ({
-    createdByIdIdx: index("created_by_idx").on(example.createdById),
-    nameIndex: index("name_idx").on(example.name),
-  }),
-);
-
+// Users table
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
     .notNull()
@@ -57,10 +32,7 @@ export const users = createTable("user", {
   image: varchar("image", { length: 255 }),
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
-  accounts: many(accounts),
-}));
-
+// Accounts table
 export const accounts = createTable(
   "account",
   {
@@ -71,9 +43,7 @@ export const accounts = createTable(
       .$type<AdapterAccount["type"]>()
       .notNull(),
     provider: varchar("provider", { length: 255 }).notNull(),
-    providerAccountId: varchar("provider_account_id", {
-      length: 255,
-    }).notNull(),
+    providerAccountId: varchar("provider_account_id", { length: 255 }).notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
     expires_at: integer("expires_at"),
@@ -83,17 +53,12 @@ export const accounts = createTable(
     session_state: varchar("session_state", { length: 255 }),
   },
   (account) => ({
-    compoundKey: primaryKey({
-      columns: [account.provider, account.providerAccountId],
-    }),
+    compoundKey: primaryKey(account.provider, account.providerAccountId),
     userIdIdx: index("account_user_id_idx").on(account.userId),
   }),
 );
 
-export const accountsRelations = relations(accounts, ({ one }) => ({
-  user: one(users, { fields: [accounts.userId], references: [users.id] }),
-}));
-
+// Sessions table
 export const sessions = createTable(
   "session",
   {
@@ -113,10 +78,7 @@ export const sessions = createTable(
   }),
 );
 
-export const sessionsRelations = relations(sessions, ({ one }) => ({
-  user: one(users, { fields: [sessions.userId], references: [users.id] }),
-}));
-
+// VerificationTokens table
 export const verificationTokens = createTable(
   "verification_token",
   {
@@ -128,12 +90,33 @@ export const verificationTokens = createTable(
     }).notNull(),
   },
   (vt) => ({
-    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+    compoundKey: primaryKey(vt.identifier, vt.token),
   }),
 );
 
-// Nuove definizioni di tabelle
+// Posts table
+export const posts = createTable(
+  "post",
+  {
+    id: serial("id").primaryKey(),
+    name: varchar("name", { length: 256 }),
+    createdById: varchar("created_by", { length: 255 })
+      .notNull()
+      .references(() => users.id),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (post) => ({
+    createdByIdIdx: index("created_by_idx").on(post.createdById),
+    nameIndex: index("name_idx").on(post.name),
+  }),
+);
 
+// Tornei table
 export const tornei = createTable("torneo", {
   idTorneo: varchar("id_torneo")
     .primaryKey()
@@ -145,8 +128,7 @@ export const tornei = createTable("torneo", {
   stato: varchar("stato", { enum: ["programmato", "inCorso", "terminato"] }),
 });
 
-
-
+// Squadre table
 export const squadre = createTable("squadre", {
   idSquadra: varchar("id_squadra")
     .primaryKey()
@@ -160,6 +142,7 @@ export const squadre = createTable("squadre", {
     .references(() => tornei.idTorneo),
 });
 
+// Giocatori table
 export const giocatori = createTable("giocatori", {
   idGiocatore: varchar("id_giocatore")
     .primaryKey()
@@ -173,6 +156,7 @@ export const giocatori = createTable("giocatori", {
     .references(() => squadre.idSquadra, { onDelete: "cascade" }),
 });
 
+// Partite table
 export const partite = createTable("partite", {
   idPartita: varchar("id_partita")
     .primaryKey()
@@ -188,24 +172,29 @@ export const partite = createTable("partite", {
   dataOra: timestamp("data_ora", { withTimezone: true }).notNull(),
 });
 
+// Gironi table
 export const gironi = createTable("gironi", {
   idGirone: varchar("id_girone")
     .primaryKey()
     .$defaultFn(() => createId()),
-    nome: varchar("nome").notNull(),
+  nome: varchar("nome").notNull(),
   idSquadra: varchar("id_squadra").references(() => squadre.idSquadra),
   idPartita: varchar("id_partita").references(() => partite.idPartita),
 });
 
-export const avvenimenti = createTable("avvenimento",{
+// Avvenimenti table
+export const avvenimenti = createTable(
+  "avvenimento",
+  {
     tipo: varchar("tipo").notNull(),
     minuto: integer("minuto").notNull(),
   },
   (table) => ({
-    pk: primaryKey({ columns: [table.tipo, table.minuto] }),
+    pk: primaryKey(table.tipo, table.minuto),
   }),
 );
 
+// Gap table
 export const gap = createTable(
   "gap",
   {
@@ -219,13 +208,23 @@ export const gap = createTable(
       .references(() => partite.idPartita),
   },
   (table) => ({
-    pk: primaryKey({
-      columns: [table.idGiocatore, table.minuto, table.tipo, table.idPartita],
-    }),
+    pk: primaryKey({ columns: [table.idGiocatore, table.minuto, table.tipo, table.idPartita] }),
   }),
 );
 
-// Updated relations
+// Relations
+
+export const usersRelations = relations(users, ({ many }) => ({
+  accounts: many(accounts),
+}));
+
+export const accountsRelations = relations(accounts, ({ one }) => ({
+  user: one(users, { fields: [accounts.userId], references: [users.id] }),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
 
 export const gironiRelations = relations(gironi, ({ many }) => ({
   squadre: many(squadre),
