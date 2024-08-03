@@ -182,7 +182,7 @@ function EditSquadraForm({ squadra }: { squadra: Squadre }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-4 md:px-0">
       <div className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="nome" className="text-right">
@@ -229,15 +229,15 @@ function EditSquadraForm({ squadra }: { squadra: Squadre }) {
           <Label htmlFor="statoAccettazione">Approva Squadra</Label>
         </div>
       </div>
-      <div className="flex justify-end">
-        <Button type="submit" disabled={isLoading}>
+      <div className="flex justify-end pb-4 md:pb-0">
+        <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Salvataggio in corso...
             </>
           ) : (
-            "Save changes"
+            "Salva"
           )}
         </Button>
       </div>
