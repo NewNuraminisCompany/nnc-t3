@@ -1,11 +1,8 @@
-import React from "react";
-import { DataTable } from "./data-table";
-import { Torneo, columns } from "./columns";
+import { AddTorneo } from "@/components/AddTorneo";
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
 import { tornei } from "@/server/db/schema"; // Import the schema
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { AddTorneo } from "@/components/AddTorneo";
+import { Torneo, columns } from "./columns";
+import { DataTable } from "./data-table";
 
 async function getData(): Promise<Torneo[]> {
   try {

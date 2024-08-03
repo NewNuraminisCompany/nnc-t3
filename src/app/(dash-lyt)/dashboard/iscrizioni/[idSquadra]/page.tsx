@@ -2,7 +2,6 @@ import { fetchPlayers } from "@/components/actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CircleUser, Edit } from "lucide-react";
-import Link from "next/link";
 
 const Dettagli = async ({ params }: { params: { idSquadra: string } }) => {
   if (!params.idSquadra) {

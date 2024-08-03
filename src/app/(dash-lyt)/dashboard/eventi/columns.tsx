@@ -1,29 +1,19 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import Link from "next/link";
-import {
-  Credenza,
-  CredenzaContent,
-  CredenzaHeader,
-  CredenzaTitle,
-  CredenzaTrigger,
-} from "@/components/ui/credenza";
+import { deleteTorneo } from "@/components/actions";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { ArrowUpDown, MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import { ColumnDef } from "@tanstack/react-table"
-import Evento from "@/app/(user-lyt)/eventi/[eventID]/page";
-import { deleteTorneo } from "@/components/actions";
-import { toast } from "sonner";
+import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown, MoreHorizontal, Trash2 } from "lucide-react";
 import { revalidatePath } from "next/cache";
-import { tornei } from "@/server/db/schema";
+import Link from "next/link";
+import { toast } from "sonner";
 
 
 export type Torneo = {
@@ -100,7 +90,7 @@ export const columns: ColumnDef<Torneo>[] = [
                 className="flex flex-row items-center justify-between text-destructive"
                 onClick={() => handleDelete(torneo)}
               >
-                Elimina evento
+                Elimina 
                 <Trash2 className="h-4 w-4" />
               </DropdownMenuItem>
             </DropdownMenuContent>
