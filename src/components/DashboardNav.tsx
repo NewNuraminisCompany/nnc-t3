@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CalendarFold, Home, LogOut, UserRoundPlus } from "lucide-react";
+import { CalendarFold, Home, LogOut, Trophy, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils"; // Assuming classnames library is used for conditional classes
@@ -25,6 +25,11 @@ const navItems = [
     href: "/dashboard/iscrizioni",
     icon: UserRoundPlus,
     label: "Iscrizioni",
+  },
+  {
+    href: "/dashboard/risultati",
+    icon: Trophy,
+    label: "Risultati",
   },
   {
     href: "/api/auth/signout",
