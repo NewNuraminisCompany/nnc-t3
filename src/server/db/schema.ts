@@ -126,6 +126,7 @@ export const tornei = createTable("torneo", {
   dataInizio: date("data_inizio").notNull(),
   dataFine: date("data_fine").notNull(),
   stato: varchar("stato", { enum: ["programmato", "inCorso", "terminato"] }),
+  imagePath: varchar("image_path"),
 });
 
 // Squadre table

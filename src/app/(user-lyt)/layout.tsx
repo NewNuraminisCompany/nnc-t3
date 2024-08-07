@@ -31,7 +31,7 @@ export default function RootLayout({
           >
             <NavBar />
             
-            <main className="container mx-auto pt-[10vh] w-full">{children}</main>
+            <main className="container mx-auto pt-[10vh] w-full mb-16">{children}</main>
             <Toaster />
           </ThemeProvider>
           <BottomBar />

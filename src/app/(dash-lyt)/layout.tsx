@@ -1,6 +1,10 @@
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "@/app/api/uploadthing/core";
+
 import SessionProvider from "../../components/SessionProvider";
 import { Inter } from "next/font/google";
 import { type Metadata } from "next";
@@ -30,12 +34,17 @@ export default function RootLayout({
               <DashboardNav />
             </aside>
             <TopBar />
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-            >
-              <main className="flex flex-col md:container mx-auto w-full md:pl-14">
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <main className="mx-auto flex w-full flex-col md:container md:pl-14">
+                <NextSSRPlugin
+                  /**
+                   * The `extractRouterConfig` will extract **only** the route configs
+                   * from the router to prevent additional information from being
+                   * leaked to the client. The data passed to the client is the same
+                   * as if you were to fetch `/api/uploadthing` directly.
+                   */
+                  routerConfig={extractRouterConfig(ourFileRouter)}
+                />
                 {children}
               </main>
               <Toaster />

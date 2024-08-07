@@ -143,11 +143,13 @@ export async function submitTorneo({
   descrizione,
   dataInizio,
   dataFine,
+  imagePath,
 }: {
   nome: string;
   descrizione: string;
   dataInizio: string;
   dataFine: string;
+  imagePath: string;
 }) {
   try {
     await db.insert(tornei).values({
@@ -157,6 +159,7 @@ export async function submitTorneo({
       dataInizio,
       dataFine,
       stato: "programmato", // Initial state
+      imagePath,
     });
     return { success: true };
   } catch (error) {

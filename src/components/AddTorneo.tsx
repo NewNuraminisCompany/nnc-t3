@@ -2,20 +2,20 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
-    Credenza,
-    CredenzaBody,
-    CredenzaContent,
-    CredenzaHeader,
-    CredenzaTitle,
-    CredenzaTrigger,
+  Credenza,
+  CredenzaBody,
+  CredenzaContent,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaTrigger,
 } from "@/components/ui/credenza";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,29 +26,37 @@ import { format } from "date-fns";
 import { CalendarIcon, Loader, Plus } from "lucide-react";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from 'sonner';
+import { toast } from "sonner";
 import * as z from "zod";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { UploadDropzone } from "@uploadthing/react";
+import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { UploadButton } from "@/utils/uploadthing";
 
 const formSchema = z.object({
   nomeTorneo: z.string().min(1).max(255),
   desc: z.string().min(1).max(255),
   dataInizio: z.date(),
   dataFine: z.date(),
+  imageUrl: z.string().optional(),
 });
 
 export function AddTorneo() {
   const [isLoading, setIsLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nomeTorneo: "",
       desc: "",
+      imageUrl: "",
     },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (values) => {
+  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (
+    values,
+  ) => {
     setIsLoading(true);
     try {
       const { success, error } = await submitTorneo({
@@ -56,15 +64,18 @@ export function AddTorneo() {
         descrizione: values.desc,
         dataInizio: values.dataInizio.toISOString(),
         dataFine: values.dataFine.toISOString(),
+        imagePath: imageUrl, // Add the image URL to the submission
       });
 
       if (success) {
-        toast.success('Evento aggiunto con successo');
+        toast.success("Evento aggiunto con successo");
+        form.reset();
+        setImageUrl("");
       } else {
-        toast.error('Errore durante l&apos;aggiunta del torneo: ' + error);
+        toast.error("Errore durante l&apos;aggiunta del torneo: " + error);
       }
     } catch (error) {
-      toast.error('Errore: ');
+      toast.error("Errore: " + error);
     } finally {
       setIsLoading(false);
     }
@@ -128,7 +139,7 @@ export function AddTorneo() {
                             variant={"outline"}
                             className={cn(
                               "w-[240px] pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
@@ -166,7 +177,7 @@ export function AddTorneo() {
                             variant={"outline"}
                             className={cn(
                               "w-[240px] pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
@@ -190,8 +201,45 @@ export function AddTorneo() {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Immagine del torneo</FormLabel>
+                    <FormControl>
+                      <UploadButton
+                        endpoint="imageUploader"
+                        onClientUploadComplete={(res) => {
+                          // Do something with the response
+                          if (res && res[0]) {
+                            setImageUrl(res[0].url);
+                            console.log("Image uploaded:", res[0].url);
+                            toast.success("Immagine caricata con successo");
+                          }
+                        }}
+                        onUploadError={(error: Error) => {
+                          // Do something with the error.
+                          alert(`ERROR! ${error.message}`);
+                        }}
+                      />
+                    </FormControl>
+                    {imageUrl && (
+                      <p className="text-sm text-green-600">
+                        Immagine caricata: {imageUrl}
+                      </p>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? <Loader className="animate-spin h-5 w-5" /> : "Submit"}
+                {isLoading ? (
+                  <Loader className="h-5 w-5 animate-spin" />
+                ) : (
+                  "Submit"
+                )}
               </Button>
             </form>
           </Form>

@@ -4,6 +4,8 @@ import { tornei } from "@/server/db/schema";
 import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
 import { desc } from "drizzle-orm";
 
+import Vibrant from 'node-vibrant';
+
 export async function Bento() {
   // Fetch tornei data using Drizzle ORM
   const torneiData = await db
@@ -17,26 +19,39 @@ export async function Bento() {
     return <div>Error loading events</div>;
   }
 
-  const features = torneiData.map((torneo, index) => ({
-    name: torneo.nome ?? `Evento ${index + 1}`,
-    description: torneo.descrizione ?? "Descrizione non disponibile",
-    href: `/eventi/${torneo.idTorneo}`,
-    cta: "Scopri",
-    color: "bg-card",
-    background: (
-      <img
-        src="/placeholder-image.jpg"  // Replace with actual image path
-        className="absolute -right-20 -top-20 opacity-60"
-        alt={torneo.nome || `Evento ${index + 1}`}
-      />
-    ),
-    className:
-      index === 0
-        ? "lg:row-start-1 lg:row-end-4 lg:col-start-1 lg:col-end-3"
-        : `lg:col-start-3 lg:col-end-5 lg:row-start-${index} lg:row-end-${
-            index + 1
-          }`,
-  }));
+  const features = await Promise.all(torneiData.map(async (torneo, index) => {
+    let dominantColor = "bg-card"; // Default color
+
+    if (torneo.imagePath) {
+      try {
+        const palette = await Vibrant.from(torneo.imagePath).getPalette();
+        if (palette.Vibrant) {
+          dominantColor = palette.Vibrant.hex;
+        }
+      } catch (error) {
+        console.error("Error extracting color:", error);
+      }
+    }
+
+    return {
+        name: torneo.nome ?? `Evento ${index + 1}`,
+        description: torneo.descrizione ?? "Descrizione non disponibile",
+        href: `/eventi/${torneo.idTorneo}`,
+        cta: "Scopri",
+        color: dominantColor ?? "bg-card",
+        background: (
+            <img
+                src={torneo.imagePath ?? "/placeholder-image.jpg"}
+                className="absolute -right-20 -top-20 opacity-60"
+                alt={torneo.nome || `Evento ${index + 1}`}
+            />
+        ),
+        className:
+            index === 0
+                ? "lg:row-start-1 lg:row-end-4 lg:col-start-1 lg:col-end-3"
+                : `lg:col-start-3 lg:col-end-5 lg:row-start-${index} lg:row-end-${index + 1}`,
+    };
+}));
 
   return (
     <BentoGrid className="lg:grid-rows-3 w-full">

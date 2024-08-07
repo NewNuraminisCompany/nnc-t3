@@ -43,7 +43,7 @@ const BentoCard = ({
     key={name}
     className={cn(
       "group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl",
-      "bg-card border w-full",
+      "border w-full",
       className
     )}
   >
@@ -67,8 +67,10 @@ const BentoCard = ({
         </a>
       </Button>
     </div>
-    {/*     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-     */}
+    <div
+      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      style={{ background: `linear-gradient(to top, ${color}, transparent)` }}
+    />
   </div>
 );
 

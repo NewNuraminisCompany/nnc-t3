@@ -28,6 +28,8 @@ import * as z from "zod";
 import { submitTeamAndPlayers } from "./actions";
 import ComboBoxIscrizioni from "./ComboBoxIscrizioni";
 import { Card } from "./ui/card";
+import { useSearchParams } from "next/navigation";
+
 
 const codiceFiscaleRegex = /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/;
 
@@ -58,6 +60,8 @@ type PlayerFormData = z.infer<typeof playerFormSchema>;
 type Player = PlayerFormData;
 
 export default function IscrizioniSquadre() {
+  const searchParams = useSearchParams(); // TODO: aggiungi parametri per combobox
+
   const [step, setStep] = useState(0);
   const [players, setPlayers] = useState<Player[]>([]);
   const [teamInfo, setTeamInfo] = useState<TeamFormData | null>(null);
