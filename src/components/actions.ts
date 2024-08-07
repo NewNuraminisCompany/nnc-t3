@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
-import { giocatori, gironi, squadre, tornei } from "@/server/db/schema"; // Import the schema
-import type { EditPlayerData, EditTeamData, PlayerData, TeamData, TorneoData } from "@/types/db-types";
+import { giocatori, squadre, tornei } from "@/server/db/schema"; // Import the schema
+import type { EditPlayerData, EditTeamData, PlayerData, TeamData, TorneoData, EditGironeData } from "@/types/db-types";
 export async function getTornei() {
   const result = await db.select().from(tornei);
   return result;
@@ -178,11 +178,9 @@ export async function fetchSquadre() {
         statoAccettazione: squadre.statoAccettazione,
         idTorneo: squadre.idTorneo,
         nomeTorneo: tornei.nome,
-        nomeGirone: gironi.nome,
       })
       .from(squadre)
       .leftJoin(tornei, eq(squadre.idTorneo, tornei.idTorneo))
-      .leftJoin(gironi, eq(squadre.idSquadra, gironi.idSquadra));
     console.log(`Fetched ${result.length} records from squadre table.`);
 
     if (result.length === 0) {
@@ -198,7 +196,6 @@ export async function fetchSquadre() {
       statoAccettazione: record.statoAccettazione ?? false,
       idTorneo: record.idTorneo,
       nomeTorneo: record.nomeTorneo ?? "Torneo sconosciuto",
-      nomeGirone: record.nomeGirone ?? "Girone non assegnato",
     }));
   } catch (error) {
     console.error("Error fetching squadre:", error);

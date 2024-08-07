@@ -7,7 +7,7 @@ import {
   
   const BottomBar = () => {
     return (
-      <footer className="fixed bottom-0 left-0 right-0 z-30 bg-background border-t md:hidden">
+      <footer className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t md:hidden">
         <div className="container mx-auto flex justify-center items-center h-14">
           <Link
             href="/"

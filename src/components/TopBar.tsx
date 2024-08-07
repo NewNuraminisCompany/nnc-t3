@@ -5,6 +5,7 @@ import {
   Home,
   LogOut,
   PanelLeft,
+  Trophy,
   UserRoundPlus,
 } from "lucide-react";
 import Link from "next/link";
@@ -41,6 +42,13 @@ const TopBar = () => {
             >
               <UserRoundPlus className="h-5 w-5" />
               Iscrizioni
+            </Link>
+            <Link
+              href="/dashboard/risultati"
+              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+            >
+              <Trophy className="h-5 w-5" />
+              Risultati
             </Link>
           </nav>
         </SheetContent>

@@ -170,17 +170,9 @@ export const partite = createTable("partite", {
   risultatoSquadra1: integer("risultato_squadra1").notNull(),
   risultatoSquadra2: integer("risultato_squadra2").notNull(),
   dataOra: timestamp("data_ora", { withTimezone: true }).notNull(),
+  giorne: varchar("giorne", { enum: ["giorneA", "gironeB", "gironeSemi", "gironeFinali",] }).notNull(),
 });
 
-// Gironi table
-export const gironi = createTable("gironi", {
-  idGirone: varchar("id_girone")
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  nome: varchar("nome").notNull(),
-  idSquadra: varchar("id_squadra").references(() => squadre.idSquadra),
-  idPartita: varchar("id_partita").references(() => partite.idPartita),
-});
 
 // Avvenimenti table
 export const avvenimenti = createTable(
@@ -224,11 +216,6 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
-}));
-
-export const gironiRelations = relations(gironi, ({ many }) => ({
-  squadre: many(squadre),
-  partite: many(partite),
 }));
 
 export const squadreRelations = relations(squadre, ({ one, many }) => ({

@@ -37,3 +37,10 @@ export type TorneoData = {
   dataFine: Date;
   stato: "programmato" | "inCorso" | "terminato";
 }
+
+export type EditGironeData = {
+  idGirone: string;
+  nome: string;
+  idSquadra: string;
+  idPartita: string;
+}
