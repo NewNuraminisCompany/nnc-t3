@@ -201,7 +201,7 @@ export const gap = createTable(
       .references(() => partite.idPartita),
   },
   (table) => ({
-    pk: primaryKey({ columns: [table.idGiocatore, table.idAvvenimento, table.idPartita] }),
+    compoundKey: primaryKey(table.idGiocatore, table.idAvvenimento, table.idPartita),
   }),
 );
 
