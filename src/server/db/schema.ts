@@ -178,12 +178,12 @@ export const partite = createTable("partite", {
 export const avvenimenti = createTable(
   "avvenimento",
   {
+    idAvvenimento: varchar("id_avvenimento")
+    .primaryKey()
+    .$defaultFn(() => createId()),
     tipo: varchar("tipo").notNull(),
     minuto: integer("minuto").notNull(),
   },
-  (table) => ({
-    pk: primaryKey(table.tipo, table.minuto),
-  }),
 );
 
 // Gap table
@@ -193,14 +193,15 @@ export const gap = createTable(
     idGiocatore: varchar("id_giocatore")
       .notNull()
       .references(() => giocatori.idGiocatore),
-    minuto: integer("minuto").notNull(),
-    tipo: varchar("tipo").notNull(),
+    idAvvenimento: varchar("id_avvenimento")
+      .notNull()
+      .references(() => avvenimenti.idAvvenimento),
     idPartita: varchar("id_partita")
       .notNull()
       .references(() => partite.idPartita),
   },
   (table) => ({
-    pk: primaryKey({ columns: [table.idGiocatore, table.minuto, table.tipo, table.idPartita] }),
+    pk: primaryKey({ columns: [table.idGiocatore, table.idAvvenimento, table.idPartita] }),
   }),
 );
 
@@ -254,7 +255,7 @@ export const gapRelations = relations(gap, ({ one }) => ({
     references: [partite.idPartita],
   }),
   avvenimento: one(avvenimenti, {
-    fields: [gap.tipo, gap.minuto],
-    references: [avvenimenti.tipo, avvenimenti.minuto],
+    fields: [gap.idAvvenimento],
+    references: [avvenimenti.idAvvenimento],
   }),
 }));
