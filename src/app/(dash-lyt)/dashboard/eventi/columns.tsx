@@ -1,6 +1,6 @@
 "use client"
 
-import { deleteTorneo } from "@/components/actions";
+import { deleteTorneo, EditTorneoData } from "@/components/actions";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,12 +10,16 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, Trash2 } from "lucide-react";
+import { ArrowUpDown, Edit, Loader2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import type { TorneoData } from "@/types/db-types";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Credenza, CredenzaContent, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from "@/components/ui/credenza";
 
 const ActionCell = ({ torneo }: { torneo: TorneoData }) => {
   const router = useRouter();
@@ -33,6 +37,19 @@ const ActionCell = ({ torneo }: { torneo: TorneoData }) => {
 
   return (
     <div className="flex items-center space-x-2">
+      <Credenza>
+        <CredenzaTrigger asChild>
+          <Button variant="ghost" size="sm">
+            <Edit className="h-4 w-4" />
+          </Button>
+        </CredenzaTrigger>
+        <CredenzaContent>
+          <CredenzaHeader>
+            <CredenzaTitle>Modifica Torneo</CredenzaTitle>
+          </CredenzaHeader>
+          <EditTorneoForm torneo={torneo} />
+        </CredenzaContent>
+      </Credenza>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -42,7 +59,7 @@ const ActionCell = ({ torneo }: { torneo: TorneoData }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
-            <Link href={`/dashboard/eventi/${torneo.idTorneo}`}>Mostra evento</Link>
+            <Link href={`/dashboard/eventi/${torneo.idTorneo}`}>Mostra Partite</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -76,12 +93,12 @@ export const columns: ColumnDef<TorneoData>[] = [
   {
     accessorKey: "dataInizio",
     header: "Data Inizio",
-    cell: ({ row }) => row.original.dataInizio.toLocaleDateString(),
+    cell: ({ row }) => new Date(row.original.dataInizio).toLocaleDateString(),
   },
   {
     accessorKey: "dataFine",
     header: "Data Fine",
-    cell: ({ row }) => row.original.dataFine.toLocaleDateString(),
+    cell: ({ row }) => new Date(row.original.dataFine).toLocaleDateString(),
   },
   {
     accessorKey: "stato",
@@ -106,3 +123,127 @@ export const columns: ColumnDef<TorneoData>[] = [
   },
 ]
 
+function EditTorneoForm({ torneo }: { torneo: TorneoData }) {
+  const [formData, setFormData] = useState({
+    ...torneo,
+    dataInizio: new Date(torneo.dataInizio).toISOString().split('T')[0],
+    dataFine: new Date(torneo.dataFine).toISOString().split('T')[0],
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleStateChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, stato: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const result = await EditTorneoData({
+        ...formData,
+        dataInizio: new Date(formData.dataInizio).toISOString(),
+        dataFine: new Date(formData.dataFine).toISOString(),
+      });
+      if (result.success) {
+        toast.success("Dati modificati con successo");
+      } else {
+        toast.error("Non è stato possibile modificare i dati");
+      }
+    } catch (error) {
+      toast.error("C'è stato un errore durante la modifica dei dati");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-4 md:px-0">
+      <div className="grid gap-4 py-4">
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="nome" className="text-right">
+            Nome
+          </Label>
+          <Input
+            id="nome"
+            name="nome"
+            value={formData.nome}
+            onChange={handleInputChange}
+            className="col-span-3"
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="descrizione" className="text-right">
+            Descrizione
+          </Label>
+          <Input
+            id="descrizione"
+            name="descrizione"
+            value={formData.descrizione}
+            onChange={handleInputChange}
+            className="col-span-3"
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="dataInizio" className="text-right">
+            Data Inizio
+          </Label>
+          <Input
+            id="dataInizio"
+            name="dataInizio"
+            type="date"
+            value={formData.dataInizio}
+            onChange={handleInputChange}
+            className="col-span-3"
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="dataFine" className="text-right">
+            Data Fine
+          </Label>
+          <Input
+            id="dataFine"
+            name="dataFine"
+            type="date"
+            value={formData.dataFine}
+            onChange={handleInputChange}
+            className="col-span-3"
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="stato" className="text-right">
+            Stato
+          </Label>
+          <Select onValueChange={handleStateChange} value={formData.stato}>
+            <SelectTrigger className="col-span-3">
+              <SelectValue placeholder="Seleziona lo stato" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="programmato">Programmato</SelectItem>
+              <SelectItem value="inCorso">In corso</SelectItem>
+              <SelectItem value="terminato">Terminato</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="flex justify-end pb-4 md:pb-0">
+        <Button type="submit" disabled={isLoading} className="w-full">
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Salvataggio in corso...
+            </>
+          ) : (
+            "Salva"
+          )}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+export { EditTorneoForm };

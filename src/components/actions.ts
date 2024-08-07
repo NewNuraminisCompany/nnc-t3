@@ -2,7 +2,7 @@
 
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
 import { giocatori, squadre, tornei } from "@/server/db/schema"; // Import the schema
-import type { EditPlayerData, EditTeamData, PlayerData, TeamData, TorneoData, EditGironeData } from "@/types/db-types";
+import type { EditPlayerData, EditTeamData, EditTorneoData, PlayerData, TeamData, TorneoData } from "@/types/db-types";
 export async function getTornei() {
   const result = await db.select().from(tornei);
   return result;
@@ -223,9 +223,11 @@ export async function fetchTorneo() {
     return result.map((torneo) => ({
       idTorneo: torneo.idTorneo,
       nome: torneo.nome,
+      descrizione: torneo.descrizione,
       dataInizio: new Date(torneo.dataInizio),
       dataFine: new Date(torneo.dataFine),
       stato: torneo.stato ?? "programmato", // Provide a default value if stato is null
+      imagePath: torneo.imagePath,
     }));
   } catch (error) {
     console.error("Error fetching tornei:", error);
@@ -233,7 +235,6 @@ export async function fetchTorneo() {
       `Failed to fetch tornei: ${error instanceof Error ? error.message : String(error)}`,
     );
   }
-
 }
 export async function deleteTorneo(Torneo: TorneoData) {
   try {
@@ -242,5 +243,30 @@ export async function deleteTorneo(Torneo: TorneoData) {
   } catch (error) {
     console.error("Error in deleteTorneo:", error);
     return { success: false, error: "Failed to delete torneo" };
+  }
+}
+
+export async function EditTorneoData(torneo: TorneoData) {
+  try {
+    const result = await db
+      .update(tornei)
+      .set({
+        nome: torneo.nome,
+        descrizione: torneo.descrizione,
+        dataInizio: new Date(torneo.dataInizio).toISOString(),
+        dataFine: new Date(torneo.dataFine).toISOString(),
+        stato: torneo.stato,
+      })
+      .where(eq(tornei.idTorneo, torneo.idTorneo))
+      .returning();
+
+    if (result.length === 0) {
+      return { success: false, error: "Torneo non trovato" };
+    }
+
+    return { success: true, updatedTorneo: result[0] };
+  } catch (error) {
+    console.error("Error in EditTorneoData:", error);
+    return { success: false, error: "Failed to update torneo" };
   }
 }

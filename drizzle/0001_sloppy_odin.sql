@@ -1,1 +1,0 @@
-ALTER TABLE "nnc-sito-t3_torneo" ADD COLUMN "image_path" varchar;

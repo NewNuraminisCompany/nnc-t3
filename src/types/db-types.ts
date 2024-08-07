@@ -33,6 +33,16 @@ export type EditPlayerData = {
 export type TorneoData = {
   idTorneo: string;
   nome: string;
+  descrizione: string,
+  dataInizio: Date;
+  dataFine: Date;
+  stato: "programmato" | "inCorso" | "terminato";
+}
+
+export type EditTorneoData = {
+  idTorneo: string;
+  nome: string;
+  descrizione: string,
   dataInizio: Date;
   dataFine: Date;
   stato: "programmato" | "inCorso" | "terminato";
