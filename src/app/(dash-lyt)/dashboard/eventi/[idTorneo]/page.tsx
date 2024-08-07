@@ -27,19 +27,6 @@ const MostraTorneo = async ({ params }: { params: { idTorneo: string } }) => {
       <div>
         <Card className="my-2 w-full items-center justify-between overflow-scroll rounded-xl">
           <CardHeader>
-            <CardTitle>{"Informazioni"}</CardTitle>
-            <CardDescription>{""}</CardDescription>
-          </CardHeader>
-          <CardContent className="items-center">
-            <Button>
-              <Link href={``}>Modifica</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-      <div>
-        <Card className="my-2 w-full items-center justify-between overflow-scroll rounded-xl">
-          <CardHeader>
             <CardTitle>{"Partite"}</CardTitle>
             <CardDescription>{""}</CardDescription>
           </CardHeader>
@@ -50,19 +37,6 @@ const MostraTorneo = async ({ params }: { params: { idTorneo: string } }) => {
           </CardContent>
         </Card>
       </div>
-      <div>
-      <Card className="my-2 w-full items-center justify-between overflow-scroll rounded-xl">
-        <CardHeader>
-          <CardTitle>{"Gironi"}</CardTitle>
-          <CardDescription>{""}</CardDescription>
-        </CardHeader>
-        <CardContent className="items-center">
-          <Button>
-            <Link href={``}>Modifica</Link>
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
     <div>
         <Card className="my-2 w-full items-center justify-between overflow-scroll rounded-xl">
           <CardHeader>

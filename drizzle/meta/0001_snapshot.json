@@ -1,5 +1,5 @@
 {
-  "id": "b957ad60-fb03-44bf-9fee-3778921dac6e",
+  "id": "d45a978e-78e4-46e2-9a26-b60fa1e34764",
   "prevId": "bb924067-a911-48b2-aa5d-65bc398ca37b",
   "version": "6",
   "dialect": "postgresql",
@@ -271,6 +271,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+<<<<<<< HEAD
     "public.nnc-sito-t3_gironi": {
       "name": "nnc-sito-t3_gironi",
       "schema": "",
@@ -332,6 +333,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+=======
+>>>>>>> af870624884c67b7523f8a37d3024fc5224e44b4
     "public.nnc-sito-t3_partite": {
       "name": "nnc-sito-t3_partite",
       "schema": "",
@@ -371,6 +374,15 @@
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
+<<<<<<< HEAD
+=======
+        },
+        "giorne": {
+          "name": "giorne",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+>>>>>>> af870624884c67b7523f8a37d3024fc5224e44b4
         }
       },
       "indexes": {},
@@ -624,12 +636,15 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
+<<<<<<< HEAD
         },
         "image_path": {
           "name": "image_path",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
+=======
+>>>>>>> af870624884c67b7523f8a37d3024fc5224e44b4
         }
       },
       "indexes": {},

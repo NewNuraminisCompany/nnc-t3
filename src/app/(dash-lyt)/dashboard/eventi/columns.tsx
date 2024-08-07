@@ -105,3 +105,4 @@ export const columns: ColumnDef<TorneoData>[] = [
     cell: ({ row }) => <ActionCell torneo={row.original} />,
   },
 ]
+

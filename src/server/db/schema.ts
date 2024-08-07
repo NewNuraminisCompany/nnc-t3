@@ -171,28 +171,20 @@ export const partite = createTable("partite", {
   risultatoSquadra1: integer("risultato_squadra1").notNull(),
   risultatoSquadra2: integer("risultato_squadra2").notNull(),
   dataOra: timestamp("data_ora", { withTimezone: true }).notNull(),
+  giorne: varchar("giorne", { enum: ["giorneA", "gironeB", "gironeSemi", "gironeFinali",] }).notNull(),
 });
 
-// Gironi table
-export const gironi = createTable("gironi", {
-  idGirone: varchar("id_girone")
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  nome: varchar("nome").notNull(),
-  idSquadra: varchar("id_squadra").references(() => squadre.idSquadra),
-  idPartita: varchar("id_partita").references(() => partite.idPartita),
-});
 
 // Avvenimenti table
 export const avvenimenti = createTable(
   "avvenimento",
   {
+    idAvvenimento: varchar("id_avvenimento")
+    .primaryKey()
+    .$defaultFn(() => createId()),
     tipo: varchar("tipo").notNull(),
     minuto: integer("minuto").notNull(),
   },
-  (table) => ({
-    pk: primaryKey(table.tipo, table.minuto),
-  }),
 );
 
 // Gap table
@@ -202,14 +194,15 @@ export const gap = createTable(
     idGiocatore: varchar("id_giocatore")
       .notNull()
       .references(() => giocatori.idGiocatore),
-    minuto: integer("minuto").notNull(),
-    tipo: varchar("tipo").notNull(),
+    idAvvenimento: varchar("id_avvenimento")
+      .notNull()
+      .references(() => avvenimenti.idAvvenimento),
     idPartita: varchar("id_partita")
       .notNull()
       .references(() => partite.idPartita),
   },
   (table) => ({
-    pk: primaryKey({ columns: [table.idGiocatore, table.minuto, table.tipo, table.idPartita] }),
+    compoundKey: primaryKey(table.idGiocatore, table.idAvvenimento, table.idPartita),
   }),
 );
 
@@ -225,11 +218,6 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
-}));
-
-export const gironiRelations = relations(gironi, ({ many }) => ({
-  squadre: many(squadre),
-  partite: many(partite),
 }));
 
 export const squadreRelations = relations(squadre, ({ one, many }) => ({
@@ -268,7 +256,7 @@ export const gapRelations = relations(gap, ({ one }) => ({
     references: [partite.idPartita],
   }),
   avvenimento: one(avvenimenti, {
-    fields: [gap.tipo, gap.minuto],
-    references: [avvenimenti.tipo, avvenimenti.minuto],
+    fields: [gap.idAvvenimento],
+    references: [avvenimenti.idAvvenimento],
   }),
 }));
