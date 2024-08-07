@@ -38,7 +38,6 @@ export type Squadre = {
   statoAccettazione: boolean
   idTorneo: string
   nomeTorneo: string
-  nomeGirone: string
 }
 
 const ActionCell = ({ squadra }: { squadra: Squadre }) => {
@@ -140,18 +139,6 @@ export const columns: ColumnDef<Squadre>[] = [
     ),
   },
   {
-    accessorKey: "nomeGirone",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Girone
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
     id: "actions",
     cell: ({ row }) => <ActionCell squadra={row.original} />,
   },
@@ -222,18 +209,6 @@ function EditSquadraForm({ squadra }: { squadra: Squadre }) {
             id="cellulare"
             name="cellulare"
             value={formData.cellulare}
-            onChange={handleInputChange}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="girone" className="text-right">
-            Girone
-          </Label>
-          <Input
-            id="girone"
-            name="nomeGirone"
-            value={formData.nomeGirone}
             onChange={handleInputChange}
             className="col-span-3"
           />
