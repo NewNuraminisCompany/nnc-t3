@@ -201,18 +201,16 @@ export function AddTorneo() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="imageUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Immagine del torneo</FormLabel>
+                    <FormLabel>Locandina del torneo</FormLabel>
                     <FormControl>
                       <UploadButton
                         endpoint="imageUploader"
                         onClientUploadComplete={(res) => {
-                          // Do something with the response
                           if (res && res[0]) {
                             setImageUrl(res[0].url);
                             console.log("Image uploaded:", res[0].url);
@@ -220,16 +218,11 @@ export function AddTorneo() {
                           }
                         }}
                         onUploadError={(error: Error) => {
-                          // Do something with the error.
-                          alert(`ERROR! ${error.message}`);
+                          console.log("Errore durante l&apos;upload dell&apos;immagine:", error);
+                          toast.error("Errore durante l&apos;upload dell&apos;immagine: " + error);
                         }}
                       />
                     </FormControl>
-                    {imageUrl && (
-                      <p className="text-sm text-green-600">
-                        Immagine caricata: {imageUrl}
-                      </p>
-                    )}
                     <FormMessage />
                   </FormItem>
                 )}

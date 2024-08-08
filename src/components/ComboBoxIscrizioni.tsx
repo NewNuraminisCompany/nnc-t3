@@ -66,14 +66,14 @@ export default function ComboBoxIscrizioni({ value, onChange }: ComboBoxIscrizio
         >
           {value
             ? torneiOptions.find((torneo) => torneo.value === value)?.label
-            : "Select torneo..."}
+            : "Seleziona torneo..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search torneo..." />
-          <CommandEmpty>No torneo found.</CommandEmpty>
+          <CommandInput placeholder="Cerca torneo..." />
+          <CommandEmpty>Nessun torneo trovato.</CommandEmpty>
           <CommandList>
             <CommandGroup>
               {loading ? (

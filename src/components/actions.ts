@@ -246,7 +246,7 @@ export async function deleteTorneo(Torneo: TorneoData) {
   }
 }
 
-export async function EditTorneoData(torneo: TorneoData) {
+export async function updateTorneo(torneo: TorneoData) {
   try {
     const result = await db
       .update(tornei)
@@ -266,7 +266,7 @@ export async function EditTorneoData(torneo: TorneoData) {
 
     return { success: true, updatedTorneo: result[0] };
   } catch (error) {
-    console.error("Error in EditTorneoData:", error);
+    console.error("Errore durante la modifica del torneo:", error);
     return { success: false, error: "Failed to update torneo" };
   }
 }
