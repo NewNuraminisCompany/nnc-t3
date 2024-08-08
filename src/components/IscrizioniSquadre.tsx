@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -19,7 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Palette, Phone, Trash2 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -29,7 +30,6 @@ import { submitTeamAndPlayers } from "./actions";
 import ComboBoxIscrizioni from "./ComboBoxIscrizioni";
 import { Card } from "./ui/card";
 import { useSearchParams } from "next/navigation";
-
 
 const codiceFiscaleRegex = /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/;
 
@@ -50,11 +50,11 @@ const playerFormSchema = z.object({
     .max(255),
   playerID: z.string().regex(codiceFiscaleRegex, "Codice fiscale non valido"),
   playerDateOfBirth: z.date().refine((date) => date <= new Date(), {
-    message: "La data di nascita non può essere futura",
+    message: "La data di nascita non può essere nel futuro",
   }),
 });
 
-;type TeamFormData = z.infer<typeof teamFormSchema>
+type TeamFormData = z.infer<typeof teamFormSchema>;
 type PlayerFormData = z.infer<typeof playerFormSchema>;
 
 type Player = PlayerFormData;
@@ -227,28 +227,34 @@ export default function IscrizioniSquadre() {
             className="space-y-8"
           >
             <div className="mb-4">
-              <h3 className="text-lg font-bold">
-                Lista Giocatori ({players.length}/10)
-              </h3>
-              <ul>
-                {players.map((player, index) => (
-                  <li key={index} className="flex items-center justify-between">
-                    <span>
-                      {player.playerName} {player.playerSurname}
-                    </span>
-                    {players.length > 5 && (
+              <ScrollArea className="overflow-x-auto whitespace-nowrap rounded-md">
+                <div className="flex space-x-4">
+                  {players.map((player, index) => (
+                    <Card
+                      key={index}
+                      className="flex max-w-xs flex-shrink-0 items-center justify-between space-x-2 p-4"
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-bold">
+                          {player.playerName} {player.playerSurname}
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          {player.playerID}
+                        </span>
+                      </div>
                       <Button
                         type="button"
                         onClick={() => removePlayer(index)}
-                        variant="destructive"
-                        size="sm"
+                        variant="outline"
+                        className="hover:text-destructive"
                       >
-                        Rimuovi
+                        <Trash2 className="h-4 w-4" />
                       </Button>
-                    )}
-                  </li>
-                ))}
-              </ul>
+                    </Card>
+                  ))}
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
             </div>
 
             <FormField
@@ -303,7 +309,7 @@ export default function IscrizioniSquadre() {
                           variant={"outline"}
                           className={cn(
                             "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                         >
                           {field.value ? (
@@ -332,9 +338,7 @@ export default function IscrizioniSquadre() {
             />
             <div className="flex justify-between">
               <Button type="submit" disabled={players.length >= 10}>
-                {players.length < 5
-                  ? `Aggiungi giocatore (minimo ${5 - players.length} richiesti)`
-                  : "Aggiungi giocatore"}
+                {players.length < 5 ? `Aggiungi` : "Aggiungi giocatore"}
               </Button>
               <Button
                 type="button"
@@ -350,41 +354,44 @@ export default function IscrizioniSquadre() {
 
       {step === 2 && (
         <div>
-          <h2 className="text-xl font-semibold">Rivedi e Invia</h2>
-          <p>
-            <strong>Torneo:</strong> {teamInfo?.tournamentId}
-          </p>
-          <p>
-            <strong>Nome squadra:</strong> {teamInfo?.teamName}
-          </p>
-          <p>
-            <strong>Colore squadra:</strong> {teamInfo?.teamColor}
-          </p>
-          <p>
-            <strong>Telefono squadra:</strong> {teamInfo?.myNumber}
-          </p>
-          {players.map((player, index) => (
-            <Card key={index} className="mb-4">
-              <h3 className="text-lg font-bold">Giocatore {index + 1}</h3>
-              <p>
-                <strong>Nome:</strong> {player.playerName}
-              </p>
-              <p>
-                <strong>Cognome:</strong> {player.playerSurname}
-              </p>
-              <p>
-                <strong>Codice Fiscale:</strong> {player.playerID}
-              </p>
-              <p>
-                <strong>Data di nascita:</strong>{" "}
-                {format(player.playerDateOfBirth, "PPP")}
-              </p>
-            </Card>
-          ))}
+          <Card className="mb-4 p-4">
+            <h2 className="text-2xl font-bold tracking-tight">{teamInfo?.teamName}</h2>
+            <p>
+              <strong>Torneo:</strong> {teamInfo?.tournamentId}
+            </p>
+            <p className="flex flex-row gap-x-2 items-center">
+              <strong><Palette className="size-4" /></strong> {teamInfo?.teamColor}
+            </p>
+            <p className="flex flex-row gap-x-2 items-center">
+              <strong><Phone className="size-4"/></strong> {teamInfo?.myNumber}
+            </p>
+          </Card>
+          <ScrollArea className="overflow-x-auto whitespace-nowrap rounded-md w-full">
+            <div className="flex space-x-4">
+              {players.map((player, index) => (
+                <Card
+                  key={index}
+                  className="flex max-w-xs flex-shrink-0 items-center justify-between space-x-2 p-4"
+                >
+                  <div className="flex flex-col">
+                    <span className="font-bold">
+                      {player.playerName} {player.playerSurname}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {player.playerID} <br />
+                      {format(player.playerDateOfBirth, "PPP")}
+                    </span>
+                  </div>
+                </Card>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
           <Button
             type="button"
             onClick={handleFinalSubmit}
             disabled={isSubmitting}
+            className="gap-y-2"
           >
             {isSubmitting ? "Invio in corso..." : "Invia"}
           </Button>
