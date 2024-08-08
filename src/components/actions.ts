@@ -367,3 +367,16 @@ export async function deletePartita(partita: PartitaData) {
     return { success: false, error: "Failed to delete partita" };
   }
 }
+
+export async function fetchNomeSquadraId(idSquadre: string) {
+  try {
+    const result = await db
+      .select({ nome: squadre.nome })
+      .from(squadre)
+      .where(eq(squadre.idSquadra, idSquadre)); 
+    return { success: true, result };
+  } catch (error) {
+    console.error("Error in fetchNomeSquadraId:", error);
+    return { success: false, error: "Failed to fetchNomeSquadraId" };
+  }
+}
