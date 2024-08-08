@@ -1,49 +1,54 @@
-import Link from "next/link";
-import React from "react";
-import { ThemeToggle } from "./ThemeToggle";
+'use client'
+
 import { Button } from "@/components/ui/button";
-import { getServerSession } from "next-auth";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ThemeToggle } from "./ThemeToggle";
+
+const navItems = [
+  {
+    href: "/eventi",
+    label: "Eventi",
+  },
+  {
+    href: "/risultati",
+    label: "Risultati",
+  },
+  {
+    href: "/iscrizioni",
+    label: "Iscrizioni",
+  },
+];
 
 const NavBar = async () => {
-  const session = await getServerSession();
+  const pathname = usePathname();
   return (
-    <nav className="fixed w-screen h-[10vh] flex items-center bg-background top-0 z-40">
+    <nav className="fixed top-0 z-40 flex h-[10vh] w-screen items-center bg-background">
       <div className="container flex items-center justify-between">
         <Link
-          className="flex items-center text-2xl font-bold tracking-tighter gap-x-2 "
+          className="flex items-center gap-x-2 text-2xl font-bold tracking-tighter"
           href="/"
         >
-          <span className="font-custom tracking-wide text-3xl hover:text-primary">
+          <span className="font-custom text-3xl tracking-wide hover:text-primary">
             NNC
           </span>
         </Link>
-        <div className="hidden md:flex flex-row items-center gap-x-5">
-          <Button variant="ghost">
-            <Link href="/eventi">Eventi</Link>
-          </Button>
-          <Button variant="ghost">
-            <Link href="/risultati">Risultati</Link>
-          </Button>
-          <Button variant="ghost">
-            <Link href="/iscrizioni">Iscrizioni</Link>
-          </Button>
-        </div>
-        <div className="flex items-center gap-x-5">
-          {session?.user?.name ? (
-            <Button>
-              <Link href="/api/auth/signout" >
-                Log Out
-              </Link>
+        <div className="hidden flex-row items-center gap-x-5 md:flex">
+          {navItems.map((item, index) => (
+            <Button
+              key={index}
+              variant={"ghost"}
+              className={cn(pathname === item.href ? "bg-accent" : "")}
+            >
+              <Link href={item.href}>{item.label}</Link>
             </Button>
-          ) : (
-            <p></p>
-          )}
-          <ThemeToggle />
+          ))}
         </div>
+        <ThemeToggle />
       </div>
     </nav>
   );
 };
 
 export default NavBar;
-
