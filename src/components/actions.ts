@@ -285,7 +285,7 @@ idSquadra2: string,
 risultatoSquadra1: number,
 risultatoSquadra2: number,
 dataOra: Date,
-girone: 'gironeA' | 'gironeB' | 'gironeSemi' | 'gironeFinali';
+girone:  'gironeA' | 'gironeB' | 'gironeSemi' | 'gironeFinali';
 }
 ) {
   try {
