@@ -1,13 +1,7 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Credenza,
   CredenzaBody,
@@ -24,9 +18,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { submitPartita } from "./actions"; // Import the server action
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, Loader, Plus } from "lucide-react";
@@ -34,18 +33,28 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+import { submitPartita } from "./actions"; // Import the server action
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 const formSchema = z.object({
-  idSquadra1: z.string().min(1),
-  idSquadra2: z.string().min(1),
+  idSquadra1: z.string().min(1, "Select a team"),
+  idSquadra2: z.string().min(1, "Select a team"),
   risultatoSquadra1: z.number().int().min(0),
   risultatoSquadra2: z.number().int().min(0),
   dataOra: z.date(),
   girone: z.enum(["gironeA", "gironeB", "gironeSemi", "gironeFinali"]),
 });
 
-export function AddPartita() {
+type Squadra = {
+  nome: string;
+  idSquadra: string;
+};
+
+type AddPartitaProps = {
+  nomi_squadre: Squadra[];
+};
+
+export const AddPartita: React.FC<AddPartitaProps> = ({ nomi_squadre }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -60,9 +69,7 @@ export function AddPartita() {
     },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (
-    values,
-  ) => {
+  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (values) => {
     setIsLoading(true);
     try {
       const { success, error } = await submitPartita({
@@ -81,7 +88,7 @@ export function AddPartita() {
         toast.error("Errore durante l'aggiunta della partita: " + error);
       }
     } catch (error) {
-      toast.error("Errore: " + error);
+      toast.error("Errore");
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +108,6 @@ export function AddPartita() {
         <CredenzaBody className="mb-2">
           <Form {...form}>
             <form
-              noValidate
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-6"
             >
@@ -112,7 +118,18 @@ export function AddPartita() {
                   <FormItem>
                     <FormLabel>Squadra 1</FormLabel>
                     <FormControl>
-                      <Input placeholder="ID Squadra 1" {...field} />
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Seleziona squadra" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {nomi_squadre.map((squadra) => (
+                            <SelectItem key={squadra.nome} value={squadra.idSquadra}>
+                              {squadra.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -126,7 +143,18 @@ export function AddPartita() {
                   <FormItem>
                     <FormLabel>Squadra 2</FormLabel>
                     <FormControl>
-                      <Input placeholder="ID Squadra 2" {...field} />
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Seleziona squadra" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {nomi_squadre.map((squadra) => (
+                            <SelectItem key={squadra.nome} value={squadra.idSquadra}>
+                              {squadra.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -146,14 +174,10 @@ export function AddPartita() {
                             variant={"outline"}
                             className={cn(
                               "w-[240px] pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                           >
-                            {field.value ? (
-                              format(field.value, "PPPpp")
-                            ) : (
-                              <span>Seleziona data e ora</span>
-                            )}
+                            {field.value ? format(field.value, "PPPpp") : <span>Seleziona data e ora</span>}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
@@ -180,13 +204,13 @@ export function AddPartita() {
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Girone" />
+                          <SelectValue placeholder="Seleziona girone" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="gironeA">Girone A</SelectItem>
                           <SelectItem value="gironeB">Girone B</SelectItem>
-                          <SelectItem value="gironeSemi">Semifinali</SelectItem>
-                          <SelectItem value="gironeFinali">Finali</SelectItem>
+                          <SelectItem value="gironeSemi">Girone Semi</SelectItem>
+                          <SelectItem value="gironeFinali">Girone Finali</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -196,11 +220,7 @@ export function AddPartita() {
               />
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? (
-                  <Loader className="h-5 w-5 animate-spin" />
-                ) : (
-                  "Submit"
-                )}
+                {isLoading ? <Loader className="h-5 w-5 animate-spin" /> : "Submit"}
               </Button>
             </form>
           </Form>
@@ -208,4 +228,4 @@ export function AddPartita() {
       </CredenzaContent>
     </Credenza>
   );
-}
+};

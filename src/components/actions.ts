@@ -380,3 +380,29 @@ export async function deletePartita(partita: PartitaData) {
     return { success: false, error: "Failed to delete partita" };
   }
 }
+
+
+export async function fetchNomiTutteSquadre() {
+  try {
+    console.log("Fetching data from squadre, tornei, and gironi tables...");
+    const result = await db
+      .selectDistinctOn([squadre.nome], { nome:squadre.nome, idSquadra:squadre.idSquadra })
+      .from(squadre)
+    console.log(`Fetched ${result.length} records from squadre table.`);
+
+    if (result.length === 0) {
+      console.log("No records found in the squadre table.");
+      return [];
+    }
+    
+    return result.map((record) => ({
+      nome: record.nome,
+      idSquadra: record.idSquadra
+    }));
+  } catch (error) {
+    console.error("Error fetching squadre:", error);
+    throw new Error(
+      `Failed to fetch squadre: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
