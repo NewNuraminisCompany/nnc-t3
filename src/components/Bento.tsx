@@ -3,8 +3,9 @@ import { db } from "@/server/db";
 import { tornei } from "@/server/db/schema";
 import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
 import { desc } from "drizzle-orm";
+import Image from 'next/image'
 
-import Vibrant from 'node-vibrant';
+import Vibrant from 'node-vibrant'; // Colori
 
 export async function Bento() {
   // Fetch tornei data using Drizzle ORM
@@ -40,7 +41,7 @@ export async function Bento() {
         cta: "Scopri",
         color: dominantColor ?? "bg-card",
         background: (
-            <img
+            <Image
                 src={torneo.imagePath ?? "/placeholder-image.jpg"}
                 className="absolute -right-20 -top-20 opacity-60"
                 alt={torneo.nome || `Evento ${index + 1}`}

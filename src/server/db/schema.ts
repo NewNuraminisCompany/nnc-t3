@@ -139,8 +139,7 @@ export const squadre = createTable("squadre", {
   cellulare: varchar("cellulare", { length: 11 }).notNull(),
   statoAccettazione: boolean("statoAccettazione"),
   idTorneo: varchar("id_torneo")
-    .notNull()
-    .references(() => tornei.idTorneo),
+    .references(() => tornei.idTorneo, { onDelete: "cascade" }),
 });
 
 // Giocatori table
