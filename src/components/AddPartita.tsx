@@ -2,6 +2,13 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Credenza,
   CredenzaBody,
   CredenzaContent,
@@ -35,7 +42,7 @@ const formSchema = z.object({
   risultatoSquadra1: z.number().int().min(0),
   risultatoSquadra2: z.number().int().min(0),
   dataOra: z.date(),
-  giorne: z.enum(["giorneA", "gironeB", "gironeSemi", "gironeFinali"]),
+  girone: z.enum(["gironeA", "gironeB", "gironeSemi", "gironeFinali"]),
 });
 
 export function AddPartita() {
@@ -49,12 +56,12 @@ export function AddPartita() {
       risultatoSquadra1: 0,
       risultatoSquadra2: 0,
       dataOra: new Date(),
-      giorne: "giorneA",
+      girone: "gironeA",
     },
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (
-    values
+    values,
   ) => {
     setIsLoading(true);
     try {
@@ -63,8 +70,8 @@ export function AddPartita() {
         idSquadra2: values.idSquadra2,
         risultatoSquadra1: values.risultatoSquadra1,
         risultatoSquadra2: values.risultatoSquadra2,
-        dataOra: values.dataOra.toISOString(),
-        giorne: values.giorne,
+        dataOra: values.dataOra,
+        girone: values.girone,
       });
 
       if (success) {
@@ -139,7 +146,7 @@ export function AddPartita() {
                             variant={"outline"}
                             className={cn(
                               "w-[240px] pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
@@ -156,7 +163,6 @@ export function AddPartita() {
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          showTime
                         />
                       </PopoverContent>
                     </Popover>
@@ -167,17 +173,22 @@ export function AddPartita() {
 
               <FormField
                 control={form.control}
-                name="giorne"
+                name="girone"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Girone</FormLabel>
                     <FormControl>
-                      <Input as="select" {...field}>
-                        <option value="giorneA">Girone A</option>
-                        <option value="gironeB">Girone B</option>
-                        <option value="gironeSemi">Semifinali</option>
-                        <option value="gironeFinali">Finali</option>
-                      </Input>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Girone" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="gironeA">Girone A</SelectItem>
+                          <SelectItem value="gironeB">Girone B</SelectItem>
+                          <SelectItem value="gironeSemi">Semifinali</SelectItem>
+                          <SelectItem value="gironeFinali">Finali</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

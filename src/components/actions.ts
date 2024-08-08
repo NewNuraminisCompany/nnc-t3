@@ -279,10 +279,18 @@ export async function submitPartita({
   risultatoSquadra2,
   dataOra,
   girone,
-}: PartitaData) {
+}: {
+  idSquadra1: string,
+idSquadra2: string,
+risultatoSquadra1: number,
+risultatoSquadra2: number,
+dataOra: Date,
+girone: string
+}
+) {
   try {
     await db.insert(partite).values({
-      idPartita: createId(),
+      idPartita:createId(),
       idSquadra1,
       idSquadra2,
       risultatoSquadra1,
@@ -292,7 +300,7 @@ export async function submitPartita({
     });
     return { success: true };
   } catch (error) {
-    console.error("Error in createPartita:", error);
+    console.error("Error in submitPartita:", error);
     return { success: false, error: "Failed to create match" };
   }
 }
