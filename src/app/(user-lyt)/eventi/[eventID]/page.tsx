@@ -1,3 +1,4 @@
+import { imagePlaceholder } from "@/components/Bento";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -35,8 +36,8 @@ const Evento = async ({ params }: { params: { eventID: string } }) => {
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="flex w-full justify-end md:w-1/3">
               <Image
-                src={event.imagePath ?? "/placeholder-image.jpg"}
-                className="rounded-sm object-cover transition-shadow duration-300 hover:shadow-xl"
+                src={event.imagePath || imagePlaceholder}
+                className="rounded object-cover transition-shadow duration-300 shadow-xl "
                 width={1080}
                 height={1350}
                 alt={event.nome}
@@ -52,13 +53,18 @@ const Evento = async ({ params }: { params: { eventID: string } }) => {
               <CardDescription className="text-md">
                 {event.descrizione}
               </CardDescription>
-              <Button className="max-w-64 gap-x-2">
-                Iscrivi la tua squadra <Pencil className="h-4 w-4" />
-              </Button>
+              {event.stato == "programmato" ? (
+                <Button className="max-w-full md:max-w-64 gap-x-2 sm:w-full">
+                  Iscrivi la tua squadra <Pencil className="h-4 w-4 " />
+                </Button>
+              ) : (
+                <Button variant={"outline"} disabled className="max-w-full md:max-w-64 gap-x-2 sm:w-full">
+                  Le iscrizioni sono chiuse.
+                </Button>
+              )}
             </div>
           </div>
         </CardHeader>
-        <CardContent className="flex w-full flex-col gap-y-4"></CardContent>
       </Card>
     </div>
   );

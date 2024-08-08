@@ -49,9 +49,9 @@ const BentoCard = ({
   >
     <div>{background}</div>
     <div className="flex items-center w-full gap-x-2">
-      <div className="pointer-events-none z-10 flex transform-gpu flex-col gap-1 p-6 transition-all duration-300 group-hover:-translate-y-1">
-        <h3 className="text-4xl font-bold text-card-foreground">{name}</h3>
-        <p className="max-w-md text-muted-foreground transition-opacity duration-300">
+      <div className="pointer-events-none z-30 flex transform-gpu flex-col gap-1 p-6 transition-all duration-300 group-hover:-translate-y-1">
+        <h3 className="text-4xl font-bold mix-blend-difference">{name}</h3>
+        <p className="max-w-md text-muted-foreground transition-opacity duration-300 z-40">
           {description}
         </p>
       </div>
@@ -68,8 +68,8 @@ const BentoCard = ({
       </Button>
     </div>
     <div
-      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-      style={{ background: `linear-gradient(to top, ${color}, transparent)` }}
+      className="pointer-events-none absolute inset-0 opacity-0 z-10 transition-opacity duration-300 group-hover:opacity-100"
+      style={{ background: `linear-gradient(to left, ${color}, transparent)` }}
     />
   </div>
 );
