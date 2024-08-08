@@ -43,7 +43,9 @@ export async function Bento() {
         background: (
             <Image
                 src={torneo.imagePath ?? "/placeholder-image.jpg"}
-                className="absolute -right-20 -top-20 opacity-60"
+                className="absolute -right-20 -top-20 opacity-60 scale-50 rounded-lg"
+                width={1080}
+                height={1350}
                 alt={torneo.nome || `Evento ${index + 1}`}
             />
         ),

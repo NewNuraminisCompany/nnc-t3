@@ -37,6 +37,8 @@ const Evento = async ({ params }: { params: { eventID: string } }) => {
               <Image
                 src={event.imagePath ?? "/placeholder-image.jpg"}
                 className="rounded-sm object-cover transition-shadow duration-300 hover:shadow-xl"
+                width={1080}
+                height={1350}
                 alt={event.nome}
               />
             </div>
