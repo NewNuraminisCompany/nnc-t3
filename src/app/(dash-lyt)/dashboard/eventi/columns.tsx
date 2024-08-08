@@ -1,39 +1,68 @@
-"use client"
-
-import { deleteTorneo, EditTorneoData } from "@/components/actions";
+"use client";
+import { deleteTorneo, updateTorneo } from "@/components/actions";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Credenza,
+  CredenzaContent,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaTrigger,
+} from "@/components/ui/credenza";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Edit, Loader2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-import Link from "next/link";
-import { toast } from "sonner";
-import type { TorneoData } from "@/types/db-types";
-import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Credenza, CredenzaContent, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from "@/components/ui/credenza";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { TorneoData } from "@/types/db-types";
+import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns/format";
+import {
+  ArrowUpDown,
+  CalendarIcon,
+  Edit,
+  Loader2,
+  MoreHorizontal,
+  Trash2,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useCallback, useState } from "react";
+import { toast } from "sonner";
 
 const ActionCell = ({ torneo }: { torneo: TorneoData }) => {
   const router = useRouter();
 
-  const handleDelete = useCallback(async (torneo: TorneoData) => {
-    console.log("Eliminazione torneo:", torneo);
-    const result = await deleteTorneo(torneo);
-    if (result.success) {
-      toast.success("Torneo eliminato con successo");
-      router.refresh();
-    } else {
-      toast.error("Non è stato possibile eliminare il torneo");
-    }
-  }, [router]);
+  const handleDelete = useCallback(
+    async (torneo: TorneoData) => {
+      console.log("Eliminazione torneo:", torneo);
+      const result = await deleteTorneo(torneo);
+      if (result.success) {
+        toast.success("Torneo eliminato con successo");
+        router.refresh();
+      } else {
+        toast.error("Non è stato possibile eliminare il torneo");
+      }
+    },
+    [router],
+  );
 
   return (
     <div className="flex items-center space-x-2">
@@ -59,14 +88,16 @@ const ActionCell = ({ torneo }: { torneo: TorneoData }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
-            <Link href={`/dashboard/eventi/${torneo.idTorneo}`}>Mostra Partite</Link>
+            <Link href={`/dashboard/eventi/${torneo.idTorneo}`}>
+              Mostra evento
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="flex flex-row items-center justify-between text-destructive"
             onClick={() => handleDelete(torneo)}
           >
-            Elimina 
+            Elimina
             <Trash2 className="h-4 w-4" />
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -87,33 +118,33 @@ export const columns: ColumnDef<TorneoData>[] = [
           Nome Torneo
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
   },
   {
     accessorKey: "dataInizio",
     header: "Data Inizio",
-    cell: ({ row }) => new Date(row.original.dataInizio).toLocaleDateString(),
+    cell: ({ row }) => row.original.dataInizio.toLocaleDateString(),
   },
   {
     accessorKey: "dataFine",
     header: "Data Fine",
-    cell: ({ row }) => new Date(row.original.dataFine).toLocaleDateString(),
+    cell: ({ row }) => row.original.dataFine.toLocaleDateString(),
   },
   {
     accessorKey: "stato",
     header: "Stato",
     cell: ({ row }) => {
-      const stato = row.original.stato
+      const stato = row.original.stato;
       switch (stato) {
         case "programmato":
-          return "Programmato"
+          return "Programmato";
         case "inCorso":
-          return "In corso"
+          return "In corso";
         case "terminato":
-          return "Terminato"
+          return "Terminato";
         default:
-          return stato
+          return stato;
       }
     },
   },
@@ -121,22 +152,26 @@ export const columns: ColumnDef<TorneoData>[] = [
     id: "actions",
     cell: ({ row }) => <ActionCell torneo={row.original} />,
   },
-]
+];
 
 function EditTorneoForm({ torneo }: { torneo: TorneoData }) {
-  const [formData, setFormData] = useState({
-    ...torneo,
-    dataInizio: new Date(torneo.dataInizio).toISOString().split('T')[0],
-    dataFine: new Date(torneo.dataFine).toISOString().split('T')[0],
-  });
+  const [formData, setFormData] = useState<TorneoData>(torneo);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleStateChange = (value: string) => {
+  const handleDateChange = (date: Date | undefined) => {
+    if (date) {
+      setFormData((prev) => ({ ...prev, dataInizio: date }));
+    }
+  };
+
+  const handleSelectChange = (value: "programmato" | "inCorso" | "terminato") => {
     setFormData((prev) => ({ ...prev, stato: value }));
   };
 
@@ -144,11 +179,7 @@ function EditTorneoForm({ torneo }: { torneo: TorneoData }) {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const result = await EditTorneoData({
-        ...formData,
-        dataInizio: new Date(formData.dataInizio).toISOString(),
-        dataFine: new Date(formData.dataFine).toISOString(),
-      });
+      const result = await updateTorneo(formData);
       if (result.success) {
         toast.success("Dati modificati con successo");
       } else {
@@ -177,54 +208,79 @@ function EditTorneoForm({ torneo }: { torneo: TorneoData }) {
           />
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="descrizione" className="text-right">
-            Descrizione
-          </Label>
-          <Input
-            id="descrizione"
-            name="descrizione"
-            value={formData.descrizione}
-            onChange={handleInputChange}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="dataInizio" className="text-right">
             Data Inizio
           </Label>
-          <Input
-            id="dataInizio"
-            name="dataInizio"
-            type="date"
-            value={formData.dataInizio}
-            onChange={handleInputChange}
-            className="col-span-3"
-          />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-[240px] pl-3 text-left font-normal",
+                  !formData.dataInizio && "text-muted-foreground",
+                )}
+              >
+                {formData.dataInizio ? (
+                  format(formData.dataInizio, "PPP")
+                ) : (
+                  <span>Seleziona una data</span>
+                )}
+                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={formData.dataInizio}
+                onSelect={handleDateChange}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="dataFine" className="text-right">
             Data Fine
           </Label>
-          <Input
-            id="dataFine"
-            name="dataFine"
-            type="date"
-            value={formData.dataFine}
-            onChange={handleInputChange}
-            className="col-span-3"
-          />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-[240px] pl-3 text-left font-normal",
+                  !formData.dataFine && "text-muted-foreground",
+                )}
+              >
+                {formData.dataFine ? (
+                  format(formData.dataFine, "PPP")
+                ) : (
+                  <span>Seleziona una data</span>
+                )}
+                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={formData.dataFine}
+                onSelect={handleDateChange}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="stato" className="text-right">
             Stato
           </Label>
-          <Select onValueChange={handleStateChange} value={formData.stato}>
-            <SelectTrigger className="col-span-3">
-              <SelectValue placeholder="Seleziona lo stato" />
+          <Select
+            onValueChange={handleSelectChange}
+            value={formData.stato}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Stato" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="programmato">Programmato</SelectItem>
-              <SelectItem value="inCorso">In corso</SelectItem>
+              <SelectItem value="inCorso">In Corso</SelectItem>
               <SelectItem value="terminato">Terminato</SelectItem>
             </SelectContent>
           </Select>
@@ -245,5 +301,3 @@ function EditTorneoForm({ torneo }: { torneo: TorneoData }) {
     </form>
   );
 }
-
-export { EditTorneoForm };

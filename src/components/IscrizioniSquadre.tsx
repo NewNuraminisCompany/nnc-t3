@@ -155,14 +155,13 @@ export default function IscrizioniSquadre() {
         <Form {...teamForm}>
           <form
             onSubmit={teamForm.handleSubmit(onTeamSubmit)}
-            className="space-y-8"
+            className="space-y-6"
           >
             <FormField
               control={teamForm.control}
               name="tournamentId"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Seleziona Torneo</FormLabel>
+                <FormItem className="flex flex-col pt-4">
                   <FormControl>
                     <ComboBoxIscrizioni
                       value={field.value}

@@ -1,5 +1,8 @@
+'use client'
+
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 import {
   CalendarFold,
   Home,
@@ -9,8 +12,34 @@ import {
   UserRoundPlus,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const navItems = [
+  {
+    href: "/dashboard",
+    icon: Home,
+    label: "Home",
+  },
+  {
+    href: "/dashboard/eventi",
+    icon: CalendarFold,
+    label: "Eventi",
+  },
+  {
+    href: "/dashboard/iscrizioni",
+    icon: UserRoundPlus,
+    label: "Iscrizioni",
+  },
+  {
+    href: "/dashboard/risultati",
+    icon: Trophy,
+    label: "Risultati",
+  },
+];
+
 
 const TopBar = () => {
+  const pathname = usePathname();
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 justify-between">
       <Sheet>
@@ -22,34 +51,21 @@ const TopBar = () => {
         </SheetTrigger>
         <SheetContent side="left" className="sm:max-w-xs">
           <nav className="grid gap-6 pt-10 text-lg font-medium">
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-            >
-              <Home className="h-5 w-5" />
-              Home
-            </Link>
-            <Link
-              href="/dashboard/eventi"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-            >
-              <CalendarFold className="h-5 w-5" />
-              Eventi
-            </Link>
-            <Link
-              href="/dashboard/iscrizioni"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-            >
-              <UserRoundPlus className="h-5 w-5" />
-              Iscrizioni
-            </Link>
-            <Link
-              href="/dashboard/risultati"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-            >
-              <Trophy className="h-5 w-5" />
-              Risultati
-            </Link>
+            {navItems.map((item, index) => (
+              <Link
+                key={index}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                  pathname === item.href
+                    ? "font-semibold text-foreground"
+                    : "text-muted-foreground",
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                <span>{item.label}</span>
+              </Link>
+            ))}
           </nav>
         </SheetContent>
       </Sheet>
