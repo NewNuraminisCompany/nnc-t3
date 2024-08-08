@@ -165,7 +165,7 @@ function EditPartitaForm({ partita }: { partita: PartitaData }) {
             id="dataOra"
             name="dataOra"
             type="date"
-            value={formData.dataOra}
+            value={formData.dataOra.toDateString()}
             onChange={handleInputChange}
             className="col-span-3"
           />
