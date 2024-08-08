@@ -236,6 +236,7 @@ export async function fetchTorneo() {
     );
   }
 }
+
 export async function deleteTorneo(Torneo: TorneoData) {
   try {
     await db.delete(tornei).where(eq(tornei.idTorneo, Torneo.idTorneo));
@@ -296,6 +297,34 @@ export async function submitPartita({
   }
 }
 
+export async function fetchPartite() {
+  try {
+    console.log("Attempting to fetch data from partite table...");
+    const result = await db.select().from(partite);
+
+    console.log(`Fetched ${result.length} records from tornei table.`);
+
+    if (result.length === 0) {
+      console.log("No records found in the partite table.");
+      return [];
+    }
+
+    return result.map((partite) => ({
+      idPartita: partite.idPartita,
+      idSquadra1: partite.idSquadra1,
+      idSquadra2: partite.idSquadra2,
+      risultatoSquadra1: partite.risultatoSquadra1,
+      risultatoSquadra2: partite.risultatoSquadra2,
+      dataOra: new Date(partite.dataOra),
+      girone: partite.girone,
+    }));
+  } catch (error) {
+    console.error("Error fetching partite:", error);
+    throw new Error(
+      `Failed to fetch partite: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
 
 export async function updatePartita(partita: PartitaData) {
   try {

@@ -2,20 +2,13 @@
 
 import { deletePartita, updatePartita } from "@/components/actions";
 import { Button } from "@/components/ui/button";
-import { ColumnDef } from "@tanstack/react-table";
 import {
-  ArrowUpDown,
-  Edit,
-  Loader2,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-} from "lucide-react";
-import Link from "next/link";
-import { toast } from "sonner";
-import type { PartitaData } from "@/types/db-types";
-import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+  Credenza,
+  CredenzaContent,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaTrigger,
+} from "@/components/ui/credenza";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -25,13 +18,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { PartitaData } from "@/types/db-types";
+import { ColumnDef } from "@tanstack/react-table";
 import {
-  Credenza,
-  CredenzaContent,
-  CredenzaHeader,
-  CredenzaTitle,
-  CredenzaTrigger,
-} from "@/components/ui/credenza";
+  Edit,
+  Loader2,
+  Trash2
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import { toast } from "sonner";
 
 const ActionCell = ({ partita }: { partita: PartitaData }) => {
   const router = useRouter();
@@ -98,7 +94,7 @@ export const columns: ColumnDef<PartitaData>[] = [
   },
 ];
 
-function EditPartitaForm({ partita }: { partita: updatePartita }) {
+function EditPartitaForm({ partita }: { partita: PartitaData }) {
   const [formData, setFormData] = useState({
     ...partita,
     dataInizio: new Date(partita.dataOra).toISOString().split("T")[0],
@@ -120,7 +116,7 @@ function EditPartitaForm({ partita }: { partita: updatePartita }) {
     try {
       const result = await updatePartita({
         ...formData,
-        dataInizio: new Date(formData.dataOra).toISOString(),
+        dataOra: new Date(formData.dataOra),
       });
       if (result.success) {
         toast.success("Dati modificati con successo");
@@ -178,7 +174,7 @@ function EditPartitaForm({ partita }: { partita: updatePartita }) {
           <Label htmlFor="stato" className="text-right">
             Girone
           </Label>
-          <Select onValueChange={handleStateChange} value={formData.stato}>
+          <Select onValueChange={handleStateChange} value={formData.girone}>
             <SelectTrigger className="col-span-3">
               <SelectValue placeholder="Seleziona lo stato" />
             </SelectTrigger>
@@ -208,3 +204,4 @@ function EditPartitaForm({ partita }: { partita: updatePartita }) {
 }
 
 export { EditPartitaForm };
+

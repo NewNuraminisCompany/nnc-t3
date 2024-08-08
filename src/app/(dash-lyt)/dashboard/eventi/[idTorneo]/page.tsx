@@ -1,12 +1,12 @@
 'use server'
 
-import { fetchTorneo } from "@/components/actions";
+import { fetchPartite } from "@/components/actions";
 import { AddPartita } from "@/components/AddPartita";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
 const MostraPartite = async () => {
-  const data = await fetchTorneo();
+  const data = await fetchPartite();
   return (
     <div className="container mx-auto w-full pt-10">
       <div className="mb-6 flex items-center justify-between">
