@@ -76,12 +76,12 @@ export const columns: ColumnDef<PartitaData>[] = [
   {
     accessorKey: "squadra1",
     header: "Casa",
-    cell: ({ row }) => new Date(row.original.idSquadra1).toLocaleDateString(),
+    cell: ({ row }) => (row.original.idSquadra1),
   },
   {
     accessorKey: "squadra2",
     header: "Trasferta",
-    cell: ({ row }) => new Date(row.original.idSquadra2).toLocaleDateString(),
+    cell: ({ row }) => (row.original.idSquadra2),
   },
   {
     accessorKey: "dataOra",
