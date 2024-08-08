@@ -21,6 +21,7 @@ const navItems = [
   },
 ];
 
+
 const NavBar = async () => {
   const pathname = usePathname();
   return (
