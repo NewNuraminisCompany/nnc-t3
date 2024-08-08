@@ -317,8 +317,8 @@ export async function fetchPartite() {
         result3.idSquadra1 = nomeSqd1[0].nome;
       }
       const nomeSqd2 = await db.select({nome : squadre.nome}).from(squadre).where(eq(squadre.idSquadra,result3.idSquadra2));
-      if(nomeSqd1[0]){
-        result3.idSquadra2 = nomeSqd1[0].nome;
+      if(nomeSqd2[0]){
+        result3.idSquadra2 = nomeSqd2[0].nome;
       }
     }
     
