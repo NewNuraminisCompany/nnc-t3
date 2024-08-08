@@ -4,6 +4,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { getServerSession } from "next-auth";
 
+
 const NavBar = async () => {
   const session = await getServerSession();
   return (
