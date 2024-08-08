@@ -285,7 +285,7 @@ idSquadra2: string,
 risultatoSquadra1: number,
 risultatoSquadra2: number,
 dataOra: Date,
-girone: string
+girone:  'gironeA' | 'gironeB' | 'gironeSemi' | 'gironeFinali';
 }
 ) {
   try {
@@ -309,6 +309,19 @@ export async function fetchPartite() {
   try {
     console.log("Attempting to fetch data from partite table...");
     const result = await db.select().from(partite);
+
+
+    for (const result3 of result) {
+      const nomeSqd1 = await db.select({nome : squadre.nome}).from(squadre).where(eq(squadre.idSquadra,result3.idSquadra1));
+      if(nomeSqd1[0]){
+        result3.idSquadra1 = nomeSqd1[0].nome;
+      }
+      const nomeSqd2 = await db.select({nome : squadre.nome}).from(squadre).where(eq(squadre.idSquadra,result3.idSquadra2));
+      if(nomeSqd2[0]){
+        result3.idSquadra2 = nomeSqd2[0].nome;
+      }
+    }
+    
 
     console.log(`Fetched ${result.length} records from tornei table.`);
 
