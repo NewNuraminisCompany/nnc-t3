@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
-import { giocatori, squadre, tornei } from "@/server/db/schema"; // Import the schema
-import type { EditPlayerData, EditTeamData, EditTorneoData, PlayerData, TeamData, TorneoData } from "@/types/db-types";
+import { giocatori, partite, squadre, tornei } from "@/server/db/schema"; // Import the schema
+import type { EditPlayerData, EditTeamData, EditTorneoData, PlayerData, TeamData, TorneoData, PartitaData } from "@/types/db-types";
 export async function getTornei() {
   const result = await db.select().from(tornei);
   return result;
@@ -268,5 +268,65 @@ export async function EditTorneoData(torneo: TorneoData) {
   } catch (error) {
     console.error("Error in EditTorneoData:", error);
     return { success: false, error: "Failed to update torneo" };
+  }
+}
+
+export async function submitPartita({
+  idSquadra1,
+  idSquadra2,
+  risultatoSquadra1,
+  risultatoSquadra2,
+  dataOra,
+  girone,
+}: PartitaData) {
+  try {
+    await db.insert(partite).values({
+      idPartita: createId(),
+      idSquadra1,
+      idSquadra2,
+      risultatoSquadra1,
+      risultatoSquadra2,
+      dataOra,
+      girone,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error in createPartita:", error);
+    return { success: false, error: "Failed to create match" };
+  }
+}
+
+
+export async function updatePartita(partita: PartitaData) {
+  try {
+    const result = await db
+      .update(partite)
+      .set({
+        idSquadra1: partita.idSquadra1,
+        idSquadra2: partita.idSquadra2,
+        dataOra: partita.dataOra,
+        girone: partita.girone,
+      })
+      .where(eq(partite.idPartita, partita.idPartita))
+      .returning();
+
+    if (result.length === 0) {
+      return { success: false, error: "Partita non trovata" };
+    }
+
+    return { success: true, updatedPartita: result[0] };
+  } catch (error) {
+    console.error("Error in updatePartita:", error);
+    return { success: false, error: "Failed to update partita" };
+  }
+}
+
+export async function deletePartita(partita: PartitaData) {
+  try {
+    await db.delete(partite).where(eq(partite.idPartita, partita.idPartita));
+    return { success: true };
+  } catch (error) {
+    console.error("Error in deletePartita:", error);
+    return { success: false, error: "Failed to delete partita" };
   }
 }

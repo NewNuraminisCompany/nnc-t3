@@ -171,7 +171,7 @@ export const partite = createTable("partite", {
   risultatoSquadra1: integer("risultato_squadra1").notNull(),
   risultatoSquadra2: integer("risultato_squadra2").notNull(),
   dataOra: timestamp("data_ora", { withTimezone: true }).notNull(),
-  giorne: varchar("giorne", { enum: ["giorneA", "gironeB", "gironeSemi", "gironeFinali",] }).notNull(),
+  girone: varchar("girone", { enum: ["gironeA", "gironeB", "gironeSemi", "gironeFinali",] }).notNull(),
 });
 
 

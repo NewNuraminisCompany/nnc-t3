@@ -47,3 +47,14 @@ export type EditTorneoData = {
   dataFine: Date;
   stato: "programmato" | "inCorso" | "terminato";
 }
+
+export type PartitaData = {
+  idPartita: string;
+  idSquadra1: string;
+  idSquadra2: string;
+  risultatoSquadra1: number;
+  risultatoSquadra2: number;
+  dataOra: Date;
+  girone: "gironeA" | "gironeB" | "gironeSemi" | "gironeFinali";
+};
+

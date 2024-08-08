@@ -1,0 +1,1 @@
+ALTER TABLE "nnc-sito-t3_partite" RENAME COLUMN "giorne" TO "girone";

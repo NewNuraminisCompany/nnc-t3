@@ -1,27 +1,21 @@
+'use server'
 
-import React from "react";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card";
-import { getTornei } from "@/components/actions";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { Dice1 } from "lucide-react";
+import { fetchTorneo } from "@/components/actions";
+import { AddPartita } from "@/components/AddPartita";
+import { columns } from "./columns";
+import { DataTable } from "./data-table";
 
-
-const MostraTorneo = async ({ params }: { params: { idTorneo: string } }) => {
-  if (!params.idTorneo) {
-    return <div>ID Torneo non valido</div>;
-  }
-  const turnaments = await getTornei();
-  return(
-    <div>ciao</div>
-  )
-
+const MostraPartite = async () => {
+  const data = await fetchTorneo();
+  return (
+    <div className="container mx-auto w-full pt-10">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-4xl font-bold tracking-tight">Partite</h1>
+        <AddPartita />
+      </div>
+      <DataTable columns={columns} data={data} />
+    </div>
+  );
 };
 
-export default MostraTorneo;
+export default MostraPartite
