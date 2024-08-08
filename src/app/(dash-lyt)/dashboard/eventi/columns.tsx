@@ -165,10 +165,20 @@ function EditTorneoForm({ torneo }: { torneo: TorneoData }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleDateChange = (date: Date | undefined) => {
+  const handleDateInizioChange = (date: Date | undefined) => {
     if (date) {
-      setFormData((prev) => ({ ...prev, dataInizio: date }));
+        const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+        setFormData((prev) => ({ ...prev, dataInizio: localDate }));
     }
+    
+};
+
+  const handleDateFineChange = (date: Date | undefined) => {
+    if (date) {
+      const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+      setFormData((prev) => ({ ...prev, dataFine: localDate }));
+    }
+
   };
 
   const handleSelectChange = (value: "programmato" | "inCorso" | "terminato") => {
@@ -232,7 +242,7 @@ function EditTorneoForm({ torneo }: { torneo: TorneoData }) {
               <Calendar
                 mode="single"
                 selected={formData.dataInizio}
-                onSelect={handleDateChange}
+                onSelect={handleDateInizioChange}
               />
             </PopoverContent>
           </Popover>
@@ -262,7 +272,7 @@ function EditTorneoForm({ torneo }: { torneo: TorneoData }) {
               <Calendar
                 mode="single"
                 selected={formData.dataFine}
-                onSelect={handleDateChange}
+                onSelect={handleDateFineChange}
               />
             </PopoverContent>
           </Popover>
