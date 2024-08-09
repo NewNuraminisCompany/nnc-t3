@@ -98,7 +98,7 @@ export const AddPartita: React.FC<AddPartitaProps> = ({ nomi_squadre }) => {
     <Credenza>
       <CredenzaTrigger asChild>
         <Button>
-          Aggiungi Partita <Plus className="ml-2 h-4 w-4" />
+          Aggiungi <Plus className="ml-2 h-4 w-4" />
         </Button>
       </CredenzaTrigger>
       <CredenzaContent>

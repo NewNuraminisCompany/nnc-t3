@@ -2,6 +2,7 @@
 
 import { deletePartita, updatePartita } from "@/components/actions";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Credenza,
   CredenzaContent,
@@ -9,8 +10,10 @@ import {
   CredenzaTitle,
   CredenzaTrigger,
 } from "@/components/ui/credenza";
+import { DatetimePickerV1 } from "@/components/ui/datetime-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -18,13 +21,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import type { PartitaData } from "@/types/db-types";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  Edit,
-  Loader2,
-  Trash2
-} from "lucide-react";
+import { table } from "console";
+import { format } from "date-fns/format";
+import { CalendarIcon, Edit, Loader2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -76,12 +78,12 @@ export const columns: ColumnDef<PartitaData>[] = [
   {
     accessorKey: "squadra1",
     header: "Casa",
-    cell: ({ row }) => (row.original.idSquadra1),
+    cell: ({ row }) => row.original.idSquadra1,
   },
   {
     accessorKey: "squadra2",
     header: "Trasferta",
-    cell: ({ row }) => (row.original.idSquadra2),
+    cell: ({ row }) => row.original.idSquadra2,
   },
   {
     accessorKey: "dataOra",
@@ -161,14 +163,30 @@ function EditPartitaForm({ partita }: { partita: PartitaData }) {
           <Label htmlFor="dataOra" className="text-right">
             Data e Ora
           </Label>
-          <Input
-            id="dataOra"
-            name="dataOra"
-            type="date"
-            value={formData.dataOra.toDateString()}
-            onChange={handleInputChange}
-            className="col-span-3"
-          />
+          <Popover>
+            <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-[240px] pl-3 text-left font-normal",
+                    !formData.dataOra && "text-muted-foreground",
+                  )}
+                >
+                  {formData.dataOra ? (
+                    format(formData.dataOra, "PPP")
+                  ) : (
+                    <span>Seleziona una data</span>
+                  )}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={formData.dataOra}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="stato" className="text-right">
@@ -204,4 +222,3 @@ function EditPartitaForm({ partita }: { partita: PartitaData }) {
 }
 
 export { EditPartitaForm };
-
