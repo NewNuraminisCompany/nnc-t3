@@ -182,7 +182,7 @@ export const avvenimenti = createTable(
     idAvvenimento: varchar("id_avvenimento")
     .primaryKey()
     .$defaultFn(() => createId()),
-    tipo: varchar("tipo").notNull(),
+    tipo: varchar("",{ enum: ["Goal", "Espulsione", "Ammonizione"] }),
     minuto: integer("minuto").notNull(),
   },
 );

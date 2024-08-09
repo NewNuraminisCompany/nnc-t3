@@ -52,7 +52,9 @@ const ActionCell = ({ torneo }: { torneo: TorneoData }) => {
   return (
     <div className="flex items-center space-x-2">
           <Button variant="ghost" size="sm">
+            <Link href={`/dashboard/risultati/${torneo.idTorneo}`}>
             <ChevronRight className="h-4 w-4" />
+            </Link>
           </Button>
     </div>
   );

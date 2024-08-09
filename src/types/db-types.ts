@@ -58,3 +58,11 @@ export type PartitaData = {
   girone: "gironeA" | "gironeB" | "gironeSemi" | "gironeFinali";
 };
 
+export type AvvenimentoData = {
+  idPartita: string,
+  idGiocatore: string,
+  idAvvenimento: string;
+  tipo: "Goal" | "Espulsione" | "Ammonizione";
+  minuto: number;
+}
+
