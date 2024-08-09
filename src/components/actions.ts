@@ -305,10 +305,23 @@ girone:  'gironeA' | 'gironeB' | 'gironeSemi' | 'gironeFinali';
   }
 }
 
-export async function fetchPartite() {
+export async function fetchPartite(idTorn : string) {
   try {
     console.log("Attempting to fetch data from partite table...");
-    const result = await db.select().from(partite);
+    console.log("id torneo: ",idTorn);
+    const result = await db
+    .select({
+      idPartita: partite.idPartita,
+      idSquadra1: partite.idSquadra1,
+      idSquadra2: partite.idSquadra2,
+      risultatoSquadra1: partite.risultatoSquadra1,
+      risultatoSquadra2: partite.risultatoSquadra2,
+      dataOra: partite.dataOra,
+      girone: partite.girone
+    } )
+    .from(partite)
+    .innerJoin(squadre, eq(partite.idSquadra1, squadre.idSquadra))
+    .where(eq(squadre.idTorneo,idTorn));
 
 
     for (const result3 of result) {
@@ -382,12 +395,14 @@ export async function deletePartita(partita: PartitaData) {
 }
 
 
-export async function fetchNomiTutteSquadre() {
+export async function fetchNomiTutteSquadre(idTorn : string) {
   try {
     console.log("Fetching data from squadre, tornei, and gironi tables...");
+    console.log("id torneo: ", idTorn)
     const result = await db
-      .selectDistinctOn([squadre.nome], { nome:squadre.nome, idSquadra:squadre.idSquadra })
+      .select({ nome:squadre.nome, idSquadra:squadre.idSquadra })
       .from(squadre)
+      .where(eq(squadre.idTorneo,idTorn));
     console.log(`Fetched ${result.length} records from squadre table.`);
 
     if (result.length === 0) {
