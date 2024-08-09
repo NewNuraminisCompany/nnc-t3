@@ -12,7 +12,7 @@ export type EditTeamData = {
   colore: string;
   cellulare: string;
   statoAccettazione: boolean;
-  idTorneo: string;
+  idTorneo: string | null;
 };
 
 export type PlayerData = {

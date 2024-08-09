@@ -36,7 +36,7 @@ export type Squadre = {
   colore: string
   cellulare: string
   statoAccettazione: boolean
-  idTorneo: string
+  idTorneo: string | null
   nomeTorneo: string
 }
 
@@ -161,7 +161,7 @@ function EditSquadraForm({ squadra }: { squadra: Squadre }) {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const result = await updateSquadra(formData);
+      const result = await updateSquadra(formData as EditTeamData);
       if (result.success) {
         toast.success("Dati modificati con successo");
       } else {
