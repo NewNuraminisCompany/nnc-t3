@@ -170,8 +170,7 @@ export const partite = createTable("partite", {
     .references(() => squadre.idSquadra, { onDelete: "cascade" }),
   risultatoSquadra1: integer("risultato_squadra1").notNull(),
   risultatoSquadra2: integer("risultato_squadra2").notNull(),
-  ora: time("ora").notNull(),
-  data: date("data").notNull(),
+  dataOra: timestamp("data_ora").notNull(),
   girone: varchar("girone", { enum: ["gironeA", "gironeB", "gironeSemi", "gironeFinali",] }).notNull(),
 });
 

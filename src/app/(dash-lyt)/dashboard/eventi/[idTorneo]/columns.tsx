@@ -1,8 +1,8 @@
 "use client";
 
-import { deletePartita, updatePartita } from "@/components/actions";
+import { deletePartita, fetchNomiTutteSquadre } from "@/components/actions";
+import { EditPartita } from "@/components/EditPartita";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Credenza,
   CredenzaContent,
@@ -10,28 +10,14 @@ import {
   CredenzaTitle,
   CredenzaTrigger,
 } from "@/components/ui/credenza";
-import { DatetimePickerV1 } from "@/components/ui/datetime-picker";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 import type { PartitaData } from "@/types/db-types";
 import { ColumnDef } from "@tanstack/react-table";
-import { table } from "console";
-import { format } from "date-fns/format";
-import { CalendarIcon, Edit, Loader2, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { Edit, Trash2 } from "lucide-react";
+import { useCallback } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-const ActionCell = ({ partita }: { partita: PartitaData }) => {
+const ActionCell = async ({ partita, idTorneo }: { partita: PartitaData, idTorneo: string }) => {
   const router = useRouter();
 
   const handleDelete = useCallback(
@@ -40,7 +26,6 @@ const ActionCell = ({ partita }: { partita: PartitaData }) => {
       const result = await deletePartita(partita);
       if (result.success) {
         toast.success("Partita eliminata con successo");
-        router.refresh();
       } else {
         toast.error("Non è stato possibile eliminare la partita");
       }
@@ -60,7 +45,10 @@ const ActionCell = ({ partita }: { partita: PartitaData }) => {
           <CredenzaHeader>
             <CredenzaTitle>Modifica Partita</CredenzaTitle>
           </CredenzaHeader>
-          <EditPartitaForm partita={partita} />
+          <EditPartita
+            nomi_squadre={await fetchNomiTutteSquadre(idTorneo)}
+            partita={partita}
+          />
         </CredenzaContent>
       </Credenza>
       <Button
@@ -74,7 +62,7 @@ const ActionCell = ({ partita }: { partita: PartitaData }) => {
   );
 };
 
-export const columns: ColumnDef<PartitaData>[] = [
+export const getColumns = (idTorneo: string): ColumnDef<PartitaData>[] => [
   {
     accessorKey: "squadra1",
     header: "Casa",
@@ -88,137 +76,10 @@ export const columns: ColumnDef<PartitaData>[] = [
   {
     accessorKey: "dataOra",
     header: "Data e Ora",
-    cell: ({ row }) => new Date(row.original.dataOra).toLocaleDateString(),
+    cell: ({ row }) => new Date(row.original.dataOra).toLocaleString("it-IT"),
   },
   {
     id: "actions",
-    cell: ({ row }) => <ActionCell partita={row.original} />,
+    cell: ({ row }) => <ActionCell partita={row.original} idTorneo={idTorneo} />,
   },
 ];
-
-function EditPartitaForm({ partita }: { partita: PartitaData }) {
-  const [formData, setFormData] = useState({
-    ...partita,
-    dataInizio: new Date(partita.dataOra).toISOString().split("T")[0],
-  });
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleStateChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, stato: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      const result = await updatePartita({
-        ...formData,
-        dataOra: new Date(formData.dataOra),
-      });
-      if (result.success) {
-        toast.success("Dati modificati con successo");
-      } else {
-        toast.error("Non è stato possibile modificare i dati");
-      }
-    } catch (error) {
-      toast.error("C'è stato un errore durante la modifica dei dati");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-4 md:px-0">
-      <div className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="casa" className="text-right">
-            Casa
-          </Label>
-          <Input
-            id="casa"
-            name="casa"
-            value={formData.idSquadra1}
-            onChange={handleInputChange}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="trasferta" className="text-right">
-            Trasferta
-          </Label>
-          <Input
-            id="trasferta"
-            name="trasferta"
-            value={formData.idSquadra2}
-            onChange={handleInputChange}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="dataOra" className="text-right">
-            Data e Ora
-          </Label>
-          <Popover>
-            <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-[240px] pl-3 text-left font-normal",
-                    !formData.dataOra && "text-muted-foreground",
-                  )}
-                >
-                  {formData.dataOra ? (
-                    format(formData.dataOra, "PPP")
-                  ) : (
-                    <span>Seleziona una data</span>
-                  )}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={formData.dataOra}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="stato" className="text-right">
-            Girone
-          </Label>
-          <Select onValueChange={handleStateChange} value={formData.girone}>
-            <SelectTrigger className="col-span-3">
-              <SelectValue placeholder="Seleziona lo stato" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="gironeA">Girone A</SelectItem>
-              <SelectItem value="gironeB">Girone A</SelectItem>
-              <SelectItem value="gironeSemi">Semifinali</SelectItem>
-              <SelectItem value="gironeFinali">Finali</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex justify-end pb-4 md:pb-0">
-          <Button type="submit" disabled={isLoading} className="w-full">
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Salvataggio in corso...
-              </>
-            ) : (
-              "Salva"
-            )}
-          </Button>
-        </div>
-      </div>
-    </form>
-  );
-}
-
-export { EditPartitaForm };
