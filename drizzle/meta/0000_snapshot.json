@@ -1,5 +1,5 @@
 {
-  "id": "a0fc28be-60ed-46a8-a825-f95c6d548db9",
+  "id": "981cf6e2-059c-4d31-9c03-4f0afa3ba72f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -173,7 +173,7 @@
           "columnsTo": [
             "id_giocatore"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "nnc-sito-t3_gap_id_avvenimento_nnc-sito-t3_avvenimento_id_avvenimento_fk": {
@@ -186,7 +186,7 @@
           "columnsTo": [
             "id_avvenimento"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "nnc-sito-t3_gap_id_partita_nnc-sito-t3_partite_id_partita_fk": {
@@ -199,7 +199,7 @@
           "columnsTo": [
             "id_partita"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -309,14 +309,20 @@
           "primaryKey": false,
           "notNull": true
         },
-        "data_ora": {
-          "name": "data_ora",
-          "type": "timestamp with time zone",
+        "ora": {
+          "name": "ora",
+          "type": "time",
           "primaryKey": false,
           "notNull": true
         },
-        "giorne": {
-          "name": "giorne",
+        "data": {
+          "name": "data",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "girone": {
+          "name": "girone",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -334,7 +340,7 @@
           "columnsTo": [
             "id_squadra"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "nnc-sito-t3_partite_id_squadra2_nnc-sito-t3_squadre_id_squadra_fk": {
@@ -347,7 +353,7 @@
           "columnsTo": [
             "id_squadra"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -512,7 +518,7 @@
           "name": "id_torneo",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {},
@@ -527,7 +533,7 @@
           "columnsTo": [
             "id_torneo"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

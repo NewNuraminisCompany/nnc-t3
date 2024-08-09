@@ -41,8 +41,9 @@ CREATE TABLE IF NOT EXISTS "nnc-sito-t3_partite" (
 	"id_squadra2" varchar NOT NULL,
 	"risultato_squadra1" integer NOT NULL,
 	"risultato_squadra2" integer NOT NULL,
-	"data_ora" timestamp with time zone NOT NULL,
-	"giorne" varchar NOT NULL
+	"ora" time NOT NULL,
+	"data" date NOT NULL,
+	"girone" varchar NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "nnc-sito-t3_post" (
@@ -65,7 +66,7 @@ CREATE TABLE IF NOT EXISTS "nnc-sito-t3_squadre" (
 	"colore" varchar NOT NULL,
 	"cellulare" varchar(11) NOT NULL,
 	"statoAccettazione" boolean,
-	"id_torneo" varchar NOT NULL
+	"id_torneo" varchar
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "nnc-sito-t3_torneo" (
@@ -100,19 +101,19 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "nnc-sito-t3_gap" ADD CONSTRAINT "nnc-sito-t3_gap_id_giocatore_nnc-sito-t3_giocatori_id_giocatore_fk" FOREIGN KEY ("id_giocatore") REFERENCES "public"."nnc-sito-t3_giocatori"("id_giocatore") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "nnc-sito-t3_gap" ADD CONSTRAINT "nnc-sito-t3_gap_id_giocatore_nnc-sito-t3_giocatori_id_giocatore_fk" FOREIGN KEY ("id_giocatore") REFERENCES "public"."nnc-sito-t3_giocatori"("id_giocatore") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "nnc-sito-t3_gap" ADD CONSTRAINT "nnc-sito-t3_gap_id_avvenimento_nnc-sito-t3_avvenimento_id_avvenimento_fk" FOREIGN KEY ("id_avvenimento") REFERENCES "public"."nnc-sito-t3_avvenimento"("id_avvenimento") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "nnc-sito-t3_gap" ADD CONSTRAINT "nnc-sito-t3_gap_id_avvenimento_nnc-sito-t3_avvenimento_id_avvenimento_fk" FOREIGN KEY ("id_avvenimento") REFERENCES "public"."nnc-sito-t3_avvenimento"("id_avvenimento") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "nnc-sito-t3_gap" ADD CONSTRAINT "nnc-sito-t3_gap_id_partita_nnc-sito-t3_partite_id_partita_fk" FOREIGN KEY ("id_partita") REFERENCES "public"."nnc-sito-t3_partite"("id_partita") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "nnc-sito-t3_gap" ADD CONSTRAINT "nnc-sito-t3_gap_id_partita_nnc-sito-t3_partite_id_partita_fk" FOREIGN KEY ("id_partita") REFERENCES "public"."nnc-sito-t3_partite"("id_partita") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -124,13 +125,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "nnc-sito-t3_partite" ADD CONSTRAINT "nnc-sito-t3_partite_id_squadra1_nnc-sito-t3_squadre_id_squadra_fk" FOREIGN KEY ("id_squadra1") REFERENCES "public"."nnc-sito-t3_squadre"("id_squadra") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "nnc-sito-t3_partite" ADD CONSTRAINT "nnc-sito-t3_partite_id_squadra1_nnc-sito-t3_squadre_id_squadra_fk" FOREIGN KEY ("id_squadra1") REFERENCES "public"."nnc-sito-t3_squadre"("id_squadra") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "nnc-sito-t3_partite" ADD CONSTRAINT "nnc-sito-t3_partite_id_squadra2_nnc-sito-t3_squadre_id_squadra_fk" FOREIGN KEY ("id_squadra2") REFERENCES "public"."nnc-sito-t3_squadre"("id_squadra") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "nnc-sito-t3_partite" ADD CONSTRAINT "nnc-sito-t3_partite_id_squadra2_nnc-sito-t3_squadre_id_squadra_fk" FOREIGN KEY ("id_squadra2") REFERENCES "public"."nnc-sito-t3_squadre"("id_squadra") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -148,7 +149,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "nnc-sito-t3_squadre" ADD CONSTRAINT "nnc-sito-t3_squadre_id_torneo_nnc-sito-t3_torneo_id_torneo_fk" FOREIGN KEY ("id_torneo") REFERENCES "public"."nnc-sito-t3_torneo"("id_torneo") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "nnc-sito-t3_squadre" ADD CONSTRAINT "nnc-sito-t3_squadre_id_torneo_nnc-sito-t3_torneo_id_torneo_fk" FOREIGN KEY ("id_torneo") REFERENCES "public"."nnc-sito-t3_torneo"("id_torneo") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

@@ -10,6 +10,7 @@ import {
   varchar,
   date,
   boolean,
+  time,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 import { createId } from "@paralleldrive/cuid2";
@@ -163,13 +164,14 @@ export const partite = createTable("partite", {
     .$defaultFn(() => createId()),
   idSquadra1: varchar("id_squadra1")
     .notNull()
-    .references(() => squadre.idSquadra),
+    .references(() => squadre.idSquadra, { onDelete: "cascade" }),
   idSquadra2: varchar("id_squadra2")
     .notNull()
-    .references(() => squadre.idSquadra),
+    .references(() => squadre.idSquadra, { onDelete: "cascade" }),
   risultatoSquadra1: integer("risultato_squadra1").notNull(),
   risultatoSquadra2: integer("risultato_squadra2").notNull(),
-  dataOra: timestamp("data_ora", { withTimezone: true }).notNull(),
+  ora: time("ora").notNull(),
+  data: date("data").notNull(),
   girone: varchar("girone", { enum: ["gironeA", "gironeB", "gironeSemi", "gironeFinali",] }).notNull(),
 });
 
@@ -192,13 +194,13 @@ export const gap = createTable(
   {
     idGiocatore: varchar("id_giocatore")
       .notNull()
-      .references(() => giocatori.idGiocatore),
+      .references(() => giocatori.idGiocatore, { onDelete: "cascade" }),
     idAvvenimento: varchar("id_avvenimento")
       .notNull()
-      .references(() => avvenimenti.idAvvenimento),
+      .references(() => avvenimenti.idAvvenimento, { onDelete: "cascade" }),
     idPartita: varchar("id_partita")
       .notNull()
-      .references(() => partite.idPartita),
+      .references(() => partite.idPartita, { onDelete: "cascade" }),
   },
   (table) => ({
     compoundKey: primaryKey(table.idGiocatore, table.idAvvenimento, table.idPartita),
