@@ -1,7 +1,7 @@
 "use client";
 
-import { deletePartita, fetchNomiTutteSquadre } from "@/components/actions";
-import { EditPartita } from "@/components/EditPartita";
+import { deletePartita } from "@/components/actions";
+
 import { Button } from "@/components/ui/button";
 import {
   Credenza,
@@ -16,10 +16,12 @@ import { Edit, Trash2 } from "lucide-react";
 import { useCallback } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useTorneo } from "@/app/context";
+import EditPartita from "@/components/EditPartita";
 
 const ActionCell = async ({ partita }: { partita: PartitaData }) => {
   const router = useRouter();
-
+  const idTorneo = useTorneo();
   const handleDelete = useCallback(
     async (partita: PartitaData) => {
       console.log("Eliminazione torneo:", partita);
@@ -38,7 +40,7 @@ const ActionCell = async ({ partita }: { partita: PartitaData }) => {
       <Credenza>
         <CredenzaTrigger asChild>
           <Button variant="ghost" size="sm">
-            <Edit className="h-4 w-4" />
+            <Edit className="size-4" />
           </Button>
         </CredenzaTrigger>
         <CredenzaContent>

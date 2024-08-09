@@ -1,15 +1,11 @@
-'use client'
+"use client"
 
-import { fetchNomiTutteSquadre } from '@/components/actions';
-import {createContext, useContext } from 'react';
+import React, { createContext, useContext } from 'react';
 
-const Context = createContext({});
+const TorneoContext = createContext<string>("");
 
-export async function SquadreContextProvider(idTorn: string, {children} : {children: React.ReactNode} ) {
-    const squadre = await fetchNomiTutteSquadre(idTorn);
-    return <Context.Provider value={squadre}>{children}</Context.Provider>;
-}
+export const useTorneo = () => useContext(TorneoContext);
 
-export function useSquadreContext() {
-    return useContext(Context);
-}
+export const TorneoProvider = ({ idTorneo, children }: { idTorneo: string; children: React.ReactNode }) => {
+  return <TorneoContext.Provider value={idTorneo}>{children}</TorneoContext.Provider>;
+};

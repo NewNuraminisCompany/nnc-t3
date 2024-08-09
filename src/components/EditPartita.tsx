@@ -1,5 +1,5 @@
 import { PartitaData } from "@/types/db-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { fetchNomiTutteSquadre, updatePartita } from "./actions";
 
@@ -10,12 +10,12 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns/format";
@@ -23,11 +23,11 @@ import { CalendarIcon, Loader2 } from "lucide-react";
 import { TimePicker } from "./time-picker";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "./ui/select";
 
 const formSchema = z.object({
@@ -50,10 +50,10 @@ type EditPartitaProps = {
   partita: PartitaData;
 };
 
-const EditPartita: React.FC<EditPartitaProps> = async (
-  { idTorneo },
-  { partita },
-) => {
+export default function EditPartita({ idTorneo, partita }: EditPartitaProps) {
+  const [nomiSquadre, setNomiSquadre] = useState<Squadra[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -66,6 +66,14 @@ const EditPartita: React.FC<EditPartitaProps> = async (
       girone: partita.girone,
     },
   });
+
+  useEffect(() => {
+    async function fetchSquadre() {
+      const res = await fetchNomiTutteSquadre(idTorneo);
+      setNomiSquadre(res);
+    }
+    fetchSquadre();
+  }, [idTorneo]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -86,13 +94,10 @@ const EditPartita: React.FC<EditPartitaProps> = async (
     }
   }
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  const nomi_squadre = await fetchNomiTutteSquadre(idTorneo);
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <div className="grid grid-cols-2 gap-4">
         <FormField
           control={form.control}
           name="idSquadra1"
@@ -105,8 +110,8 @@ const EditPartita: React.FC<EditPartitaProps> = async (
                     <SelectValue placeholder="Seleziona squadra" />
                   </SelectTrigger>
                   <SelectContent>
-                    {nomi_squadre.map((squadra) => (
-                      <SelectItem key={squadra.nome} value={squadra.idSquadra}>
+                    {nomiSquadre.map((squadra: Squadra) => (
+                      <SelectItem key={squadra.idSquadra} value={squadra.idSquadra}>
                         {squadra.nome}
                       </SelectItem>
                     ))}
@@ -129,8 +134,8 @@ const EditPartita: React.FC<EditPartitaProps> = async (
                     <SelectValue placeholder="Seleziona squadra" />
                   </SelectTrigger>
                   <SelectContent>
-                    {nomi_squadre.map((squadra) => (
-                      <SelectItem key={squadra.nome} value={squadra.idSquadra}>
+                    {nomiSquadre.map((squadra: Squadra) => (
+                      <SelectItem key={squadra.idSquadra} value={squadra.idSquadra}>
                         {squadra.nome}
                       </SelectItem>
                     ))}
@@ -141,6 +146,7 @@ const EditPartita: React.FC<EditPartitaProps> = async (
             </FormItem>
           )}
         />
+        </div>
         <FormField
           control={form.control}
           name="dataOra"
@@ -154,7 +160,7 @@ const EditPartita: React.FC<EditPartitaProps> = async (
                       variant={"outline"}
                       className={cn(
                         "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground",
+                        !field.value && "text-muted-foreground"
                       )}
                     >
                       {field.value ? (
@@ -195,7 +201,7 @@ const EditPartita: React.FC<EditPartitaProps> = async (
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="gironeA">Girone A</SelectItem>
-                    <SelectItem value="gironeB">Girone A</SelectItem>
+                    <SelectItem value="gironeB">Girone B</SelectItem>
                     <SelectItem value="gironeSemi">Semifinali</SelectItem>
                     <SelectItem value="gironeFinali">Finali</SelectItem>
                   </SelectContent>
@@ -218,7 +224,4 @@ const EditPartita: React.FC<EditPartitaProps> = async (
       </form>
     </Form>
   );
-};
-
-export { EditPartita };
-
+}
