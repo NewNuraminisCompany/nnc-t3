@@ -1,6 +1,6 @@
 import { fetchPartite, fetchNomiTutteSquadre } from "@/components/actions";
 import { AddPartita } from "@/components/AddPartita";
-import { getColumns } from "./columns"; // Ensure the import path and name are correct
+import { columns } from "./columns"; // Ensure the import path and name are correct
 import { DataTable } from "./data-table";
 
 // Define the interface for params
@@ -19,7 +19,7 @@ const MostraPartite = async ({ params }: { params: Params }) => {
         <h1 className="text-4xl font-bold tracking-tight">Partite</h1>
         <AddPartita nomi_squadre={squadre} />
       </div>
-      <DataTable columns={getColumns(idTorneo)} data={data} />
+      <DataTable columns={columns} data={data} />
     </div>
   );
 };

@@ -17,17 +17,17 @@ import { useCallback } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-const ActionCell = async ({ partita, idTorneo }: { partita: PartitaData, idTorneo: string }) => {
+const ActionCell = async ({ partita }: { partita: PartitaData }) => {
   const router = useRouter();
 
   const handleDelete = useCallback(
     async (partita: PartitaData) => {
-      console.log("Eliminazione partita:", partita);
+      console.log("Eliminazione torneo:", partita);
       const result = await deletePartita(partita);
       if (result.success) {
-        toast.success("Partita eliminata con successo");
+        toast.success("Torneo eliminato con successo");
       } else {
-        toast.error("Non è stato possibile eliminare la partita");
+        toast.error("Non è stato possibile eliminare il torneo");
       }
     },
     [router],
@@ -46,7 +46,7 @@ const ActionCell = async ({ partita, idTorneo }: { partita: PartitaData, idTorne
             <CredenzaTitle>Modifica Partita</CredenzaTitle>
           </CredenzaHeader>
           <EditPartita
-            nomi_squadre={await fetchNomiTutteSquadre(idTorneo)}
+            idTorneo={idTorneo}
             partita={partita}
           />
         </CredenzaContent>
@@ -62,7 +62,7 @@ const ActionCell = async ({ partita, idTorneo }: { partita: PartitaData, idTorne
   );
 };
 
-export const getColumns = (idTorneo: string): ColumnDef<PartitaData>[] => [
+export const columns: ColumnDef<PartitaData>[] = [
   {
     accessorKey: "squadra1",
     header: "Casa",
@@ -80,6 +80,6 @@ export const getColumns = (idTorneo: string): ColumnDef<PartitaData>[] => [
   },
   {
     id: "actions",
-    cell: ({ row }) => <ActionCell partita={row.original} idTorneo={idTorneo} />,
+    cell: ({ row }) => <ActionCell partita={row.original} />,
   },
 ];

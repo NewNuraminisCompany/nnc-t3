@@ -1,7 +1,7 @@
 import { PartitaData } from "@/types/db-types";
 import { useState } from "react";
 import { toast } from "sonner";
-import { updatePartita } from "./actions";
+import { fetchNomiTutteSquadre, updatePartita } from "./actions";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -46,12 +46,12 @@ type Squadra = {
 };
 
 type EditPartitaProps = {
-  nomi_squadre: Squadra[];
+  idTorneo: string;
   partita: PartitaData;
 };
 
-const EditPartita: React.FC<EditPartitaProps> = (
-  { nomi_squadre },
+const EditPartita: React.FC<EditPartitaProps> = async (
+  { idTorneo },
   { partita },
 ) => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -87,6 +87,8 @@ const EditPartita: React.FC<EditPartitaProps> = (
   }
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const nomi_squadre = await fetchNomiTutteSquadre(idTorneo);
 
   return (
     <Form {...form}>
