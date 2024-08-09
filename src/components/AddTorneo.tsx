@@ -70,10 +70,10 @@ export function AddTorneo() {
         form.reset();
         setImageUrl("");
       } else {
-        toast.error("Errore durante l&apos;aggiunta del torneo: " + error);
+        toast.error(`Errore durante l'aggiunta del torneo: ${String(error)}`);
       }
     } catch (error) {
-      toast.error("Errore: " + error);
+      toast.error(`Errore: ${String(error)}`);
     } finally {
       setIsLoading(false);
     }
@@ -209,15 +209,20 @@ export function AddTorneo() {
                       <UploadButton
                         endpoint="imageUploader"
                         onClientUploadComplete={(res) => {
-                          if (res && res[0]) {
+                          if (res?.[0]?.url) {
                             setImageUrl(res[0].url);
                             console.log("Image uploaded:", res[0].url);
                             toast.success("Immagine caricata con successo");
                           }
                         }}
                         onUploadError={(error: Error) => {
-                          console.log("Errore durante l&apos;upload dell&apos;immagine:", error);
-                          toast.error("Errore durante l&apos;upload dell&apos;immagine: " + error);
+                          console.log(
+                            `Errore durante l'upload dell'immagine:`,
+                            error,
+                          );
+                          toast.error(
+                            `Errore durante l'upload dell'immagine: ${error.message}`,
+                          );
                         }}
                       />
                     </FormControl>

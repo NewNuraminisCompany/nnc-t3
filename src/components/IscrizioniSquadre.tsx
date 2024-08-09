@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -21,15 +23,13 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, Palette, Phone, Trash2 } from "lucide-react";
-import { redirect } from "next/navigation";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import { submitTeamAndPlayers } from "./actions";
 import ComboBoxIscrizioni from "./ComboBoxIscrizioni";
 import { Card } from "./ui/card";
-import { useSearchParams } from "next/navigation";
 
 const codiceFiscaleRegex = /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/;
 
@@ -60,8 +60,8 @@ type PlayerFormData = z.infer<typeof playerFormSchema>;
 type Player = PlayerFormData;
 
 export default function IscrizioniSquadre() {
-  const searchParams = useSearchParams(); // TODO: aggiungi parametri per combobox
-
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(0);
   const [players, setPlayers] = useState<Player[]>([]);
   const [teamInfo, setTeamInfo] = useState<TeamFormData | null>(null);
@@ -73,7 +73,7 @@ export default function IscrizioniSquadre() {
       teamName: "",
       teamColor: "",
       myNumber: "",
-      tournamentId: "",
+      tournamentId: searchParams.get("torneoId") ?? "",
     },
     mode: "onBlur",
   });
@@ -137,7 +137,7 @@ export default function IscrizioniSquadre() {
       if (result.success) {
         console.log("Data submitted successfully");
         toast.success("Iscrizione effettuata con successo");
-        redirect("/");
+        router.push("/");
       } else {
         throw new Error(result.error);
       }
@@ -309,7 +309,7 @@ export default function IscrizioniSquadre() {
                           variant={"outline"}
                           className={cn(
                             "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
+                            !field.value && "text-muted-foreground"
                           )}
                         >
                           {field.value ? (

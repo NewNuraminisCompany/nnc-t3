@@ -56,7 +56,7 @@ export async function Bento() {
         background: (
           <Image
             src={
-              torneo.imagePath ||
+              torneo.imagePath ??
               "https://utfs.io/f/f96b4688-b46e-4c39-bc96-3c463af62aae-1ta2k.jpg"
             }
             className="absolute -right-20 -top-28 scale-[55%] rounded-lg opacity-80 transition-all duration-300 group-hover:z-20 group-hover:scale-[60%]"

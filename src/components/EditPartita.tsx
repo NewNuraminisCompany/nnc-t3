@@ -68,11 +68,16 @@ export default function EditPartita({ idTorneo, partita }: EditPartitaProps) {
   });
 
   useEffect(() => {
+    void fetchSquadre();
+  
     async function fetchSquadre() {
-      const res = await fetchNomiTutteSquadre(idTorneo);
-      setNomiSquadre(res);
+      try {
+        const res = await fetchNomiTutteSquadre(idTorneo);
+        setNomiSquadre(res);
+      } catch (error) {
+        console.error("Failed to fetch squadre:", error);
+      }
     }
-    fetchSquadre();
   }, [idTorneo]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
