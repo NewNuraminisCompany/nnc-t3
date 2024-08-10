@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -26,6 +25,7 @@ import { fetchPlayers2, fetchPartite2, insertAvvenimento } from "./actions";
 import { Input } from "./ui/input";
 import { toast } from "sonner";
 
+// Define the form schema
 const formSchema = z.object({
   id_avvenimento: z.string().min(1, "Seleziona un avvenimento"),
   tipo: z.enum(["Goal", "Espulsione", "Ammonizione"]),
@@ -34,7 +34,8 @@ const formSchema = z.object({
   idPartita: z.string().min(1),
 });
 
-type Giocator = {
+// Define the type for a Giocatore
+type Giocatore = {
   nome: string;
   cognome: string;
   idSquadra: string;
@@ -47,14 +48,11 @@ interface AddAvvenimentoProps {
 }
 
 export default function AddAvvenimento({ idTorneo, idPartit }: AddAvvenimentoProps) {
-  const [Giocatori, setGiocatori] = useState<Giocator[]>([]);
-  const [Partite, setPartite] = useState<
-    { idPartita: string; label: string }[]
-  >([]);
+  const [Giocatori, setGiocatori] = useState<Giocatore[]>([]);
+  const [, setPartite] = useState<{ idPartita: string; label: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
-    // resolver: zodResolver(formSchema),
     defaultValues: {
       id_avvenimento: "",
       tipo: "Goal",
@@ -66,33 +64,36 @@ export default function AddAvvenimento({ idTorneo, idPartit }: AddAvvenimentoPro
 
   useEffect(() => {
     async function fetchData() {
-      const [players, matches] = await Promise.all([
-        fetchPlayers2(idTorneo),
-        fetchPartite2(idTorneo),
-      ]);
+      try {
+        const [players, matches] = await Promise.all([
+          fetchPlayers2(idTorneo),
+          fetchPartite2(idTorneo),
+        ]);
 
-      setGiocatori(players);
+        setGiocatori(players);
 
-      if (matches) {
-        setPartite(
-          matches.map((match) => ({
-            idPartita: match.idPartita,
-            label: `${match.idSquadra1} vs ${match.idSquadra2}`,
-          })),
-        );
-      } else {
-        setPartite([]);
+        if (matches) {
+          setPartite(
+            matches.map((match) => ({
+              idPartita: match.idPartita,
+              label: `${match.idSquadra1} vs ${match.idSquadra2}`,
+            })),
+          );
+        } else {
+          setPartite([]);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast.error("Errore durante il caricamento dei dati");
       }
     }
 
-    fetchData();
+    fetchData().catch(error => console.error("Unhandled error in fetchData:", error));
   }, [idTorneo]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true); // Imposta isLoading a true prima di iniziare
-    console.log("i dati del form: ",values);
+    setIsLoading(true);
     try {
-      console.log("Form submitted with values:", values); // Log aggiuntivo per debug
       const result = await insertAvvenimento({
         idAvvenimento: values.id_avvenimento,
         idGiocatore: values.giocatore,
@@ -107,10 +108,10 @@ export default function AddAvvenimento({ idTorneo, idPartit }: AddAvvenimentoPro
         toast.error("Non è stato possibile modificare i dati");
       }
     } catch (error) {
-      console.error("Error during submission:", error); // Log l'errore nel caso si verifichi
+      console.error("Error during submission:", error);
       toast.error("C'è stato un errore durante la modifica dei dati");
     } finally {
-      setIsLoading(false); // Reimposta isLoading a false dopo la fine della chiamata
+      setIsLoading(false);
     }
   }
 

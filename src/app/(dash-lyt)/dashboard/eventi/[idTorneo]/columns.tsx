@@ -1,7 +1,6 @@
 "use client";
 
 import { deletePartita } from "@/components/actions";
-
 import { Button } from "@/components/ui/button";
 import {
   Credenza,
@@ -11,7 +10,7 @@ import {
   CredenzaTrigger,
 } from "@/components/ui/credenza";
 import type { PartitaData } from "@/types/db-types";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
 import { useCallback } from "react";
 import { toast } from "sonner";
@@ -19,20 +18,22 @@ import { useRouter } from "next/navigation";
 import { useTorneo } from "@/app/context";
 import EditPartita from "@/components/EditPartita";
 
-const ActionCell = async ({ partita }: { partita: PartitaData }) => {
+const ActionCell = ({ partita }: { partita: PartitaData }) => {
   const router = useRouter();
   const idTorneo = useTorneo();
+
   const handleDelete = useCallback(
     async (partita: PartitaData) => {
       console.log("Eliminazione torneo:", partita);
       const result = await deletePartita(partita);
       if (result.success) {
         toast.success("Torneo eliminato con successo");
+        router.refresh();  // Assuming you want to refresh the page after deletion
       } else {
         toast.error("Non è stato possibile eliminare il torneo");
       }
     },
-    [router],
+    [] // Removed `router` from the dependency array as it doesn't change
   );
 
   return (
@@ -47,10 +48,7 @@ const ActionCell = async ({ partita }: { partita: PartitaData }) => {
           <CredenzaHeader>
             <CredenzaTitle>Modifica Partita</CredenzaTitle>
           </CredenzaHeader>
-          <EditPartita
-            idTorneo={idTorneo}
-            partita={partita}
-          />
+          <EditPartita idTorneo={idTorneo} partita={partita} />
         </CredenzaContent>
       </Credenza>
       <Button

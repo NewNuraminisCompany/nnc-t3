@@ -1,65 +1,25 @@
 "use client";
-import { deleteTorneo, updateTorneo } from "@/components/actions";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Credenza,
-  CredenzaContent,
-  CredenzaHeader,
-  CredenzaTitle,
-  CredenzaTrigger,
-} from "@/components/ui/credenza";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { TorneoData } from "@/types/db-types";
-import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns/format";
-import {
-  ArrowUpDown,
-  CalendarIcon,
-  ChevronRight,
-  Edit,
-  Loader2,
-} from "lucide-react";
+import type { TorneoData } from "@/types/db-types";
+import type { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { useCallback, useState } from "react";
-import { toast } from "sonner";
+import React from "react";
 
+// ActionCell component
 const ActionCell = ({ torneo }: { torneo: TorneoData }) => {
-  const router = useRouter();
-
   return (
     <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="sm">
-            <Link href={`/dashboard/risultati/${torneo.idTorneo}`}>
-            <ChevronRight className="h-4 w-4" />
-            </Link>
-          </Button>
+      <Button variant="ghost" size="sm">
+        <Link href={`/dashboard/risultati/${torneo.idTorneo}`}>
+          <ChevronRight className="h-4 w-4" />
+        </Link>
+      </Button>
     </div>
   );
 };
 
+// Columns definition
 export const columns: ColumnDef<TorneoData>[] = [
   {
     accessorKey: "nome",

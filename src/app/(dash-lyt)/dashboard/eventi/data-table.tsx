@@ -2,13 +2,10 @@
 
 import * as React from "react";
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
-  ColumnFiltersState,
   getSortedRowModel,
   getFilteredRowModel,
-  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -27,6 +24,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react"; // Assuming you're using lucide-react for icons
+
+// Importing types with 'import type'
+import type { ColumnDef, ColumnFiltersState, SortingState } from "@tanstack/react-table";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
