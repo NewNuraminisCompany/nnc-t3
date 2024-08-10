@@ -31,8 +31,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { TorneoData } from "@/types/db-types";
-import { ColumnDef } from "@tanstack/react-table";
+import type { TorneoData } from "@/types/db-types";
+import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns/format";
 import {
   ArrowUpDown,
