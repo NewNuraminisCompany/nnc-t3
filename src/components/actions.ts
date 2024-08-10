@@ -3,13 +3,13 @@
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
 import { avvenimenti, gap, giocatori, partite, squadre, tornei } from "@/server/db/schema"; // Import the schema
 import type {
-    AvvenimentoData,
-    EditPlayerData,
-    EditTeamData,
-    PartitaData,
-    PlayerData,
-    TeamData,
-    TorneoData
+  AvvenimentoData,
+  EditPlayerData,
+  EditTeamData,
+  PartitaData,
+  PlayerData,
+  TeamData,
+  TorneoData
 } from "@/types/db-types";
 export async function getTornei() {
   const result = await db.select().from(tornei);
@@ -197,6 +197,24 @@ export async function submitTorneo({
     return { success: false, error: "Failed to submit tournament" };
   }
 }
+
+export async function getTorneoNameByID(idTorneo: string) {
+  try {
+    console.log("Fetching data from tornei table...");
+    const result = await db
+      .select({ nome: tornei.nome })
+      .from(tornei)
+      .where(eq(tornei.idTorneo, idTorneo));
+
+    return result;
+  } catch (error) {
+    console.error("Error fetching torneo:", error);
+    throw new Error(
+      `Failed to fetch torneo name: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
+
 
 export async function getSquadreLogo(idSquadra: string) {
   try {
@@ -403,9 +421,6 @@ export async function fetchPartite(idTorn: string) {
     }));
   } catch (error) {
     console.error("Error fetching partite:", error);
-    throw new Error(
-      `Failed to fetch partite: ${error instanceof Error ? error.message : String(error)}`,
-    );
   }
 }
 

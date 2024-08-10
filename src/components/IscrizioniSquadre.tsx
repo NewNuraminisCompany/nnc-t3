@@ -1,8 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -19,15 +16,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon, Palette, Phone, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { ArrowRight, CalendarIcon, Palette, Phone, Plus, Trash2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { submitTeamAndPlayers } from "./actions";
+import { submitTeamAndPlayers, getTorneoNameByID } from "./actions";
 import ComboBoxIscrizioni from "./ComboBoxIscrizioni";
 import { Card } from "./ui/card";
 
@@ -59,13 +58,16 @@ type PlayerFormData = z.infer<typeof playerFormSchema>;
 
 type Player = PlayerFormData;
 
-export default function IscrizioniSquadre() {
+export default async function IscrizioniSquadre() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [step, setStep] = useState(0);
   const [players, setPlayers] = useState<Player[]>([]);
   const [teamInfo, setTeamInfo] = useState<TeamFormData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [torneoName, setTorneoName] = useState<string>("");
+
+  const torneoIdFromUrl = searchParams.get("torneoId");
 
   const teamForm = useForm<TeamFormData>({
     resolver: zodResolver(teamFormSchema),
@@ -78,6 +80,13 @@ export default function IscrizioniSquadre() {
     mode: "onBlur",
   });
 
+  useEffect(() => {
+      if (torneoIdFromUrl) {
+        teamForm.setValue("tournamentId", torneoIdFromUrl);
+      }
+
+    }, [torneoIdFromUrl, teamForm]);
+
   const playerForm = useForm<PlayerFormData>({
     resolver: zodResolver(playerFormSchema),
     defaultValues: {
@@ -89,10 +98,18 @@ export default function IscrizioniSquadre() {
     mode: "onBlur",
   });
 
-  const onTeamSubmit: SubmitHandler<TeamFormData> = (values) => {
+  const onTeamSubmit: SubmitHandler<TeamFormData> = async (values) => {
     setTeamInfo(values);
+    // Fetch the tournament name when moving to step 1
+    try {
+      const tournamentData = await getTorneoNameByID(values.tournamentId);
+    } catch (error) {
+      console.error("Error fetching tournament name:", error);
+      setTorneoName("Nome torneo non disponibile");
+    }
     setStep(1);
   };
+
 
   const onPlayerSubmit: SubmitHandler<PlayerFormData> = (values) => {
     setPlayers([...players, values]);
@@ -149,11 +166,47 @@ export default function IscrizioniSquadre() {
     }
   };
 
+  const renderNavigationButtons = () => (
+    <div className="mt-6 flex justify-between">
+      {step > 0 && (
+        <Button type="button" onClick={() => setStep((prev) => prev - 1)}>
+          Indietro
+        </Button>
+      )}
+      {step === 0 && (
+        <div className="w-full flex justify-end">
+          <Button type="submit" form="teamForm">
+            Avanti <ArrowRight className="size-4" />
+          </Button>
+        </div>
+      )}
+      {step === 1 && (
+        <Button
+          type="button"
+          onClick={goToReview}
+          disabled={!canProceedToReview}
+        >
+          Rivedi
+        </Button>
+      )}
+      {step === 2 && (
+        <Button
+          type="button"
+          onClick={handleFinalSubmit}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Invio in corso..." : "Invia"}
+        </Button>
+      )}
+    </div>
+  );
+
   return (
     <div>
       {step === 0 && (
         <Form {...teamForm}>
           <form
+            id="teamForm"
             onSubmit={teamForm.handleSubmit(onTeamSubmit)}
             className="space-y-6"
           >
@@ -165,7 +218,11 @@ export default function IscrizioniSquadre() {
                   <FormControl>
                     <ComboBoxIscrizioni
                       value={field.value}
-                      onChange={field.onChange}
+                      onChange={(value) => {
+                        field.onChange(value);
+                        // Update the URL when the selection changes
+                        router.push(`/iscrizioni?torneoId=${value}`, undefined);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -215,7 +272,6 @@ export default function IscrizioniSquadre() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Avanti</Button>
           </form>
         </Form>
       )}
@@ -223,6 +279,7 @@ export default function IscrizioniSquadre() {
       {step === 1 && (
         <Form {...playerForm}>
           <form
+            id="playerForm"
             onSubmit={playerForm.handleSubmit(onPlayerSubmit)}
             className="space-y-8"
           >
@@ -336,18 +393,9 @@ export default function IscrizioniSquadre() {
                 </FormItem>
               )}
             />
-            <div className="flex justify-between">
-              <Button type="submit" disabled={players.length >= 10}>
-                {players.length < 5 ? `Aggiungi` : "Aggiungi giocatore"}
-              </Button>
-              <Button
-                type="button"
-                onClick={goToReview}
-                disabled={!canProceedToReview}
-              >
-                Rivedi
-              </Button>
-            </div>
+            <Button className="flex gap-x-2" variant={"outline"} type="submit" disabled={players.length >= 10}>
+              {players.length < 5 ? `Aggiungi` : "Aggiungi giocatore"} <Plus className="size-4" />
+            </Button>
           </form>
         </Form>
       )}
@@ -357,7 +405,7 @@ export default function IscrizioniSquadre() {
           <Card className="mb-4 p-4">
             <h2 className="text-2xl font-bold tracking-tight">{teamInfo?.teamName}</h2>
             <p>
-              <strong>Torneo:</strong> {teamInfo?.tournamentId}
+              <strong>Torneo:</strong> {tournamentData?.nome}
             </p>
             <p className="flex flex-row gap-x-2 items-center">
               <strong><Palette className="size-4" /></strong> {teamInfo?.teamColor}
@@ -387,22 +435,10 @@ export default function IscrizioniSquadre() {
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
-          <Button
-            type="button"
-            onClick={handleFinalSubmit}
-            disabled={isSubmitting}
-            className="gap-y-2"
-          >
-            {isSubmitting ? "Invio in corso..." : "Invia"}
-          </Button>
         </div>
       )}
 
-      {step > 0 && (
-        <Button type="button" onClick={() => setStep((prev) => prev - 1)}>
-          Indietro
-        </Button>
-      )}
+      {renderNavigationButtons()}
     </div>
   );
 }

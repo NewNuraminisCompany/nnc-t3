@@ -12,6 +12,7 @@ import { tornei } from "@/server/db/schema"; // Import the schema we just create
 import { eq } from "drizzle-orm";
 import { Pencil } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const Evento = async ({ params }: { params: { eventID: string } }) => {
   if (!params.eventID) {
@@ -54,8 +55,11 @@ const Evento = async ({ params }: { params: { eventID: string } }) => {
                 {event.descrizione}
               </CardDescription>
               {event.stato == "programmato" ? (
-                <Button className="max-w-full md:max-w-64 gap-x-2 sm:w-full">
-                  Iscrivi la tua squadra <Pencil className="h-4 w-4 " />
+                <Button className="flex items-center max-w-full md:max-w-64 gap-x-2 sm:w-full">
+                <Link className="flex items-center " href={`/iscrizioni?torneoId=${event.idTorneo}`}>
+                  <Pencil className="size-4 mr-2" />
+                  Iscrivi la tua squadra
+                </Link>
                 </Button>
               ) : (
                 <Button variant={"outline"} disabled className="max-w-full md:max-w-64 gap-x-2 sm:w-full">
