@@ -1,0 +1,1 @@
+ALTER TABLE "nnc-sito-t3_squadre" ADD COLUMN "logo_path" varchar;
