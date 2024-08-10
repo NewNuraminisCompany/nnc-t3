@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -43,21 +42,24 @@ type Giocator = {
 
 interface AddAvvenimentoProps {
   idTorneo: string;
+  idPartit: string;
 }
 
-export default function AddAvvenimento({ idTorneo }: AddAvvenimentoProps) {
+export default function AddAvvenimento({ idTorneo, idPartit }: AddAvvenimentoProps) {
   const [Giocatori, setGiocatori] = useState<Giocator[]>([]);
-  const [Partite, setPartite] = useState<{ idPartita: string; label: string }[]>([]);
+  const [Partite, setPartite] = useState<
+    { idPartita: string; label: string }[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    // resolver: zodResolver(formSchema),
     defaultValues: {
       id_avvenimento: "",
       tipo: "Goal",
       minuto: 0,
       giocatore: "",
-      idPartita: "", // Ensure this is included
+      idPartita: "",
     },
   });
 
@@ -69,31 +71,45 @@ export default function AddAvvenimento({ idTorneo }: AddAvvenimentoProps) {
       ]);
 
       setGiocatori(players);
-      setPartite(matches.map(match => ({ idPartita: match.idPartita, label: `${match.idSquadra1} vs ${match.idSquadra2}` })));
+
+      if (matches) {
+        setPartite(
+          matches.map((match) => ({
+            idPartita: match.idPartita,
+            label: `${match.idSquadra1} vs ${match.idSquadra2}`,
+          })),
+        );
+      } else {
+        setPartite([]);
+      }
     }
 
     fetchData();
   }, [idTorneo]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
+    setIsLoading(true); // Imposta isLoading a true prima di iniziare
+    console.log("i dati del form: ",values);
     try {
+      console.log("Form submitted with values:", values); // Log aggiuntivo per debug
       const result = await insertAvvenimento({
         idAvvenimento: values.id_avvenimento,
         idGiocatore: values.giocatore,
-        idPartita: values.idPartita,
+        idPartita: idPartit,
         tipo: values.tipo,
-        minuto: values.minuto
+        minuto: values.minuto,
       });
+
       if (result.success) {
         toast.success("Dati modificati con successo");
       } else {
         toast.error("Non è stato possibile modificare i dati");
       }
     } catch (error) {
+      console.error("Error during submission:", error); // Log l'errore nel caso si verifichi
       toast.error("C'è stato un errore durante la modifica dei dati");
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Reimposta isLoading a false dopo la fine della chiamata
     }
   }
 
@@ -113,9 +129,15 @@ export default function AddAvvenimento({ idTorneo }: AddAvvenimentoProps) {
                       <SelectValue placeholder="Seleziona tipo di avvenimento" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem key="Goal" value="Goal">Goal</SelectItem>
-                      <SelectItem key="Espulsione" value="Espulsione">Espulsione</SelectItem>
-                      <SelectItem key="Ammonizione" value="Ammonizione">Ammonizione</SelectItem>
+                      <SelectItem key="Goal" value="Goal">
+                        Goal
+                      </SelectItem>
+                      <SelectItem key="Espulsione" value="Espulsione">
+                        Espulsione
+                      </SelectItem>
+                      <SelectItem key="Ammonizione" value="Ammonizione">
+                        Ammonizione
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -130,13 +152,18 @@ export default function AddAvvenimento({ idTorneo }: AddAvvenimentoProps) {
               <FormItem>
                 <FormLabel>Minuto</FormLabel>
                 <FormControl>
-                  <Input type="number" min="0" max="90" {...field} />
+                  <Input
+                    type="number"
+                    min="0"
+                    max="90"
+                    value={field.value}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
         </div>
         <FormField
           control={form.control}
@@ -151,7 +178,10 @@ export default function AddAvvenimento({ idTorneo }: AddAvvenimentoProps) {
                   </SelectTrigger>
                   <SelectContent>
                     {Giocatori.map((giocatore) => (
-                      <SelectItem key={giocatore.idGiocatore} value={giocatore.idGiocatore}>
+                      <SelectItem
+                        key={giocatore.idGiocatore}
+                        value={giocatore.idGiocatore}
+                      >
                         {giocatore.nome}
                       </SelectItem>
                     ))}
@@ -166,7 +196,7 @@ export default function AddAvvenimento({ idTorneo }: AddAvvenimentoProps) {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Salvataggio in corso...
+              Caricamento...
             </>
           ) : (
             "Salva"

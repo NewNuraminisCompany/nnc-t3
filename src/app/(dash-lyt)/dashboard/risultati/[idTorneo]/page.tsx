@@ -40,6 +40,18 @@ const MostraPartite = async ({ params }: { params: Params }) => {
                 {new Date(data.dataOra).toDateString()}
               </p>
             </div>
+            <div className="flex-1 text-center">
+              <h3 className="text-lg">{`Risultato`}</h3>
+              <p className="text-muted-foreground">
+                {data.risultatoSquadra1} :  {data.risultatoSquadra2}
+              </p>
+            </div>
+            <div className="flex-1 text-center">
+              <h3 className="text-lg">{`Girone`}</h3>
+              <p className="text-muted-foreground">
+                {data.girone}
+              </p>
+            </div>
             <Credenza>
               <CredenzaTrigger asChild>
                 <Button variant="ghost" size="sm">
@@ -51,7 +63,7 @@ const MostraPartite = async ({ params }: { params: Params }) => {
                   <CredenzaTitle>Modifica Squadra</CredenzaTitle>
                 </CredenzaHeader>
                 
-                <AddAvvenimento idTorneo={idTorneo} />
+                <AddAvvenimento idTorneo={idTorneo} idPartit={data.idPartita}/>
               </CredenzaContent>
             </Credenza>
           </div>

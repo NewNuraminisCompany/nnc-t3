@@ -449,34 +449,44 @@ export async function updatePartita(partita: PartitaData) {
 }
 
 export async function insertAvvenimento(avvenimento: AvvenimentoData) {
+  console.log("ho ricevuto: ", avvenimento);
   try {
+    // Insert into avvenimenti table
     const result = await db
       .insert(avvenimenti)
       .values({
-        idAvvenimento: avvenimento.idAvvenimento,
         tipo: avvenimento.tipo,
         minuto: avvenimento.minuto,
       })
       .returning();
-      console.log("idAvvenimento: ",avvenimento.idAvvenimento);
+
+    if (result[0]) {
+      // Insert into gap table
       const result2 = await db
-      .insert(gap)
-      .values({
-        idAvvenimento: avvenimento.idAvvenimento,
-        idGiocatore: avvenimento.idGiocatore,
-        idPartita: avvenimento.idPartita,
-      })
-      .returning();
-    if (result.length === 0 || result2.length === 0) {
-      return { success: false, error: "avvenimento non inserito" };
+        .insert(gap)
+        .values({
+          idAvvenimento: result[0].idAvvenimento,
+          idGiocatore: avvenimento.idGiocatore,
+          idPartita: avvenimento.idPartita,
+        })
+        .returning();
+
+      if (result2.length === 0) {
+        return { success: false, error: "avvenimento non inserito in gap" };
+      }
     }
 
-    return { success: true};
+    if (result.length === 0) {
+      return { success: false, error: "avvenimento non inserito in avvenimenti" };
+    }
+
+    return { success: true };
   } catch (error) {
     console.error("Error in insertAvvenimento:", error);
     return { success: false, error: "Failed to insert Avvenimento" };
   }
 }
+
 
 export async function deletePartita(partita: PartitaData) {
   try {
