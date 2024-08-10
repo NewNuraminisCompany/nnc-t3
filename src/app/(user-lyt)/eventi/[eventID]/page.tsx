@@ -1,11 +1,11 @@
+
 import { imagePlaceholder } from "@/components/Bento";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardDescription,
+    CardHeader,
+    CardTitle
 } from "@/components/ui/card";
 import { db } from "@/server/db"; // Assume this is where you've set up your Drizzle instance
 import { tornei } from "@/server/db/schema"; // Import the schema we just created
