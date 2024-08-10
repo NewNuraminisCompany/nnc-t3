@@ -409,47 +409,6 @@ export async function fetchPartite(idTorn: string) {
   }
 }
 
-export async function fetchPartite2(idTorn : string) {
-  try {
-    console.log("Attempting to fetch data from partite table...");
-    console.log("id torneo: ",idTorn);
-    const result = await db
-    .select({
-      idPartita: partite.idPartita,
-      idSquadra1: partite.idSquadra1,
-      idSquadra2: partite.idSquadra2,
-      risultatoSquadra1: partite.risultatoSquadra1,
-      risultatoSquadra2: partite.risultatoSquadra2,
-      dataOra: partite.dataOra,
-      girone: partite.girone
-    } )
-    .from(partite)
-    .innerJoin(squadre, eq(partite.idSquadra1, squadre.idSquadra))
-    .where(eq(squadre.idTorneo,idTorn));
-
-    if (result.length === 0) {
-      console.log("No records found in the partite table.");
-      return [];
-    }
-
-    return result.map((partite) => ({
-      idPartita: partite.idPartita,
-      idSquadra1: partite.idSquadra1,
-      idSquadra2: partite.idSquadra2,
-      risultatoSquadra1: partite.risultatoSquadra1,
-      risultatoSquadra2: partite.risultatoSquadra2,
-      dataOra: new Date(partite.dataOra),
-      girone: partite.girone,
-    }));
-  } catch (error) {
-    console.error("Error fetching partite:", error);
-    throw new Error(
-      'Failed to fetch partite: ${error instanceof Error ? error.message : String(error)}',
-    );
-  }
-}
-
-
 export async function updatePartita(partita: PartitaData) {
   try {
     const result = await db
@@ -511,6 +470,43 @@ export async function deletePartita(partita: PartitaData) {
   } catch (error) {
     console.error("Error in deletePartita:", error);
     return { success: false, error: "Failed to delete partita" };
+  }
+}
+
+export async function fetchPartite2(idTorn : string) {
+  try {
+    console.log("Attempting to fetch data from partite table...");
+    console.log("id torneo: ",idTorn);
+    const result = await db
+    .select({
+      idPartita: partite.idPartita,
+      idSquadra1: partite.idSquadra1,
+      idSquadra2: partite.idSquadra2,
+      risultatoSquadra1: partite.risultatoSquadra1,
+      risultatoSquadra2: partite.risultatoSquadra2,
+      dataOra: partite.dataOra,
+      girone: partite.girone
+    } )
+    .from(partite)
+    .innerJoin(squadre, eq(partite.idSquadra1, squadre.idSquadra))
+    .where(eq(squadre.idTorneo,idTorn));
+
+    if (result.length === 0) {
+      console.log("No records found in the partite table.");
+      return [];
+    }
+
+    return result.map((partite) => ({
+      idPartita: partite.idPartita,
+      idSquadra1: partite.idSquadra1,
+      idSquadra2: partite.idSquadra2,
+      risultatoSquadra1: partite.risultatoSquadra1,
+      risultatoSquadra2: partite.risultatoSquadra2,
+      dataOra: new Date(partite.dataOra),
+      girone: partite.girone,
+    }));
+  } catch (error) {
+    console.error("Error fetching partite:", error);
   }
 }
 
