@@ -38,7 +38,9 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
 
   const table = useReactTable({
     data,
@@ -63,25 +65,44 @@ export function DataTable<TData, TValue>({
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>
-                    {header.column.id === 'stato' ? (
+                    {header.column.id === "stato" ? (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-full justify-start">
+                          <Button
+                            variant="ghost"
+                            className="h-8 w-full justify-start"
+                          >
                             {header.column.columnDef.header as string}
                             <ChevronDown className="ml-2 h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
-                          <DropdownMenuItem onClick={() => header.column.setFilterValue(undefined)}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              header.column.setFilterValue(undefined)
+                            }
+                          >
                             Tutti
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => header.column.setFilterValue("programmato")}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              header.column.setFilterValue("programmato")
+                            }
+                          >
                             Programmato
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => header.column.setFilterValue("inCorso")}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              header.column.setFilterValue("inCorso")
+                            }
+                          >
                             In Corso
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => header.column.setFilterValue("terminato")}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              header.column.setFilterValue("terminato")
+                            }
+                          >
                             Terminato
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -89,7 +110,7 @@ export function DataTable<TData, TValue>({
                     ) : (
                       flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )
                     )}
                   </TableHead>
@@ -114,8 +135,12 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                Nessuna partita trovata, clicca sul bottone "Aggiungi" per aggiungere una partita.
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-muted-foreground"
+              >
+                Nessuna partita trovata, clicca sul bottone &quot;Aggiungi&quot;
+                per aggiungere una partita.
               </TableCell>
             </TableRow>
           )}

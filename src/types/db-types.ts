@@ -12,7 +12,7 @@ export type EditTeamData = {
   colore: string;
   cellulare: string;
   statoAccettazione: boolean;
-  idTorneo: string;
+  idTorneo: string | null;
 };
 
 export type PlayerData = {
@@ -57,4 +57,12 @@ export type PartitaData = {
   dataOra: Date;
   girone: "gironeA" | "gironeB" | "gironeSemi" | "gironeFinali";
 };
+
+export type AvvenimentoData = {
+  idPartita: string,
+  idGiocatore: string,
+  idAvvenimento: string;
+  tipo: "Goal" | "Espulsione" | "Ammonizione";
+  minuto: number;
+}
 

@@ -108,6 +108,26 @@ export async function fetchPlayers(squadraId: string) {
     throw new Error("Failed to fetch players");
   }
 }
+export async function fetchPlayers2(TorneoID: string) {
+  try {
+    const players = await db
+    .selectDistinctOn([giocatori.nome],{/*da cambiare, si dovrebbe selectDistinctOn Codice Fiscale*/ 
+      nome: giocatori.nome,
+      cognome: giocatori.cognome,
+      idSquadra: giocatori.idSquadra,
+      idGiocatore: giocatori.idGiocatore,
+      cf: giocatori.cf,
+      dataNascita: giocatori.dataNascita
+    })
+    .from(giocatori)
+    .leftJoin(squadre, eq(squadre.idSquadra, giocatori.idSquadra))
+    .leftJoin(tornei, eq(tornei.idTorneo, squadre.idSquadra));
+    return players;
+  } catch (error) {
+    console.error("Error fetching players:", error);
+    throw new Error("Failed to fetch players");
+  }
+}
 
 export async function submitTeamAndPlayers({
   team,
@@ -410,6 +430,36 @@ export async function updatePartita(partita: PartitaData) {
   } catch (error) {
     console.error("Error in updatePartita:", error);
     return { success: false, error: "Failed to update partita" };
+  }
+}
+
+export async function insertAvvenimento(avvenimento: AvvenimentoData) {
+  try {
+    const result = await db
+      .insert(avvenimenti)
+      .values({
+        idAvvenimento: avvenimento.idAvvenimento,
+        tipo: avvenimento.tipo,
+        minuto: avvenimento.minuto,
+      })
+      .returning();
+      console.log("idAvvenimento: ",avvenimento.idAvvenimento);
+      const result2 = await db
+      .insert(gap)
+      .values({
+        idAvvenimento: avvenimento.idAvvenimento,
+        idGiocatore: avvenimento.idGiocatore,
+        idPartita: avvenimento.idPartita,
+      })
+      .returning();  
+    if (result.length === 0 || result2.length === 0) {
+      return { success: false, error: "avvenimento non inserito" };
+    }
+
+    return { success: true};
+  } catch (error) {
+    console.error("Error in insertAvvenimento:", error);
+    return { success: false, error: "Failed to insert Avvenimento" };
   }
 }
 

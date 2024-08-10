@@ -36,7 +36,7 @@ const Evento = async ({ params }: { params: { eventID: string } }) => {
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="flex w-full justify-end md:w-1/3">
               <Image
-                src={event.imagePath || imagePlaceholder}
+                src={event.imagePath ?? imagePlaceholder}
                 className="rounded object-cover transition-shadow duration-300 shadow-xl "
                 width={1080}
                 height={1350}
