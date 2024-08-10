@@ -1,8 +1,9 @@
 "use server";
 
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
-import { giocatori, partite, squadre, tornei } from "@/server/db/schema"; // Import the schema
+import { avvenimenti, gap, giocatori, partite, squadre, tornei } from "@/server/db/schema"; // Import the schema
 import type {
+    AvvenimentoData,
     EditPlayerData,
     EditTeamData,
     PartitaData,
@@ -443,7 +444,7 @@ export async function fetchPartite2(idTorn : string) {
   } catch (error) {
     console.error("Error fetching partite:", error);
     throw new Error(
-      Failed to fetch partite: ${error instanceof Error ? error.message : String(error)},
+      'Failed to fetch partite: ${error instanceof Error ? error.message : String(error)}',
     );
   }
 }

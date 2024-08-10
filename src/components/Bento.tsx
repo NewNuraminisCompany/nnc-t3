@@ -1,7 +1,6 @@
-import React from "react";
+import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
 import { db } from "@/server/db";
 import { tornei } from "@/server/db/schema";
-import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
 import { desc } from "drizzle-orm";
 import Image from "next/image";
 
@@ -55,10 +54,7 @@ export async function Bento() {
         color: dominantColor ?? "bg-card",
         background: (
           <Image
-            src={
-              torneo.imagePath ??
-              "https://utfs.io/f/f96b4688-b46e-4c39-bc96-3c463af62aae-1ta2k.jpg"
-            }
+            src="/assets/placeholder.png"
             className="absolute -right-20 -top-28 scale-[55%] rounded-lg opacity-80 transition-all duration-300 group-hover:z-20 group-hover:scale-[60%]"
             width={1080}
             height={1350}
