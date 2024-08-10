@@ -36,6 +36,7 @@ const formSchema = z.object({
 
 type Giocator = {
   nome: string;
+  cognome: string;
   idSquadra: string;
   idGiocatore: string;
 };
@@ -182,7 +183,7 @@ export default function AddAvvenimento({ idTorneo, idPartit }: AddAvvenimentoPro
                         key={giocatore.idGiocatore}
                         value={giocatore.idGiocatore}
                       >
-                        {giocatore.nome}
+                        {giocatore.nome} {giocatore.cognome}
                       </SelectItem>
                     ))}
                   </SelectContent>

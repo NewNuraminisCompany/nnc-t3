@@ -111,7 +111,7 @@ export async function fetchPlayers(squadraId: string) {
 export async function fetchPlayers2(TorneoID: string) {
   try {
     const players = await db
-    .selectDistinctOn([giocatori.nome],{/*da cambiare, si dovrebbe selectDistinctOn Codice Fiscale*/
+    .selectDistinctOn([giocatori.idGiocatore],{
       nome: giocatori.nome,
       cognome: giocatori.cognome,
       idSquadra: giocatori.idSquadra,
