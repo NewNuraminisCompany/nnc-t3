@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
-import { ArrowRightIcon } from "@radix-ui/react-icons";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ArrowRightIcon } from "@radix-ui/react-icons";
+import { ReactNode } from "react";
 
 const BentoGrid = ({
   children,
@@ -25,7 +25,6 @@ const BentoGrid = ({
 const BentoCard = ({
   name,
   className,
-  background,
   description,
   href,
   cta,
@@ -33,7 +32,6 @@ const BentoCard = ({
 }: {
   name: string;
   className: string;
-  background: ReactNode;
   description: string;
   href: string;
   cta: string;
@@ -47,7 +45,6 @@ const BentoCard = ({
       className
     )}
   >
-    <div>{background}</div>
     <div className="flex items-center w-full gap-x-2">
       <div className="pointer-events-none z-30 flex transform-gpu flex-col gap-1 p-6 transition-all duration-300 group-hover:-translate-y-1">
         <h3 className="text-4xl font-bold mix-blend-difference">{name}</h3>
