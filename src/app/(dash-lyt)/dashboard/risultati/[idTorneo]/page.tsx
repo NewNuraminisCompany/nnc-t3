@@ -17,7 +17,8 @@ const MostraPartite = async ({ params }: { params: Params }) => {
   const { idTorneo } = params;
   console.log("idTorneo: ",idTorneo);
   const data = await fetchPartite(idTorneo);
-  
+  if(data){
+    
   return (
     <TorneoProvider idTorneo={idTorneo}>
     <div className="container mx-auto w-full pt-10">
@@ -72,6 +73,7 @@ const MostraPartite = async ({ params }: { params: Params }) => {
     </div>
     </TorneoProvider>
   );
+  }
 };
 
 export default MostraPartite;

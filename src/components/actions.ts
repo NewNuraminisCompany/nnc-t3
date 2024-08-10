@@ -17,7 +17,7 @@ export async function getTornei() {
 }
 
 import { createId } from "@paralleldrive/cuid2";
-import { eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 
 export async function addGiocatori({
   idSquadra,
@@ -470,7 +470,30 @@ export async function insertAvvenimento(avvenimento: AvvenimentoData) {
           idPartita: avvenimento.idPartita,
         })
         .returning();
+      
+      const goalSquadra1 = await db
+      .select({goal1: count(avvenimenti.tipo)})
+      .from(avvenimenti)
+      .leftJoin(gap, eq(gap.idAvvenimento, avvenimenti.idAvvenimento))
+      .leftJoin(partite, eq(partite.idPartita, gap.idPartita))
+      .leftJoin(giocatori, eq(giocatori.idGiocatore, gap.idGiocatore))
+      .where(and(eq(avvenimenti.tipo,"Goal"), eq(giocatori.idSquadra, partite.idSquadra1), eq(partite.idPartita,avvenimento.idPartita)));
 
+      const goalSquadra2 = await db
+      .select({goal2: count(avvenimenti.tipo)})
+      .from(avvenimenti)
+      .leftJoin(gap, eq(gap.idAvvenimento, avvenimenti.idAvvenimento))
+      .leftJoin(partite, eq(partite.idPartita, gap.idPartita))
+      .leftJoin(giocatori, eq(giocatori.idGiocatore, gap.idGiocatore))
+      .where(and(eq(avvenimenti.tipo,"Goal"), eq(giocatori.idSquadra, partite.idSquadra2), eq(partite.idPartita,avvenimento.idPartita)));
+
+      if(goalSquadra1[0] && goalSquadra2[0]){
+        const result3 = await db
+      .update(partite)
+      .set({risultatoSquadra1: goalSquadra1[0].goal1,
+            risultatoSquadra2: goalSquadra2[0].goal2})
+      .where(eq(partite.idPartita,avvenimento.idPartita));
+      }
       if (result2.length === 0) {
         return { success: false, error: "avvenimento non inserito in gap" };
       }
