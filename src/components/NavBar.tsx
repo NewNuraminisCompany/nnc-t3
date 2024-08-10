@@ -22,8 +22,9 @@ const navItems = [
 ];
 
 
-const NavBar = async () => {
+const NavBar = () => {
   const pathname = usePathname();
+
   return (
     <nav className="fixed top-0 z-40 flex h-[10vh] w-screen items-center bg-background">
       <div className="container flex items-center justify-between">

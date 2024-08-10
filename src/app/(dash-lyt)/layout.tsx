@@ -1,16 +1,16 @@
-import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import "@/styles/globals.css";
 
+import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
-import { ourFileRouter } from "@/app/api/uploadthing/core";
 
-import SessionProvider from "../../components/SessionProvider";
-import { Inter } from "next/font/google";
-import { type Metadata } from "next";
-import { Toaster } from "@/components/ui/sonner";
 import DashboardNav from "@/components/DashboardNav";
 import TopBar from "@/components/TopBar";
+import { Toaster } from "@/components/ui/sonner";
+import { type Metadata } from "next";
+import { Inter } from "next/font/google";
+import SessionProvider from "../../components/SessionProvider";
 
 export const metadata: Metadata = {
   title: "NNC Dashboard",
@@ -26,7 +26,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="it" className={inter.className}>
       <body className="bg-background">
         <SessionProvider>
           <div vaul-drawer-wrapper="" className="bg-background">
