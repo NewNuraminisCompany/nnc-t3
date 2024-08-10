@@ -181,12 +181,13 @@ export const avvenimenti = createTable(
   "avvenimento",
   {
     idAvvenimento: varchar("id_avvenimento")
-    .primaryKey()
-    .$defaultFn(() => createId()),
-    tipo: varchar("",{ enum: ["Goal", "Espulsione", "Ammonizione"] }),
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    tipo: varchar("tipo", { enum: ["Goal", "Espulsione", "Ammonizione"] }).notNull(),
     minuto: integer("minuto").notNull(),
   },
 );
+
 
 // Gap table
 export const gap = createTable(

@@ -51,7 +51,7 @@ const MostraPartite = async ({ params }: { params: Params }) => {
                   <CredenzaTitle>Modifica Squadra</CredenzaTitle>
                 </CredenzaHeader>
                 
-                <AddAvvenimento idTorneo={idTorneo} />
+                <AddAvvenimento idTorneo={idTorneo} idPartit={data.idPartita}/>
               </CredenzaContent>
             </Credenza>
           </div>
