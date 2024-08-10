@@ -1,5 +1,6 @@
-import { Suspense } from 'react'
-import dynamic from 'next/dynamic'
+
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 
 const IscrizioniSquadre = dynamic(() => import("@/components/IscrizioniSquadre"), { ssr: false })
 

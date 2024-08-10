@@ -1,5 +1,6 @@
 
 import { imagePlaceholder } from "@/components/Bento";
+import BlurFade from "@/components/magicui/blur-fade";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -13,6 +14,7 @@ import { eq } from "drizzle-orm";
 import { Pencil } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+
 
 const Evento = async ({ params }: { params: { eventID: string } }) => {
   if (!params.eventID) {
@@ -36,14 +38,18 @@ const Evento = async ({ params }: { params: { eventID: string } }) => {
         <CardHeader>
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="flex w-full justify-end md:w-1/3">
-              <Image
-                src={event.imagePath ?? imagePlaceholder}
-                className="rounded object-cover transition-shadow duration-300 shadow-xl "
-                width={1080}
-                height={1350}
-                alt={event.nome}
-              />
+              <BlurFade delay={0.25} inView>
+            <Image
+              src={event.imagePath ?? imagePlaceholder}
+              className="rounded object-cover transition-shadow duration-300 shadow-xl "
+              width={1080}
+              height={1350}
+              alt={event.nome}
+            />
+                    </BlurFade>
+
             </div>
+              <BlurFade delay={0.25 * 2} inView>
             <div className="flex flex-col gap-y-2 md:w-2/3">
               <CardTitle className="w-full text-4xl font-bold tracking-tight">
                 {event.nome}
@@ -67,6 +73,7 @@ const Evento = async ({ params }: { params: { eventID: string } }) => {
                 </Button>
               )}
             </div>
+            </BlurFade>
           </div>
         </CardHeader>
       </Card>

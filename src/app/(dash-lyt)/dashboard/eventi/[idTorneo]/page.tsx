@@ -14,17 +14,19 @@ const MostraPartite = async ({ params }: { params: Params }) => {
   const data = await fetchPartite(idTorneo);
   const squadre = await fetchNomiTutteSquadre(idTorneo);
   
-  return (
-    <TorneoProvider idTorneo={idTorneo}>
-    <div className="container mx-auto w-full pt-10">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-4xl font-bold tracking-tight">Partite</h1>
-        <AddPartita nomi_squadre={squadre} />
+  if (data){
+    return (
+      <TorneoProvider idTorneo={idTorneo}>
+      <div className="container mx-auto w-full pt-10">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-4xl font-bold tracking-tight">Partite</h1>
+          <AddPartita nomi_squadre={squadre} />
+        </div>
+        <DataTable columns={columns} data={data} />
       </div>
-      <DataTable columns={columns} data={data} />
-    </div>
-    </TorneoProvider>
-  );
+      </TorneoProvider>
+    );
+  }
 };
 
 export default MostraPartite;
