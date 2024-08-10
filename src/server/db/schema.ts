@@ -139,6 +139,7 @@ export const squadre = createTable("squadre", {
   colore: varchar("colore").notNull(),
   cellulare: varchar("cellulare", { length: 11 }).notNull(),
   statoAccettazione: boolean("statoAccettazione"),
+  logoPath: varchar("logo_path"),
   idTorneo: varchar("id_torneo")
     .references(() => tornei.idTorneo, { onDelete: "cascade" }),
 });

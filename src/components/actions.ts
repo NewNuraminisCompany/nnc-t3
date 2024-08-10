@@ -2,7 +2,15 @@
 
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
 import { giocatori, partite, squadre, tornei } from "@/server/db/schema"; // Import the schema
-import type { EditPlayerData, EditTeamData, EditTorneoData, PlayerData, TeamData, TorneoData, PartitaData } from "@/types/db-types";
+import type {
+  EditPlayerData,
+  EditTeamData,
+  EditTorneoData,
+  PlayerData,
+  TeamData,
+  TorneoData,
+  PartitaData,
+} from "@/types/db-types";
 export async function getTornei() {
   const result = await db.select().from(tornei);
   return result;
@@ -10,7 +18,6 @@ export async function getTornei() {
 
 import { createId } from "@paralleldrive/cuid2";
 import { eq } from "drizzle-orm";
-
 
 export async function addGiocatori({
   idSquadra,
@@ -20,16 +27,19 @@ export async function addGiocatori({
   giocatori: PlayerData[];
 }) {
   try {
-    const newGiocatori = await db.insert(giocatori).values(
-      players.map((player) => ({
-        idGiocatore: createId(),
-        idSquadra,
-        cf: player.cf,
-        nome: player.nome,
-        cognome: player.cognome,
-        dataNascita: player.dataNascita,
-      }))
-    ).returning();
+    const newGiocatori = await db
+      .insert(giocatori)
+      .values(
+        players.map((player) => ({
+          idGiocatore: createId(),
+          idSquadra,
+          cf: player.cf,
+          nome: player.nome,
+          cognome: player.cognome,
+          dataNascita: player.dataNascita,
+        })),
+      )
+      .returning();
 
     return { success: true, giocatori: newGiocatori };
   } catch (error) {
@@ -168,6 +178,22 @@ export async function submitTorneo({
   }
 }
 
+export async function getSquadreLogo(idSquadra: string) {
+  try {
+    console.log("Fetching data from squadre, tornei, and gironi tables...");
+    const result = await db
+      .select({
+        logoPath: squadre.logoPath,
+      })
+      .from(squadre).where(eq(squadre.idSquadra, idSquadra));
+      return result;
+  } catch (error) {
+    console.error("Error fetching squadre:", error);
+    throw new Error(
+      `Failed to fetch squadre: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
 
 export async function fetchSquadre() {
   try {
@@ -183,7 +209,7 @@ export async function fetchSquadre() {
         nomeTorneo: tornei.nome,
       })
       .from(squadre)
-      .leftJoin(tornei, eq(squadre.idTorneo, tornei.idTorneo))
+      .leftJoin(tornei, eq(squadre.idTorneo, tornei.idTorneo));
     console.log(`Fetched ${result.length} records from squadre table.`);
 
     if (result.length === 0) {
@@ -280,17 +306,16 @@ export async function submitPartita({
   dataOra,
   girone,
 }: {
-  idSquadra1: string,
-idSquadra2: string,
-risultatoSquadra1: number,
-risultatoSquadra2: number,
-dataOra: Date,
-girone:  'gironeA' | 'gironeB' | 'gironeSemi' | 'gironeFinali';
-}
-) {
+  idSquadra1: string;
+  idSquadra2: string;
+  risultatoSquadra1: number;
+  risultatoSquadra2: number;
+  dataOra: Date;
+  girone: "gironeA" | "gironeB" | "gironeSemi" | "gironeFinali";
+}) {
   try {
     await db.insert(partite).values({
-      idPartita:createId(),
+      idPartita: createId(),
       idSquadra1,
       idSquadra2,
       risultatoSquadra1,
@@ -305,36 +330,40 @@ girone:  'gironeA' | 'gironeB' | 'gironeSemi' | 'gironeFinali';
   }
 }
 
-export async function fetchPartite(idTorn : string) {
+export async function fetchPartite(idTorn: string) {
   try {
     console.log("Attempting to fetch data from partite table...");
-    console.log("id torneo: ",idTorn);
+    console.log("id torneo: ", idTorn);
     const result = await db
-    .select({
-      idPartita: partite.idPartita,
-      idSquadra1: partite.idSquadra1,
-      idSquadra2: partite.idSquadra2,
-      risultatoSquadra1: partite.risultatoSquadra1,
-      risultatoSquadra2: partite.risultatoSquadra2,
-      dataOra: partite.dataOra,
-      girone: partite.girone
-    } )
-    .from(partite)
-    .innerJoin(squadre, eq(partite.idSquadra1, squadre.idSquadra))
-    .where(eq(squadre.idTorneo,idTorn));
-
+      .select({
+        idPartita: partite.idPartita,
+        idSquadra1: partite.idSquadra1,
+        idSquadra2: partite.idSquadra2,
+        risultatoSquadra1: partite.risultatoSquadra1,
+        risultatoSquadra2: partite.risultatoSquadra2,
+        dataOra: partite.dataOra,
+        girone: partite.girone,
+      })
+      .from(partite)
+      .innerJoin(squadre, eq(partite.idSquadra1, squadre.idSquadra))
+      .where(eq(squadre.idTorneo, idTorn));
 
     for (const result3 of result) {
-      const nomeSqd1 = await db.select({nome : squadre.nome}).from(squadre).where(eq(squadre.idSquadra,result3.idSquadra1));
-      if(nomeSqd1[0]){
+      const nomeSqd1 = await db
+        .select({ nome: squadre.nome })
+        .from(squadre)
+        .where(eq(squadre.idSquadra, result3.idSquadra1));
+      if (nomeSqd1[0]) {
         result3.idSquadra1 = nomeSqd1[0].nome;
       }
-      const nomeSqd2 = await db.select({nome : squadre.nome}).from(squadre).where(eq(squadre.idSquadra,result3.idSquadra2));
-      if(nomeSqd2[0]){
+      const nomeSqd2 = await db
+        .select({ nome: squadre.nome })
+        .from(squadre)
+        .where(eq(squadre.idSquadra, result3.idSquadra2));
+      if (nomeSqd2[0]) {
         result3.idSquadra2 = nomeSqd2[0].nome;
       }
     }
-    
 
     console.log(`Fetched ${result.length} records from tornei table.`);
 
@@ -394,25 +423,24 @@ export async function deletePartita(partita: PartitaData) {
   }
 }
 
-
-export async function fetchNomiTutteSquadre(idTorn : string) {
+export async function fetchNomiTutteSquadre(idTorn: string) {
   try {
     console.log("Fetching data from squadre, tornei, and gironi tables...");
-    console.log("id torneo: ", idTorn)
+    console.log("id torneo: ", idTorn);
     const result = await db
-      .select({ nome:squadre.nome, idSquadra:squadre.idSquadra })
+      .select({ nome: squadre.nome, idSquadra: squadre.idSquadra })
       .from(squadre)
-      .where(eq(squadre.idTorneo,idTorn));
+      .where(eq(squadre.idTorneo, idTorn));
     console.log(`Fetched ${result.length} records from squadre table.`);
 
     if (result.length === 0) {
       console.log("No records found in the squadre table.");
       return [];
     }
-    
+
     return result.map((record) => ({
       nome: record.nome,
-      idSquadra: record.idSquadra
+      idSquadra: record.idSquadra,
     }));
   } catch (error) {
     console.error("Error fetching squadre:", error);
