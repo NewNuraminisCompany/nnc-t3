@@ -49,6 +49,7 @@ export async function addGiocatori({
 }
 
 export async function updateGiocatore(giocatore: PlayerData) {
+  //console.log("PLayerData ricevuti: ",giocatore);
   try {
     await db
       .update(giocatori)
@@ -58,7 +59,7 @@ export async function updateGiocatore(giocatore: PlayerData) {
         cognome: giocatore.cognome,
         dataNascita: giocatore.dataNascita,
       })
-      .where(eq(squadre.idSquadra, giocatore.idSquadra));
+      .where(and(eq(giocatori.idSquadra, giocatore.idSquadra), eq(giocatori.idGiocatore,giocatore.idGiocatore)));
     return { success: true };
   } catch (error) {
     console.error("Error in updateSquadra:", error);

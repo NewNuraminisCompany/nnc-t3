@@ -21,6 +21,7 @@ export type PlayerData = {
   cognome: string;
   dataNascita: string;
   idSquadra: string;
+  idGiocatore: string;
 };
 
 export type EditPlayerData = {

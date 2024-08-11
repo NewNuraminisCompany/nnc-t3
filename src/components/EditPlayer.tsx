@@ -27,6 +27,7 @@ const formSchema = z.object({
   nome: z.string().min(1, "Inserisci un nome"),
   cognome: z.string().min(1, "Inserisci un cognome"),
   dataNascita: z.date(),
+  idGiocatore: z.string()
 });
 
 export default function EditPlayer({ player }: { player: PlayerData }) {
@@ -38,6 +39,7 @@ export default function EditPlayer({ player }: { player: PlayerData }) {
       nome: player.nome,
       cognome: player.cognome,
       dataNascita: new Date(player.dataNascita),
+      idGiocatore: player.idGiocatore,
     },
   });
 
