@@ -69,7 +69,7 @@ export default function EditPartita({ idTorneo, partita }: EditPartitaProps) {
 
   useEffect(() => {
     void fetchSquadre();
-  
+
     async function fetchSquadre() {
       try {
         const res = await fetchNomiTutteSquadre(idTorneo);

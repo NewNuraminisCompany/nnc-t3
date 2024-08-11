@@ -46,9 +46,9 @@ const Dettagli = async ({ params }: { params: { idSquadra: string } }) => {
                   <Edit className="h-4 w-4" />
                 </Button>
               </CredenzaTrigger>
-              <CredenzaContent>
+              <CredenzaContent className="p-4 pt-0">
                 <CredenzaHeader>
-                  <CredenzaTitle>Modifica Squadra</CredenzaTitle>
+                  <CredenzaTitle>Modifica Giocatore</CredenzaTitle>
                 </CredenzaHeader>
                 <EditPlayer player={player} />
               </CredenzaContent>

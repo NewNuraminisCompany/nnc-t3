@@ -26,7 +26,7 @@ const NavBar = () => {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed top-0 z-40 flex h-[10vh] w-screen items-center bg-background">
+    <nav className="fixed top-0 z-40 flex h-[10vh] w-screen items-center bg-gradient-to-b from-background to-transparent">
       <div className="container flex items-center justify-between">
         <Link
           className="flex items-center gap-x-2 text-2xl font-bold tracking-tighter"
