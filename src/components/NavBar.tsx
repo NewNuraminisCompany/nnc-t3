@@ -5,6 +5,9 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
+import localFont from 'next/font/local'
+
+const myFont = localFont({ src: "../../public/fonts/Tanker-Regular.ttf" })
 
 const navItems = [
   {
@@ -32,7 +35,7 @@ const NavBar = () => {
           className="flex items-center gap-x-2 text-2xl font-bold tracking-tighter"
           href="/"
         >
-          <span className="font-custom text-3xl tracking-wide hover:text-primary">
+          <span className={`${myFont.className} text-3xl tracking-wide hover:text-primary`}>
             NNC
           </span>
         </Link>
