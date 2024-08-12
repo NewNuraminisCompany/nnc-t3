@@ -4,7 +4,7 @@ import { TorneoProvider } from "@/app/context";
 import { Card } from "@/components/ui/card";
 import { Credenza, CredenzaContent, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from "@/components/ui/credenza";
 
-import { Trophy, Edit } from "lucide-react";
+import { Trophy, Edit, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AddAvvenimento from "@/components/AddAvvenimento";
 
@@ -34,7 +34,7 @@ const MostraPartite = async ({ params }: { params: Params }) => {
           className="group relative mb-4 overflow-hidden rounded-lg"
         >
           <div className="flex items-center gap-4 p-4">
-          <Trophy className="h-12 w-12 rounded-full object-contain" />
+          <Trophy className="size-10" />
             <div className="flex-1">
               <h3 className="text-lg font-bold">{`${data.idSquadra1} vs ${data.idSquadra2}`}</h3>
               <p className="text-muted-foreground">
@@ -55,13 +55,13 @@ const MostraPartite = async ({ params }: { params: Params }) => {
             </div>
             <Credenza>
               <CredenzaTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Edit className="h-4 w-4" />
+                <Button variant="ghost" size="sm" className="rounded-full">      
+                  <Plus className="size-6" />
                 </Button>
               </CredenzaTrigger>
               <CredenzaContent>
                 <CredenzaHeader>
-                  <CredenzaTitle>Modifica Squadra</CredenzaTitle>
+                  <CredenzaTitle>Aggiungi Avvenimento</CredenzaTitle>
                 </CredenzaHeader>
                 
                 <AddAvvenimento idTorneo={idTorneo} idPartit={data.idPartita}/>

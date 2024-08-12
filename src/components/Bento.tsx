@@ -5,9 +5,6 @@ import { desc } from "drizzle-orm";
 
 import Vibrant from "node-vibrant"; // Colori
 
-export const imagePlaceholder =
-  "https://utfs.io/f/f96b4688-b46e-4c39-bc96-3c463af62aae-1ta2k.jpg";
-
 export async function Bento() {
   // Fetch tornei data using Drizzle ORM
   const torneiData = await db
@@ -34,16 +31,7 @@ export async function Bento() {
         } catch (error) {
           console.error("Error extracting color:", error);
         }
-      } else {
-        try {
-          const palette = await Vibrant.from(imagePlaceholder).getPalette();
-          if (palette.Vibrant) {
-            dominantColor = palette.Vibrant.hex;
-          }
-        } catch (error) {
-          console.error("Error extracting color from placeholder:", error);
-        }
-      }
+      } 
       console.log(torneo.imagePath);
       return {
         name: torneo.nome ?? `Evento ${index + 1}`,

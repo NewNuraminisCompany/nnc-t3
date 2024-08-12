@@ -16,6 +16,7 @@ export default async function Eventi() {
               id={event.idTorneo}
               nome={event.nome}
               descrizione={event.descrizione}
+              stato={event.stato}
             />
           </div>
         ))}

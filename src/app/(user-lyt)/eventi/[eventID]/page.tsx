@@ -1,26 +1,19 @@
-
-import { imagePlaceholder } from "@/components/Bento";
 import BlurFade from "@/components/magicui/blur-fade";
 import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardDescription,
-    CardHeader,
-    CardTitle
-} from "@/components/ui/card";
-import { db } from "@/server/db"; // Assume this is where you've set up your Drizzle instance
-import { tornei } from "@/server/db/schema"; // Import the schema we just created
+import { Card, CardContent } from "@/components/ui/card";
+import { db } from "@/server/db";
+import { tornei } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
-import { Pencil } from "lucide-react";
+import { Calendar, Pencil } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
 
 const Evento = async ({ params }: { params: { eventID: string } }) => {
   if (!params.eventID) {
     return <div>Invalid event ID</div>;
   }
-  const parsedEventID = params.eventID; // Ensure it's the correct type for your database
+
+  const parsedEventID = params.eventID;
   const torneoData = await db
     .select()
     .from(tornei)
@@ -32,51 +25,72 @@ const Evento = async ({ params }: { params: { eventID: string } }) => {
     return <div>Evento non trovato</div>;
   }
 
-  return (
-    <div className="flex w-full flex-col gap-y-4">
-      <Card className="my-2 w-full items-center justify-between overflow-scroll rounded-xl">
-        <CardHeader>
-          <div className="flex flex-col gap-4 md:flex-row">
-            <div className="flex w-full justify-end md:w-1/3">
-              <BlurFade delay={0.25} inView>
-            <Image
-              src={event.imagePath ?? imagePlaceholder}
-              className="rounded object-cover transition-shadow duration-300 shadow-xl "
-              width={1080}
-              height={1350}
-              alt={event.nome}
-            />
-                    </BlurFade>
+  const imagePlaceholder =
+    "https://utfs.io/f/f96b4688-b46e-4c39-bc96-3c463af62aae-1ta2k.jpg";
 
-            </div>
-              <BlurFade delay={0.25 * 2} inView>
-            <div className="flex flex-col gap-y-2 md:w-2/3">
-              <CardTitle className="w-full text-4xl font-bold tracking-tight">
-                {event.nome}
-              </CardTitle>
-              <span className="text-md block text-ellipsis whitespace-nowrap font-semibold text-muted-foreground">
-                {event.dataInizio} {" –> "} {event.dataFine}
-              </span>
-              <CardDescription className="text-md">
-                {event.descrizione}
-              </CardDescription>
-              {event.stato == "programmato" ? (
-                <Button className="flex items-center max-w-full md:max-w-64 gap-x-2 sm:w-full">
-                <Link className="flex items-center " href={`/iscrizioni?torneoId=${event.idTorneo}`}>
-                  <Pencil className="size-4 mr-2" />
-                  Iscrivi la tua squadra
-                </Link>
-                </Button>
-              ) : (
-                <Button variant={"outline"} disabled className="max-w-full md:max-w-64 gap-x-2 sm:w-full">
-                  Le iscrizioni sono chiuse.
-                </Button>
-              )}
-            </div>
-            </BlurFade>
-          </div>
-        </CardHeader>
-      </Card>
+  return (
+    <div className="absolute left-0 right-0 top-0 min-h-screen">
+      {/* Full-height image container */}
+      <div className="absolute inset-0 -top-20 md:-top-16 z-0 max-h-[32rem] w-full">
+        <Image
+          src={event.imagePath ?? imagePlaceholder}
+          layout="fill"
+          objectFit="cover"
+          alt={event.nome}
+          className="inset-0"
+          priority
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/70 to-background" />
+      </div>
+
+      {/* Content container */}
+      <div className="container z-10 mt-16 flex min-h-screen flex-col pt-16 sm:pt-24">
+        <div className="flex-grow py-8">
+          <BlurFade delay={0.25} inView>
+            <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground mix-blend-difference shadow-sm">
+              {event.nome}
+            </h1>
+          </BlurFade>
+          <BlurFade delay={0.25 * 2} inView>
+            <Card className="mt-8 bg-background/80 backdrop-blur-sm">
+              <CardContent className="grid gap-6 p-6 sm:grid-cols-2">
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-sm font-medium">
+                      {event.dataInizio} {" –> "} {event.dataFine}
+                    </span>
+                  </div>
+                  <p className="text-muted-foreground">{event.descrizione}</p>
+                </div>
+
+                <div className="flex flex-col justify-end space-y-4">
+                  {event.stato === "programmato" ? (
+                    <Button className="w-full sm:w-auto">
+                      <Link
+                        className="flex items-center"
+                        href={`/iscrizioni?torneoId=${event.idTorneo}`}
+                      >
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Iscrivi la tua squadra
+                      </Link>
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      disabled
+                      className="w-full sm:w-auto"
+                    >
+                      Le iscrizioni sono chiuse
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </BlurFade>
+        </div>
+      </div>
     </div>
   );
 };

@@ -33,7 +33,7 @@ const Dettagli = async ({ params }: { params: { idSquadra: string } }) => {
           className="group relative mb-4 overflow-hidden rounded-lg"
         >
           <div className="flex items-center gap-4 p-4">
-            <CircleUser className="h-12 w-12 rounded-full object-contain" />
+            <CircleUser className="size-10" />
             <div className="flex-1">
               <h3 className="text-lg font-bold">{`${player.nome} ${player.cognome}`}</h3>
               <p className="text-muted-foreground">
@@ -46,9 +46,9 @@ const Dettagli = async ({ params }: { params: { idSquadra: string } }) => {
                   <Edit className="h-4 w-4" />
                 </Button>
               </CredenzaTrigger>
-              <CredenzaContent className="p-4 pt-0">
+              <CredenzaContent>
                 <CredenzaHeader>
-                  <CredenzaTitle>Modifica Giocatore</CredenzaTitle>
+                  <CredenzaTitle>Modifica {player.nome} {player.cognome}</CredenzaTitle>
                 </CredenzaHeader>
                 <EditPlayer player={player} />
               </CredenzaContent>
