@@ -16,8 +16,12 @@ const Avvenimenti = async ({ params }: { params: Params }) => {
   console.log("idPartita: ", idPartita);
   const data = await fetchAvvenimenti(idPartita);
   const torneoData = await fetchTorneoFromPartita(idPartita);
-  if (torneoData && torneoData[0]) {
-    const partiteData = await fetchPartite(torneoData[0].idTorneo);
+
+  const torneoId = torneoData?.[0]?.idTorneo;
+
+
+  if (torneoId) {
+    const partiteData = await fetchPartite(torneoId);
     if (data && partiteData) {
       return (
         <div className="flex w-full flex-col">

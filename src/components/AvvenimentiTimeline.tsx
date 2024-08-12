@@ -1,7 +1,7 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Icon, AlertTriangle, Skull } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
+import { AlertTriangle, Icon, Skull } from 'lucide-react';
+import React from 'react';
 
 import { soccerBall } from '@lucide/lab';
 
@@ -56,7 +56,7 @@ const AvvenimentiTimeline: React.FC<AvvenimentiTimelineProps> = ({ avvenimenti }
                 <div className="absolute left-0 top-[14px] bottom-[-32px] w-[2px] bg-muted-foreground" />
               )}
               <div className="flex flex-col sm:flex-row sm:items-center mb-1">
-                <span className="text-sm font-semibold mr-2">{evento.minuto}'</span>
+                <span className="text-sm font-semibold mr-2">{evento.minuto}&apos;</span>
                 <Badge variant="outline" className="mt-1 sm:mt-0 w-fit">
                   {evento.nomeGiocatore}
                 </Badge>

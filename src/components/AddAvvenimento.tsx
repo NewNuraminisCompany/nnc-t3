@@ -89,7 +89,7 @@ export default function AddAvvenimento({ idTorneo, idPartita }: AddAvvenimentoPr
       if (result.success) {
         toast.success("Avvenimento aggiunto con successo");
       } else {
-        toast.error(result.error || "Non è stato possibile aggiungere l'avvenimento");
+        toast.error(result.error ?? "Non è stato possibile aggiungere l'avvenimento");
       }
     } catch (error) {
       console.error("Error during submission:", error);
