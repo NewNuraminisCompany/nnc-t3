@@ -585,3 +585,48 @@ export async function fetchNomiTutteSquadre(idTorn: string) {
     );
   }
 }
+
+export async function fetchAvvenimenti(idPartita : string){
+  try {
+    const result = await db
+      .select()
+      .from(avvenimenti)
+      .innerJoin(gap, eq(gap.idAvvenimento,avvenimenti.idAvvenimento))
+      .where(eq(gap.idPartita,idPartita));
+    console.log(`Fetched ${result.length} records from avvenimenti table.`);
+
+    if (result.length === 0) {
+      console.log("No records found in the squadre table.");
+      return [];
+    }
+
+    for (const result3 of result) {
+      const nomeGioc = await db
+        .select({ nome: giocatori.nome, cognome: giocatori.cognome })
+        .from(giocatori)
+        .where(eq(giocatori.idGiocatore, result3.gap.idGiocatore));
+      if (nomeGioc[0]) {
+        result3.gap.idGiocatore = (nomeGioc[0].nome + " " + nomeGioc[0].cognome);
+      }
+    }
+
+    
+    
+    if(result[0]){
+      if(result[0].gap){
+        return result.map((record) => ({
+          idAvvenimento: record.avvenimento.idAvvenimento,
+          nomeGiocatore: record.gap.idGiocatore,
+          minuto: record.avvenimento.minuto,
+          tipo: record.avvenimento.tipo,
+        }));
+      }
+    }
+
+  } catch (error) {
+    console.error("Error fetching avvenimenti:", error);
+    throw new Error(
+      `Failed to fetch avvenimenti: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}

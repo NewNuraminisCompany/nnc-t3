@@ -11,6 +11,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 // Define appropriate types
@@ -114,6 +115,7 @@ const Risultato = () => {
       {partite.length > 0 ? (
         partite.map((partita) => (
           <BlurFade key={partita.idPartita} delay={0.25} inView>
+            <Link href={`/risultati/${partita.idPartita}`}> 
             <Card
               key={partita.idPartita}
               className="group relative mb-4 overflow-hidden rounded-lg"
@@ -127,6 +129,7 @@ const Risultato = () => {
                 </span>
               </div>
             </Card>
+            </Link>
           </BlurFade>
         ))
       ) : (
