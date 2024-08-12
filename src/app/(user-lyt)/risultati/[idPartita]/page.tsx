@@ -28,7 +28,7 @@ const Avvenimenti = async ({ params }: { params: Params }) => {
           <h1 className="my-4 text-3xl font-bold md:text-4xl">
             Risultati Partita
           </h1>
-          <div className="mx-auto flex w-full max-w-md flex-col items-center justify-between space-y-2 pt-8 text-center text-lg font-bold sm:flex-row sm:space-y-0 sm:text-left sm:text-xl md:text-2xl">
+          <div className="mx-auto flex w-full max-w-xl flex-col items-center justify-between space-y-2 pt-8 text-center text-lg font-bold sm:flex-row sm:space-y-0 sm:text-left sm:text-xl md:text-2xl">
             <div className="flex w-full justify-center sm:w-auto sm:justify-start">
               <span>{partiteData[0]?.idSquadra1}</span>
             </div>
