@@ -610,8 +610,6 @@ export async function fetchAvvenimenti(idPartita : string){
       }
     }
 
-    
-    
     if(result[0]){
       if(result[0].gap){
         return result.map((record) => ({
@@ -628,5 +626,22 @@ export async function fetchAvvenimenti(idPartita : string){
     throw new Error(
       `Failed to fetch avvenimenti: ${error instanceof Error ? error.message : String(error)}`,
     );
+  }
+}
+
+// :)
+export async function fetchTorneoFromPartita(idPartita: string) {
+  try {
+    console.log("Fetching data from tornei table...");
+    const result = await db
+      .select({ idTorneo: tornei.idTorneo,  })
+      .from(tornei)
+      .innerJoin(squadre, eq(squadre.idTorneo, tornei.idTorneo ))
+      .innerJoin(partite, eq(partite.idSquadra1 || partite.idSquadra2, squadre.idSquadra))
+      .where(eq(partite.idPartita, idPartita));
+
+    return result;
+  } catch (error) {
+    console.error("Error fetching torneo:", error);
   }
 }

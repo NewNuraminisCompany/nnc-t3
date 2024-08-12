@@ -1,14 +1,11 @@
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "./ui/button";
 import Link from "next/link";
-import { ArrowRight, Plus } from "lucide-react";
 
 type propsType = {
   id: string;
@@ -21,10 +18,10 @@ const EventListCard = (props: propsType) => {
   return (
     <div className="items-center justify-between rounded-xl pb-2">
       <Link href={`/eventi/${props.id}`}>
-        <Card className="shadow-lg">
+        <Card className="shadow-md">
           <CardHeader className="flex items-center justify-between gap-y-2">
             <Badge className="mx-auto" variant="outline">
-              {props.stato}
+              {props.stato?.toUpperCase()}
             </Badge>
             <CardTitle>{props.nome}</CardTitle>
             <CardDescription>{props.descrizione}</CardDescription>

@@ -1,41 +1,50 @@
 "use server";
 
-import { fetchAvvenimenti, fetchPartite, fetchTorneo } from "@/components/actions";
-import { columns } from "../../../(dash-lyt)/dashboard/risultati/[idTorneo]/[idPartita]/columns";
-import { DataTable } from "../../../(dash-lyt)/dashboard/risultati/[idTorneo]/[idPartita]/data-table";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { useEffect, useState } from "react";
+  fetchAvvenimenti,
+  fetchPartite,
+  fetchTorneoFromPartita,
+} from "@/components/actions";
+import AvvenimentiTimeline from "@/components/AvvenimentiTimeline";
 
 interface Params {
   idPartita: string;
-  idTorneo: string;
 }
-
-
 
 const Avvenimenti = async ({ params }: { params: Params }) => {
   const { idPartita } = params;
-  const { idTorneo } = params;
   console.log("idPartita: ", idPartita);
-  console.log("idTorneo: ", idTorneo);
   const data = await fetchAvvenimenti(idPartita);
-
-
-  if (data) {
-    return (
-      <div>
-        <h1 className="text-4xl font-bold my-4">Risultati Partite</h1>
-        
-        <DataTable columns={columns} data={data} />
-      </div>
-    );
+  const torneoData = await fetchTorneoFromPartita(idPartita);
+  if (torneoData && torneoData[0]) {
+    const partiteData = await fetchPartite(torneoData[0].idTorneo);
+    if (data && partiteData) {
+      return (
+        <div className="flex w-full flex-col">
+          <h1 className="my-4 text-3xl font-bold md:text-4xl">
+            Risultati Partita
+          </h1>
+          <div className="mx-auto flex w-full max-w-md flex-col items-center justify-between space-y-2 pt-8 text-center text-lg font-bold sm:flex-row sm:space-y-0 sm:text-left sm:text-xl md:text-2xl">
+            <div className="flex w-full justify-center sm:w-auto sm:justify-start">
+              <span>{partiteData[0]?.idSquadra1}</span>
+            </div>
+            <div className="flex items-center justify-center text-3xl font-extrabold sm:text-4xl md:text-5xl">
+              <span>{partiteData[0]?.risultatoSquadra1}</span>
+              <span className="mx-2">:</span>
+              <span>{partiteData[0]?.risultatoSquadra2}</span>
+            </div>
+            <div className="flex w-full justify-center sm:w-auto sm:justify-end">
+              <span>{partiteData[0]?.idSquadra2}</span>
+            </div>
+          </div>
+          <div className="mx-auto mt-8 w-full max-w-md">
+            <AvvenimentiTimeline avvenimenti={data} />
+          </div>
+        </div>
+      );
+    }
   }
+  return null;
 };
 
 export default Avvenimenti;
