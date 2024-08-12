@@ -19,7 +19,6 @@ const Avvenimenti = async ({ params }: { params: Params }) => {
 
   const torneoId = torneoData?.[0]?.idTorneo;
 
-
   if (torneoId) {
     const partiteData = await fetchPartite(torneoId);
     if (data && partiteData) {

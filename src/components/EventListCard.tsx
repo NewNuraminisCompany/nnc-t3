@@ -16,7 +16,7 @@ type propsType = {
 
 const EventListCard = (props: propsType) => {
   return (
-    <div className="items-center justify-between rounded-xl pb-2">
+    <div className="items-center justify-between rounded-xl pb-3">
       <Link href={`/eventi/${props.id}`}>
         <Card className="shadow-md">
           <CardHeader className="flex items-center justify-between gap-y-2">

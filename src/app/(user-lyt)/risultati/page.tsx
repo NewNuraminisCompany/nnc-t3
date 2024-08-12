@@ -118,7 +118,7 @@ const Risultato = () => {
             <Link href={`/risultati/${partita.idPartita}`}> 
             <Card
               key={partita.idPartita}
-              className="group relative mb-4 overflow-hidden shadow-md rounded-lg"
+              className="group relative mb-3 overflow-hidden shadow-md rounded-lg"
             >
               <div className="flex flex-col items-center gap-4 p-4">
                 <span className="text-lg font-bold">
