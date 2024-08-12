@@ -2,7 +2,7 @@
 
 import {
   fetchAvvenimenti,
-  fetchPartite,
+  fetchPartitaa,
   fetchTorneoFromPartita,
 } from "@/components/actions";
 import AvvenimentiTimeline from "@/components/AvvenimentiTimeline";
@@ -20,7 +20,7 @@ const Avvenimenti = async ({ params }: { params: Params }) => {
   const torneoId = torneoData?.[0]?.idTorneo;
 
   if (torneoId) {
-    const partiteData = await fetchPartite(torneoId);
+    const partiteData = await fetchPartitaa(torneoId,idPartita);
     if (data && partiteData) {
       return (
         <div className="flex w-full flex-col">
