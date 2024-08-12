@@ -37,7 +37,7 @@ const MostraPartite = async ({ params }: { params: Params }) => {
               className="group relative mb-4 overflow-hidden rounded-lg"
             >
               <div className="flex items-center gap-4 p-4">
-                <Trophy className="h-12 w-12 rounded-full object-contain" />
+                <Trophy className="size-10 object-contain" />
                 <div className="flex-1">
                   <h3 className="text-lg font-bold">{`${data.idSquadra1} vs ${data.idSquadra2}`}</h3>
                   <p className="text-muted-foreground">
