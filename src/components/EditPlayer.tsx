@@ -27,7 +27,8 @@ const formSchema = z.object({
   nome: z.string().min(1, "Inserisci un nome"),
   cognome: z.string().min(1, "Inserisci un cognome"),
   dataNascita: z.date(),
-  idGiocatore: z.string()
+  idGiocatore: z.string(),
+  cf: z.string()
 });
 
 export default function EditPlayer({ player }: { player: PlayerData }) {
@@ -40,6 +41,7 @@ export default function EditPlayer({ player }: { player: PlayerData }) {
       cognome: player.cognome,
       dataNascita: new Date(player.dataNascita),
       idGiocatore: player.idGiocatore,
+      cf : player.cf
     },
   });
 
@@ -106,7 +108,7 @@ export default function EditPlayer({ player }: { player: PlayerData }) {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
+                        "w-[210px] pl-3 text-left font-normal",
                         !field.value && "text-muted-foreground",
                       )}
                     >
@@ -131,6 +133,19 @@ export default function EditPlayer({ player }: { player: PlayerData }) {
             </FormItem>
           )}
         />
+        <FormField
+            control={form.control}
+            name="cf"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Codice Fiscale</FormLabel>
+                <FormControl>
+                  <Input placeholder="Codice Fiscale" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading ? (
             <>

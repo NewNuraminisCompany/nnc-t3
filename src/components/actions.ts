@@ -8,6 +8,7 @@ import type {
   EditTeamData,
   PartitaData,
   PlayerData,
+  PlayerData2,
   TeamData,
   TorneoData
 } from "@/types/db-types";
@@ -699,5 +700,23 @@ export async function fetchTorneoFromPartita(idPartita: string) {
     return result;
   } catch (error) {
     console.error("Error fetching torneo:", error);
+  }
+}
+export async function submitPlayer(player : PlayerData){
+  try{
+    const result = await db
+    .insert(giocatori)
+    .values({
+      idGiocatore: createId(),
+      idSquadra : player.idSquadra,
+      cf: player.cf,
+      nome: player.nome,
+      cognome: player.cognome,
+      dataNascita: player.dataNascita}
+    );
+    return result;
+  }
+  catch(error){
+    console.error("Error submitting new player:", error);
   }
 }

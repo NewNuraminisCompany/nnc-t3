@@ -24,6 +24,15 @@ export type PlayerData = {
   idGiocatore: string;
 };
 
+export type PlayerData2 = {
+  cf: string;
+  nome: string;
+  cognome: string;
+  dataNascita: Date;
+  idSquadra: string;
+  idGiocatore: string;
+};
+
 export type EditPlayerData = {
   cf: string;
   nome: string;

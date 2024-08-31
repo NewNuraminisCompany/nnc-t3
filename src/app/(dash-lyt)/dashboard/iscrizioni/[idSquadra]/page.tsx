@@ -3,6 +3,7 @@ import { fetchPlayers } from "@/components/actions";
 import EditPlayer from "@/components/EditPlayer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { AddGiocatore } from "@/components/AddGiocatore";
 import {
   Credenza,
   CredenzaContent,
@@ -26,6 +27,7 @@ const Dettagli = async ({ params }: { params: { idSquadra: string } }) => {
         <h1 className="text-4xl font-bold tracking-tight">
           Dettagli di {players[0]?.squadra.nome ?? params.idSquadra}
         </h1>
+        <AddGiocatore/>
       </div>
       {players.map((player) => (
         <Card
