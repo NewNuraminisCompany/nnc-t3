@@ -110,98 +110,99 @@ export default function AddAvvenimento({ idTorneo, idPartita }: AddAvvenimentoPr
         <CredenzaHeader>
           <CredenzaTitle>Aggiungi avvenimento</CredenzaTitle>
         </CredenzaHeader>
-        <CredenzaBody className="mb-2" children={undefined}></CredenzaBody>
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="tipo"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Tipo di avvenimento</FormLabel>
-                <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Seleziona tipo di avvenimento" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem key="Goal" value="Goal">
-                        Goal
-                      </SelectItem>
-                      <SelectItem key="Espulsione" value="Espulsione">
-                        Espulsione
-                      </SelectItem>
-                      <SelectItem key="Ammonizione" value="Ammonizione">
-                        Ammonizione
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="minuto"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Minuto</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min="0"
-                    max="90"
-                    value={field.value}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <FormField
-          control={form.control}
-          name="giocatore"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Giocatore</FormLabel>
-              <FormControl>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Seleziona giocatore" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {giocatori.map((giocatore) => (
-                      <SelectItem
-                        key={giocatore.idGiocatore}
-                        value={giocatore.idGiocatore}
-                      >
-                        {giocatore.nome} {giocatore.cognome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" disabled={isLoading} className="w-full">
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Caricamento...
-            </>
-          ) : (
-            "Salva"
-          )}
-        </Button>
-      </form>
-    </Form>
-    </CredenzaContent>
+        <CredenzaBody>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="tipo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo di avvenimento</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Seleziona tipo di avvenimento" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem key="Goal" value="Goal">
+                              Goal
+                            </SelectItem>
+                            <SelectItem key="Espulsione" value="Espulsione">
+                              Espulsione
+                            </SelectItem>
+                            <SelectItem key="Ammonizione" value="Ammonizione">
+                              Ammonizione
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="minuto"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Minuto</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          max="90"
+                          value={field.value}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="giocatore"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Giocatore</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Seleziona giocatore" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {giocatori.map((giocatore) => (
+                            <SelectItem
+                              key={giocatore.idGiocatore}
+                              value={giocatore.idGiocatore}
+                            >
+                              {giocatore.nome} {giocatore.cognome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" disabled={isLoading} className="w-full">
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Caricamento...
+                  </>
+                ) : (
+                  "Salva"
+                )}
+              </Button>
+            </form>
+          </Form>
+        </CredenzaBody>
+      </CredenzaContent>
     </Credenza>
   );
 }

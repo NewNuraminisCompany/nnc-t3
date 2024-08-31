@@ -24,7 +24,7 @@ const EventListCard = (props: propsType) => {
               {props.stato?.toUpperCase()}
             </Badge>
             <CardTitle>{props.nome}</CardTitle>
-            <CardDescription>{props.descrizione}</CardDescription>
+            <CardDescription className="text-center">{props.descrizione}</CardDescription>
           </CardHeader>
         </Card>
       </Link>
