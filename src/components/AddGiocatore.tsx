@@ -28,20 +28,23 @@ import { Input } from "@/components/ui/input";
 import { CalendarIcon, Loader, Plus } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "@/lib/utils";
-import { submitPlayer } from "./actions"; // Import the server action
+import { submitPlayer } from "./actions";
 
 const formSchema = z.object({
   idGiocatore: z.string(),
-  nome: z.string().nonempty("Nome is required"), // Added nonempty validation for better feedback
+  nome: z.string().nonempty("Nome is required"),
   cognome: z.string().nonempty("Cognome is required"),
   cf: z.string().nonempty("Codice Fiscale is required"),
   dataNascita: z.date(),
   idSquadra: z.string()
 });
 
-export function AddGiocatore(iDSquadra: string) {
+interface AddGiocatoreProps {
+  iDSquadra: string;
+}
+
+export function AddGiocatore({ iDSquadra }: AddGiocatoreProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,11 +60,11 @@ export function AddGiocatore(iDSquadra: string) {
 
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (values) => {
     setIsLoading(true);
-    console.log("Submitting form with values:", values); // Log form values
+    console.log("Submitting form with values:", values);
 
     try {
       const success = await submitPlayer({
-        idGiocatore: "", // Ensure all fields are correctly passed
+        idGiocatore: "",
         nome: values.nome,
         cognome: values.cognome,
         dataNascita: values.dataNascita.toISOString(),
@@ -72,12 +75,11 @@ export function AddGiocatore(iDSquadra: string) {
       if (success) {
         toast.success("Giocatore aggiunto con successo");
         form.reset();
-        setImageUrl("");
       } else {
         toast.error(`Errore durante l'aggiunta del giocatore`);
       }
     } catch (error) {
-      console.error("Submission error:", error); // Log any errors
+      console.error("Submission error:", error);
       toast.error(`Errore: ${String(error)}`);
     } finally {
       setIsLoading(false);

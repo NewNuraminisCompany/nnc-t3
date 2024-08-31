@@ -27,7 +27,7 @@ const Dettagli = async ({ params }: { params: { idSquadra: string } }) => {
         <h1 className="text-4xl font-bold tracking-tight">
           Dettagli di {players[0]?.squadra.nome ?? params.idSquadra}
         </h1>
-        <AddGiocatore/>
+        <AddGiocatore iDSquadra={params.idSquadra} />
       </div>
       {players.map((player) => (
         <Card
