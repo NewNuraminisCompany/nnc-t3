@@ -77,7 +77,7 @@ const Evento = async ({ params }: { params: { eventID: string } }) => {
               layout="fill"
               objectFit="cover"
               alt={event.nome}
-              className="rounded-lg"
+              className="rounded-sm"
             />
           </div>
           <div className="space-y-4">

@@ -1,8 +1,10 @@
 "use client";
 
+import React from "react";
+
 import { fetchPartite, fetchTorneo } from "@/components/actions";
 import BlurFade from "@/components/magicui/blur-fade";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -13,6 +15,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Calendar, Clock, Users } from "lucide-react";
 
 // Define appropriate types
 type Torneo = {
@@ -48,7 +51,12 @@ const Risultato = () => {
 
           const partiteData = await fetchPartite(defaultTorneo);
           // Ordina le partite in base a dataOra
-          setPartite(partiteData?.sort((a, b) => new Date(a.dataOra).getTime() - new Date(b.dataOra).getTime()) ?? []);
+          setPartite(
+            partiteData?.sort(
+              (a, b) =>
+                new Date(a.dataOra).getTime() - new Date(b.dataOra).getTime(),
+            ) ?? [],
+          );
         } else {
           setPartite([]);
         }
@@ -69,7 +77,12 @@ const Risultato = () => {
     try {
       const partiteData = await fetchPartite(value);
       // Ordina le partite in base a dataOra
-      setPartite(partiteData?.sort((a, b) => new Date(a.dataOra).getTime() - new Date(b.dataOra).getTime()) ?? []);
+      setPartite(
+        partiteData?.sort(
+          (a, b) =>
+            new Date(a.dataOra).getTime() - new Date(b.dataOra).getTime(),
+        ) ?? [],
+      );
     } catch (error) {
       console.error("Error fetching partite:", error);
       setPartite([]);
@@ -78,21 +91,30 @@ const Risultato = () => {
 
   if (loading) {
     return (
-      <div>
-        <h1 className="my-4 text-4xl font-bold">Risultati Partite</h1>
-        <div className="relative mb-4 w-[200px]">
+      <div className="container mx-auto px-4">
+        <h1 className="my-6 text-2xl font-bold sm:my-8 sm:text-3xl md:text-4xl">
+          Risultati Partite
+        </h1>
+        <div className="relative mb-4 w-full max-w-[200px] sm:mb-6">
           <Skeleton className="h-10 w-full rounded-md" />
         </div>
         {[1, 2, 3].map((index) => (
           <BlurFade key={index} duration={0.2} delay={0.25 * index} inView>
-            <Card
-              key={index}
-              className="group relative mb-4 overflow-hidden rounded-lg"
-            >
-              <div className="flex flex-col items-center gap-4 p-4">
-                <Skeleton className="h-6 w-1/2" />
-                <Skeleton className="h-10 w-1/3" />
-              </div>
+            <Card className="mb-4 sm:mb-6">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-6 w-1/4" />
+                  <Skeleton className="h-8 w-1/3" />
+                  <Skeleton className="h-6 w-1/4" />
+                </div>
+                <div className="mt-3 flex justify-center">
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+                <div className="mt-3 flex justify-between">
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+              </CardContent>
             </Card>
           </BlurFade>
         ))}
@@ -101,10 +123,12 @@ const Risultato = () => {
   }
 
   return (
-    <div>
-      <h1 className="my-4 text-4xl font-bold">Risultati Partite</h1>
+    <div className="">
+      <h1 className="my-6 text-2xl font-bold sm:my-8 sm:text-3xl md:text-4xl">
+        Risultati Partite
+      </h1>
       <Select onValueChange={handleTorneoChange} value={selectedTorneo}>
-        <SelectTrigger className="mb-4 w-[200px]">
+        <SelectTrigger className="mb-4 w-full max-w-[200px] sm:mb-6">
           <SelectValue placeholder="Seleziona un torneo" />
         </SelectTrigger>
         <SelectContent>
@@ -120,32 +144,45 @@ const Risultato = () => {
         partite.map((partita) => (
           <BlurFade key={partita.idPartita} delay={0.25} inView>
             <Link href={`/risultati/${partita.idPartita}`}>
-              <Card
-                key={partita.idPartita}
-                className="group relative mb-3 overflow-hidden rounded-lg shadow-md"
-              >
-                <div className="flex flex-col items-center gap-4 p-4">
-                  <span className="text-lg font-bold">
-                    {partita.idSquadra1} vs {partita.idSquadra2}
-                  </span>
-                  <span className="text-4xl font-bold tracking-tight">
-                    {partita.risultatoSquadra1} - {partita.risultatoSquadra2}
-                  </span>
-                  {/* Mostra la data e ora della partita */}
-                  <span className="text-sm text-muted-foreground">
-                    Data e Ora: {new Date(partita.dataOra).toLocaleString()}
-                  </span>
-                  {/* Mostra il girone */}
-                  <span className="text-sm text-muted-foreground">
-                    Girone: {partita.girone}
-                  </span>
-                </div>
+              <Card className="mb-4 transition-shadow hover:shadow-lg sm:mb-6">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="w-1/3 font-semibold sm:text-base md:text-2xl">
+                      {partita.idSquadra1}
+                    </div>
+                    <div className="w-1/3 text-center text-2xl font-bold md:text-4xl">
+                      {partita.risultatoSquadra1} - {partita.risultatoSquadra2}
+                    </div>
+                    <div className="w-1/3 text-right font-semibold sm:text-base md:text-2xl">
+                      {partita.idSquadra2}
+                    </div>
+                  </div>
+                  <div className="mt-2 flex justify-center sm:mt-3">
+                    <div className="flex items-center text-xs text-muted-foreground sm:text-sm">
+                      <Clock className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                      {new Date(partita.dataOra).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                  </div>
+                  <div className="mt-2 flex justify-between text-xs text-muted-foreground sm:mt-3 sm:text-sm">
+                    <div className="flex items-center">
+                      <Calendar className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                      {new Date(partita.dataOra).toLocaleDateString()}
+                    </div>
+                    <div className="flex items-center">
+                      <Users className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                      {partita.girone}
+                    </div>
+                  </div>
+                </CardContent>
               </Card>
             </Link>
           </BlurFade>
         ))
       ) : (
-        <div className="pt-16 text-center text-muted-foreground">
+        <div className="pt-8 text-center text-muted-foreground sm:pt-16">
           Nessuna partita disponibile.
         </div>
       )}
