@@ -64,8 +64,8 @@ export default function AddAvvenimento({ idTorneo, idPartita }: AddAvvenimentoPr
   useEffect(() => {
     async function fetchData() {
       try {
-        const players = await fetchPlayers2(idTorneo);
-        setGiocatori(players);
+        const players = await fetchPlayers2(idTorneo, idPartita);
+        setGiocatori([...players.playersSquadra1, ...players.playersSquadra2]);
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Errore durante il caricamento dei dati");

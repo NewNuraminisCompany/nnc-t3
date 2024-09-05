@@ -26,6 +26,8 @@ type Partita = {
   idSquadra2: string;
   risultatoSquadra1: number;
   risultatoSquadra2: number;
+  dataOra: Date;
+  girone: string;
 };
 
 const Risultato = () => {
@@ -45,7 +47,8 @@ const Risultato = () => {
           setSelectedTorneo(defaultTorneo);
 
           const partiteData = await fetchPartite(defaultTorneo);
-          setPartite(partiteData ?? []);
+          // Ordina le partite in base a dataOra
+          setPartite(partiteData?.sort((a, b) => new Date(a.dataOra).getTime() - new Date(b.dataOra).getTime()) ?? []);
         } else {
           setPartite([]);
         }
@@ -65,7 +68,8 @@ const Risultato = () => {
     setSelectedTorneo(value);
     try {
       const partiteData = await fetchPartite(value);
-      setPartite(partiteData ?? []);
+      // Ordina le partite in base a dataOra
+      setPartite(partiteData?.sort((a, b) => new Date(a.dataOra).getTime() - new Date(b.dataOra).getTime()) ?? []);
     } catch (error) {
       console.error("Error fetching partite:", error);
       setPartite([]);
@@ -126,6 +130,14 @@ const Risultato = () => {
                   </span>
                   <span className="text-4xl font-bold tracking-tight">
                     {partita.risultatoSquadra1} - {partita.risultatoSquadra2}
+                  </span>
+                  {/* Mostra la data e ora della partita */}
+                  <span className="text-sm text-muted-foreground">
+                    Data e Ora: {new Date(partita.dataOra).toLocaleString()}
+                  </span>
+                  {/* Mostra il girone */}
+                  <span className="text-sm text-muted-foreground">
+                    Girone: {partita.girone}
                   </span>
                 </div>
               </Card>

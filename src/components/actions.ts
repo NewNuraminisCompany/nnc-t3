@@ -110,9 +110,11 @@ export async function fetchPlayers(squadraId: string) {
     throw new Error("Failed to fetch players");
   }
 }
-export async function fetchPlayers2(TorneoID: string) {
+export async function fetchPlayers2(TorneoID: string, PartitaID: string) {
+  console.log("TorneoID: ", TorneoID, "   PartitaID: ", PartitaID);
   try {
-    const players = await db
+    // Fetch players from Squadra1
+    const playersSquadra1 = await db
     .selectDistinctOn([giocatori.idGiocatore],{
       nome: giocatori.nome,
       cognome: giocatori.cognome,
@@ -121,15 +123,38 @@ export async function fetchPlayers2(TorneoID: string) {
       cf: giocatori.cf,
       dataNascita: giocatori.dataNascita
     })
-    .from(giocatori)
-    .leftJoin(squadre, eq(squadre.idSquadra, giocatori.idSquadra))
-    .leftJoin(tornei, eq(tornei.idTorneo, squadre.idSquadra));
-    return players;
+      .from(giocatori)
+      .leftJoin(squadre, eq(squadre.idSquadra, giocatori.idSquadra))
+      .leftJoin(tornei, eq(tornei.idTorneo, squadre.idTorneo))  // Corrected the join condition
+      .leftJoin(partite, eq(partite.idPartita, PartitaID))  // Corrected match identification
+      .where(and(eq(tornei.idTorneo, TorneoID), eq(partite.idSquadra1, squadre.idSquadra)));
+
+    // Fetch players from Squadra2
+    const playersSquadra2 = await db
+    .selectDistinctOn([giocatori.idGiocatore],{
+      nome: giocatori.nome,
+      cognome: giocatori.cognome,
+      idSquadra: giocatori.idSquadra,
+      idGiocatore: giocatori.idGiocatore,
+      cf: giocatori.cf,
+      dataNascita: giocatori.dataNascita
+    })
+      .from(giocatori)
+      .leftJoin(squadre, eq(squadre.idSquadra, giocatori.idSquadra))
+      .leftJoin(tornei, eq(tornei.idTorneo, squadre.idTorneo))
+      .leftJoin(partite, eq(partite.idPartita, PartitaID))  // Corrected match identification
+      .where(and(eq(tornei.idTorneo, TorneoID), eq(partite.idSquadra2, squadre.idSquadra)));
+
+    return {
+      playersSquadra1,
+      playersSquadra2
+    };
   } catch (error) {
     console.error("Error fetching players:", error);
     throw new Error("Failed to fetch players");
   }
 }
+
 
 export async function submitTeamAndPlayers({
   team,
