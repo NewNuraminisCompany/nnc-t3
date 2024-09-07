@@ -1,7 +1,14 @@
 "use server";
 
 import { db } from "@/server/db"; // Import your Drizzle ORM setup
-import { avvenimenti, gap, giocatori, partite, squadre, tornei } from "@/server/db/schema"; // Import the schema
+import {
+  avvenimenti,
+  gap,
+  giocatori,
+  partite,
+  squadre,
+  tornei,
+} from "@/server/db/schema"; // Import the schema
 import type {
   AvvenimentoData,
   EditPlayerData,
@@ -10,7 +17,7 @@ import type {
   PlayerData,
   PlayerData2,
   TeamData,
-  TorneoData
+  TorneoData,
 } from "@/types/db-types";
 export async function getTornei() {
   const result = await db.select().from(tornei);
@@ -60,7 +67,12 @@ export async function updateGiocatore(giocatore: PlayerData) {
         cognome: giocatore.cognome,
         dataNascita: giocatore.dataNascita,
       })
-      .where(and(eq(giocatori.idSquadra, giocatore.idSquadra), eq(giocatori.idGiocatore,giocatore.idGiocatore)));
+      .where(
+        and(
+          eq(giocatori.idSquadra, giocatore.idSquadra),
+          eq(giocatori.idGiocatore, giocatore.idGiocatore),
+        ),
+      );
     return { success: true };
   } catch (error) {
     console.error("Error in updateSquadra:", error);
@@ -115,46 +127,55 @@ export async function fetchPlayers2(TorneoID: string, PartitaID: string) {
   try {
     // Fetch players from Squadra1
     const playersSquadra1 = await db
-    .selectDistinctOn([giocatori.idGiocatore],{
-      nome: giocatori.nome,
-      cognome: giocatori.cognome,
-      idSquadra: giocatori.idSquadra,
-      idGiocatore: giocatori.idGiocatore,
-      cf: giocatori.cf,
-      dataNascita: giocatori.dataNascita
-    })
+      .selectDistinctOn([giocatori.idGiocatore], {
+        nome: giocatori.nome,
+        cognome: giocatori.cognome,
+        idSquadra: giocatori.idSquadra,
+        idGiocatore: giocatori.idGiocatore,
+        cf: giocatori.cf,
+        dataNascita: giocatori.dataNascita,
+      })
       .from(giocatori)
       .leftJoin(squadre, eq(squadre.idSquadra, giocatori.idSquadra))
-      .leftJoin(tornei, eq(tornei.idTorneo, squadre.idTorneo))  // Corrected the join condition
-      .leftJoin(partite, eq(partite.idPartita, PartitaID))  // Corrected match identification
-      .where(and(eq(tornei.idTorneo, TorneoID), eq(partite.idSquadra1, squadre.idSquadra)));
+      .leftJoin(tornei, eq(tornei.idTorneo, squadre.idTorneo)) // Corrected the join condition
+      .leftJoin(partite, eq(partite.idPartita, PartitaID)) // Corrected match identification
+      .where(
+        and(
+          eq(tornei.idTorneo, TorneoID),
+          eq(partite.idSquadra1, squadre.idSquadra),
+        ),
+      );
 
     // Fetch players from Squadra2
     const playersSquadra2 = await db
-    .selectDistinctOn([giocatori.idGiocatore],{
-      nome: giocatori.nome,
-      cognome: giocatori.cognome,
-      idSquadra: giocatori.idSquadra,
-      idGiocatore: giocatori.idGiocatore,
-      cf: giocatori.cf,
-      dataNascita: giocatori.dataNascita
-    })
+      .selectDistinctOn([giocatori.idGiocatore], {
+        nome: giocatori.nome,
+        cognome: giocatori.cognome,
+        idSquadra: giocatori.idSquadra,
+        idGiocatore: giocatori.idGiocatore,
+        cf: giocatori.cf,
+        dataNascita: giocatori.dataNascita,
+      })
       .from(giocatori)
       .leftJoin(squadre, eq(squadre.idSquadra, giocatori.idSquadra))
       .leftJoin(tornei, eq(tornei.idTorneo, squadre.idTorneo))
-      .leftJoin(partite, eq(partite.idPartita, PartitaID))  // Corrected match identification
-      .where(and(eq(tornei.idTorneo, TorneoID), eq(partite.idSquadra2, squadre.idSquadra)));
+      .leftJoin(partite, eq(partite.idPartita, PartitaID)) // Corrected match identification
+      .where(
+        and(
+          eq(tornei.idTorneo, TorneoID),
+          eq(partite.idSquadra2, squadre.idSquadra),
+        ),
+      );
 
     return {
       playersSquadra1,
-      playersSquadra2
+      playersSquadra2,
     };
   } catch (error) {
     console.error("Error fetching players:", error);
     throw new Error("Failed to fetch players");
   }
 }
-
 
 export async function submitTeamAndPlayers({
   team,
@@ -242,7 +263,6 @@ export async function getTorneoNameByID(idTorneo: string) {
   }
 }
 
-
 export async function getSquadreLogo(idSquadra: string) {
   try {
     console.log("Fetching data from squadre, tornei, and gironi tables...");
@@ -250,8 +270,9 @@ export async function getSquadreLogo(idSquadra: string) {
       .select({
         logoPath: squadre.logoPath,
       })
-      .from(squadre).where(eq(squadre.idSquadra, idSquadra));
-      return result;
+      .from(squadre)
+      .where(eq(squadre.idSquadra, idSquadra));
+    return result;
   } catch (error) {
     console.error("Error fetching squadre:", error);
     throw new Error(
@@ -335,6 +356,64 @@ export async function deleteTorneo(Torneo: TorneoData) {
   } catch (error) {
     console.error("Error in deleteTorneo:", error);
     return { success: false, error: "Failed to delete torneo" };
+  }
+}
+
+export async function deleteAvvenimento(Avvenimento: AvvenimentoData) {
+  if (!Avvenimento.idAvvenimento || !Avvenimento.idPartita) {
+    console.error("Missing required fields in Avvenimento object");
+    return { success: false, error: "Missing required fields" };
+  }
+  try {
+    await db
+      .delete(avvenimenti)
+      .where(eq(avvenimenti.idAvvenimento, Avvenimento.idAvvenimento));
+    
+      const goalSquadra1 = await db
+        .select({ goal1: count(avvenimenti.tipo) })
+        .from(avvenimenti)
+        .leftJoin(gap, eq(gap.idAvvenimento, avvenimenti.idAvvenimento))
+        .leftJoin(partite, eq(partite.idPartita, gap.idPartita))
+        .leftJoin(giocatori, eq(giocatori.idGiocatore, gap.idGiocatore))
+        .where(
+          and(
+            eq(avvenimenti.tipo, "Goal"),
+            eq(giocatori.idSquadra, partite.idSquadra1),
+            eq(partite.idPartita, Avvenimento.idPartita),
+          ),
+        );
+        console.log("goalSquadra1: ",goalSquadra1);
+
+      const goalSquadra2 = await db
+        .select({ goal2: count(avvenimenti.tipo) })
+        .from(avvenimenti)
+        .leftJoin(gap, eq(gap.idAvvenimento, avvenimenti.idAvvenimento))
+        .leftJoin(partite, eq(partite.idPartita, gap.idPartita))
+        .leftJoin(giocatori, eq(giocatori.idGiocatore, gap.idGiocatore))
+        .where(
+          and(
+            eq(avvenimenti.tipo, "Goal"),
+            eq(giocatori.idSquadra, partite.idSquadra2),
+            eq(partite.idPartita, Avvenimento.idPartita),
+          ),
+        );
+
+        console.log("goalSquadra2: ",goalSquadra2);
+
+      if (goalSquadra1[0] && goalSquadra2[0]) {
+        const result3 = await db
+          .update(partite)
+          .set({
+            risultatoSquadra1: goalSquadra1[0].goal1,
+            risultatoSquadra2: goalSquadra2[0].goal2,
+          })
+          .where(eq(partite.idPartita, Avvenimento.idPartita));
+      }
+      return {success: true};
+
+  } catch (error) {
+    console.error("Error in deleteAvvenimento:", error);
+    return { success: false, error: "Failed to delete avvenimento" };
   }
 }
 
@@ -467,7 +546,7 @@ export async function fetchPartitaa(idTorn: string, idPart: string) {
       })
       .from(partite)
       .innerJoin(squadre, eq(partite.idSquadra1, squadre.idSquadra))
-      .where(and(eq(squadre.idTorneo, idTorn),eq(partite.idPartita,idPart)));
+      .where(and(eq(squadre.idTorneo, idTorn), eq(partite.idPartita, idPart)));
 
     for (const result3 of result) {
       const nomeSqd1 = await db
@@ -553,29 +632,43 @@ export async function insertAvvenimento(avvenimento: AvvenimentoData) {
           idPartita: avvenimento.idPartita,
         })
         .returning();
-      
+
       const goalSquadra1 = await db
-      .select({goal1: count(avvenimenti.tipo)})
-      .from(avvenimenti)
-      .leftJoin(gap, eq(gap.idAvvenimento, avvenimenti.idAvvenimento))
-      .leftJoin(partite, eq(partite.idPartita, gap.idPartita))
-      .leftJoin(giocatori, eq(giocatori.idGiocatore, gap.idGiocatore))
-      .where(and(eq(avvenimenti.tipo,"Goal"), eq(giocatori.idSquadra, partite.idSquadra1), eq(partite.idPartita,avvenimento.idPartita)));
+        .select({ goal1: count(avvenimenti.tipo) })
+        .from(avvenimenti)
+        .leftJoin(gap, eq(gap.idAvvenimento, avvenimenti.idAvvenimento))
+        .leftJoin(partite, eq(partite.idPartita, gap.idPartita))
+        .leftJoin(giocatori, eq(giocatori.idGiocatore, gap.idGiocatore))
+        .where(
+          and(
+            eq(avvenimenti.tipo, "Goal"),
+            eq(giocatori.idSquadra, partite.idSquadra1),
+            eq(partite.idPartita, avvenimento.idPartita),
+          ),
+        );
 
       const goalSquadra2 = await db
-      .select({goal2: count(avvenimenti.tipo)})
-      .from(avvenimenti)
-      .leftJoin(gap, eq(gap.idAvvenimento, avvenimenti.idAvvenimento))
-      .leftJoin(partite, eq(partite.idPartita, gap.idPartita))
-      .leftJoin(giocatori, eq(giocatori.idGiocatore, gap.idGiocatore))
-      .where(and(eq(avvenimenti.tipo,"Goal"), eq(giocatori.idSquadra, partite.idSquadra2), eq(partite.idPartita,avvenimento.idPartita)));
+        .select({ goal2: count(avvenimenti.tipo) })
+        .from(avvenimenti)
+        .leftJoin(gap, eq(gap.idAvvenimento, avvenimenti.idAvvenimento))
+        .leftJoin(partite, eq(partite.idPartita, gap.idPartita))
+        .leftJoin(giocatori, eq(giocatori.idGiocatore, gap.idGiocatore))
+        .where(
+          and(
+            eq(avvenimenti.tipo, "Goal"),
+            eq(giocatori.idSquadra, partite.idSquadra2),
+            eq(partite.idPartita, avvenimento.idPartita),
+          ),
+        );
 
-      if(goalSquadra1[0] && goalSquadra2[0]){
+      if (goalSquadra1[0] && goalSquadra2[0]) {
         const result3 = await db
-      .update(partite)
-      .set({risultatoSquadra1: goalSquadra1[0].goal1,
-            risultatoSquadra2: goalSquadra2[0].goal2})
-      .where(eq(partite.idPartita,avvenimento.idPartita));
+          .update(partite)
+          .set({
+            risultatoSquadra1: goalSquadra1[0].goal1,
+            risultatoSquadra2: goalSquadra2[0].goal2,
+          })
+          .where(eq(partite.idPartita, avvenimento.idPartita));
       }
       if (result2.length === 0) {
         return { success: false, error: "avvenimento non inserito in gap" };
@@ -583,7 +676,10 @@ export async function insertAvvenimento(avvenimento: AvvenimentoData) {
     }
 
     if (result.length === 0) {
-      return { success: false, error: "avvenimento non inserito in avvenimenti" };
+      return {
+        success: false,
+        error: "avvenimento non inserito in avvenimenti",
+      };
     }
 
     return { success: true };
@@ -592,7 +688,6 @@ export async function insertAvvenimento(avvenimento: AvvenimentoData) {
     return { success: false, error: "Failed to insert Avvenimento" };
   }
 }
-
 
 export async function deletePartita(partita: PartitaData) {
   try {
@@ -604,23 +699,23 @@ export async function deletePartita(partita: PartitaData) {
   }
 }
 
-export async function fetchPartite2(idTorn : string) {
+export async function fetchPartite2(idTorn: string) {
   try {
     console.log("Attempting to fetch data from partite table...");
-    console.log("id torneo: ",idTorn);
+    console.log("id torneo: ", idTorn);
     const result = await db
-    .select({
-      idPartita: partite.idPartita,
-      idSquadra1: partite.idSquadra1,
-      idSquadra2: partite.idSquadra2,
-      risultatoSquadra1: partite.risultatoSquadra1,
-      risultatoSquadra2: partite.risultatoSquadra2,
-      dataOra: partite.dataOra,
-      girone: partite.girone
-    } )
-    .from(partite)
-    .innerJoin(squadre, eq(partite.idSquadra1, squadre.idSquadra))
-    .where(eq(squadre.idTorneo,idTorn));
+      .select({
+        idPartita: partite.idPartita,
+        idSquadra1: partite.idSquadra1,
+        idSquadra2: partite.idSquadra2,
+        risultatoSquadra1: partite.risultatoSquadra1,
+        risultatoSquadra2: partite.risultatoSquadra2,
+        dataOra: partite.dataOra,
+        girone: partite.girone,
+      })
+      .from(partite)
+      .innerJoin(squadre, eq(partite.idSquadra1, squadre.idSquadra))
+      .where(eq(squadre.idTorneo, idTorn));
 
     if (result.length === 0) {
       console.log("No records found in the partite table.");
@@ -668,13 +763,14 @@ export async function fetchNomiTutteSquadre(idTorn: string) {
   }
 }
 
-export async function fetchAvvenimenti(idPartita : string){
+export async function fetchAvvenimenti(idPartita: string) {
+  let ultimaSperanza : string;
   try {
     const result = await db
       .select()
       .from(avvenimenti)
-      .innerJoin(gap, eq(gap.idAvvenimento,avvenimenti.idAvvenimento))
-      .where(eq(gap.idPartita,idPartita));
+      .innerJoin(gap, eq(gap.idAvvenimento, avvenimenti.idAvvenimento))
+      .where(eq(gap.idPartita, idPartita));
     console.log(`Fetched ${result.length} records from avvenimenti table.`);
 
     if (result.length === 0) {
@@ -688,21 +784,22 @@ export async function fetchAvvenimenti(idPartita : string){
         .from(giocatori)
         .where(eq(giocatori.idGiocatore, result3.gap.idGiocatore));
       if (nomeGioc[0]) {
-        result3.gap.idGiocatore = (nomeGioc[0].nome + " " + nomeGioc[0].cognome);
+        ultimaSperanza = result3.gap.idGiocatore;
+        result3.gap.idGiocatore = nomeGioc[0].nome + " " + nomeGioc[0].cognome;
       }
     }
 
-    if(result[0]){
-      if(result[0].gap){
+    if (result[0]) {
+      if (result[0].gap) {
         return result.map((record) => ({
           idAvvenimento: record.avvenimento.idAvvenimento,
+          idGiocatore: ultimaSperanza,
           nomeGiocatore: record.gap.idGiocatore,
           minuto: record.avvenimento.minuto,
           tipo: record.avvenimento.tipo,
         }));
       }
     }
-
   } catch (error) {
     console.error("Error fetching avvenimenti:", error);
     throw new Error(
@@ -716,10 +813,13 @@ export async function fetchTorneoFromPartita(idPartita: string) {
   try {
     console.log("Fetching data from tornei table...");
     const result = await db
-      .select({ idTorneo: tornei.idTorneo,  })
+      .select({ idTorneo: tornei.idTorneo })
       .from(tornei)
-      .innerJoin(squadre, eq(squadre.idTorneo, tornei.idTorneo ))
-      .innerJoin(partite, eq(partite.idSquadra1 || partite.idSquadra2, squadre.idSquadra))
+      .innerJoin(squadre, eq(squadre.idTorneo, tornei.idTorneo))
+      .innerJoin(
+        partite,
+        eq(partite.idSquadra1 || partite.idSquadra2, squadre.idSquadra),
+      )
       .where(eq(partite.idPartita, idPartita));
 
     return result;
@@ -727,21 +827,18 @@ export async function fetchTorneoFromPartita(idPartita: string) {
     console.error("Error fetching torneo:", error);
   }
 }
-export async function submitPlayer(player : PlayerData){
-  try{
-    const result = await db
-    .insert(giocatori)
-    .values({
+export async function submitPlayer(player: PlayerData) {
+  try {
+    const result = await db.insert(giocatori).values({
       idGiocatore: createId(),
-      idSquadra : player.idSquadra,
+      idSquadra: player.idSquadra,
       cf: player.cf,
       nome: player.nome,
       cognome: player.cognome,
-      dataNascita: player.dataNascita}
-    );
+      dataNascita: player.dataNascita,
+    });
     return result;
-  }
-  catch(error){
+  } catch (error) {
     console.error("Error submitting new player:", error);
   }
 }
