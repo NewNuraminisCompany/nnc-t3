@@ -74,5 +74,6 @@ export type AvvenimentoData = {
   idAvvenimento: string;
   tipo: "Goal" | "Espulsione" | "Ammonizione";
   minuto: number;
+  nomeGiocatore: string;
 }
 

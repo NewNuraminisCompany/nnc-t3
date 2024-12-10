@@ -84,6 +84,7 @@ export default function AddAvvenimento({ idTorneo, idPartita }: AddAvvenimentoPr
         idPartita: values.idPartita,
         tipo: values.tipo,
         minuto: values.minuto,
+        nomeGiocatore: "",
       });
 
       if (result.success) {
