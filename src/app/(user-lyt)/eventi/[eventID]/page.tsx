@@ -1,4 +1,3 @@
-import BlurFade from "@/components/magicui/blur-fade";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/server/db";
@@ -6,7 +5,6 @@ import { tornei, squadre } from "@/server/db/schema";
 import { count, eq } from "drizzle-orm";
 import {
   Calendar,
-  MapPin,
   Users,
   Clock,
   Info,

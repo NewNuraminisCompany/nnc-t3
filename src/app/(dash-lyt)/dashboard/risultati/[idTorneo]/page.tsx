@@ -2,15 +2,8 @@ import { fetchPartite } from "@/components/actions";
 
 import { TorneoProvider } from "@/app/context";
 import { Card } from "@/components/ui/card";
-import {
-  Credenza,
-  CredenzaContent,
-  CredenzaHeader,
-  CredenzaTitle,
-  CredenzaTrigger,
-} from "@/components/ui/credenza";
 
-import { Trophy, Edit, ChevronRight } from "lucide-react";
+import { Trophy, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 

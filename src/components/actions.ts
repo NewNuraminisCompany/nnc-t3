@@ -15,10 +15,10 @@ import type {
   EditTeamData,
   PartitaData,
   PlayerData,
-  PlayerData2,
   TeamData,
   TorneoData,
 } from "@/types/db-types";
+
 export async function getTornei() {
   const result = await db.select().from(tornei);
   return result;
