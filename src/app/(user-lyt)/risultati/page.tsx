@@ -91,7 +91,7 @@ const Risultato = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4">
+      <div className="">
         <h1 className="my-6 text-2xl font-bold sm:my-8 sm:text-3xl md:text-4xl">
           Risultati Partite
         </h1>
