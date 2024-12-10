@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 };
 
 const inter = Inter({ subsets: ["latin"] });
+export const fetchCache = "default-cache";
 
 export default function RootLayout({
   children,
