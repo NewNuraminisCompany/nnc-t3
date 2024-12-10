@@ -32,7 +32,7 @@ function checkIfProgrammato(tournaments: Tournament[]) {
 
 export default function Iscrizioni() {
   if (checkIfProgrammato(tournaments)) {
-    return <div className="flex flex-col items-center gap-y-4 justify-center min-h-[80vh]"><CircleAlert className="size-16 text-red-500"/> <p className="text-balance text-center text-muted-foreground">Al momento non c'è nessun torneo programmato.</p></div>;
+    return <div className="flex flex-col items-center gap-y-4 justify-center min-h-[80vh]"><CircleAlert className="size-16 text-red-500"/> <p className="text-balance text-center text-muted-foreground">Al momento non c&apos;è nessun torneo programmato.</p></div>;
   } else {
     return (
       <div className="flex w-full flex-col">
