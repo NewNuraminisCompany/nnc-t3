@@ -1,6 +1,8 @@
 import React, { Suspense } from "react";
 import IscrizioniSquadre from "@/components/IscrizioniSquadre";
 import { getTornei } from "@/components/actions";
+import { CircleAlert } from "lucide-react";
+
 
 const rawTournaments = await getTornei();
 
@@ -30,7 +32,7 @@ function checkIfProgrammato(tournaments: Tournament[]) {
 
 export default function Iscrizioni() {
   if (checkIfProgrammato(tournaments)) {
-    return <div>Nessun torneo programmato al momento.</div>;
+    return <div className="flex flex-col items-center gap-y-4 justify-center min-h-[80vh]"><CircleAlert className="size-16 text-red-500"/> <p className="text-balance text-center text-muted-foreground">Al momento non c'è nessun torneo programmato.</p></div>;
   } else {
     return (
       <div className="flex w-full flex-col">

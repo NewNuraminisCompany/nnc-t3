@@ -481,6 +481,7 @@ export async function fetchPartite(idTorn: string) {
     console.log("id torneo: ", idTorn);
     const sq1 = alias(squadre, 'sq1');
     const sq2 = alias(squadre, 'sq2');
+
     const result = await db
       .select({
         idPartita: partite.idPartita,
@@ -501,16 +502,24 @@ export async function fetchPartite(idTorn: string) {
       return [];
     }
 
-    return result.map((partita) => ({
-      idPartita: partita.idPartita,
-      idSquadra1: partita.idSquadra1,
-      idSquadra2: partita.idSquadra2,
-      risultatoSquadra1: partita.risultatoSquadra1,
-      risultatoSquadra2: partita.risultatoSquadra2,
-      dataOra: new Date(partita.dataOra),
-      girone: partita.girone,
-    }));
+    const promises = result.map(async (partita) => {
+      const [nomeSquadra1, nomeSquadra2] = await Promise.all([
+        db.select({ nome: squadre.nome }).from(squadre).where(eq(squadre.idSquadra, partita.idSquadra1)),
+        db.select({ nome: squadre.nome }).from(squadre).where(eq(squadre.idSquadra, partita.idSquadra2)),
+      ]);
 
+      return {
+        idPartita: partita.idPartita,
+        idSquadra1: nomeSquadra1[0]?.nome || partita.idSquadra1,
+        idSquadra2: nomeSquadra2[0]?.nome || partita.idSquadra2,
+        risultatoSquadra1: partita.risultatoSquadra1,
+        risultatoSquadra2: partita.risultatoSquadra2,
+        dataOra: new Date(partita.dataOra),
+        girone: partita.girone,
+      };
+    });
+
+    return await Promise.all(promises);
   } catch (error) {
     console.error("Error fetching partite:", error);
   }
