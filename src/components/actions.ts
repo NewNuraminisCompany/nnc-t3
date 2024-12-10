@@ -510,8 +510,8 @@ export async function fetchPartite(idTorn: string) {
 
       return {
         idPartita: partita.idPartita,
-        idSquadra1: nomeSquadra1[0]?.nome || partita.idSquadra1,
-        idSquadra2: nomeSquadra2[0]?.nome || partita.idSquadra2,
+        idSquadra1: nomeSquadra1[0]?.nome ?? partita.idSquadra1,
+        idSquadra2: nomeSquadra2[0]?.nome ?? partita.idSquadra2,
         risultatoSquadra1: partita.risultatoSquadra1,
         risultatoSquadra2: partita.risultatoSquadra2,
         dataOra: new Date(partita.dataOra),
@@ -813,7 +813,7 @@ export async function fetchTorneoFromPartita(idPartita: string) {
       .innerJoin(squadre, eq(squadre.idTorneo, tornei.idTorneo))
       .innerJoin(
         partite,
-        eq(partite.idSquadra1 || partite.idSquadra2, squadre.idSquadra),
+        eq(partite.idSquadra1 ?? partite.idSquadra2, squadre.idSquadra),
       )
       .where(eq(partite.idPartita, idPartita));
 
