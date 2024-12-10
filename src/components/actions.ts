@@ -19,6 +19,7 @@ export async function getTornei() {
 
 import { createId } from "@paralleldrive/cuid2";
 import { and, count, eq } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 
 export async function addGiocatori({
   idSquadra,
@@ -399,53 +400,38 @@ export async function fetchPartite(idTorn: string) {
   try {
     console.log("Attempting to fetch data from partite table...");
     console.log("id torneo: ", idTorn);
+    const sq1 = alias(squadre, 'sq1');
+    const sq2 = alias(squadre, 'sq2');
     const result = await db
       .select({
         idPartita: partite.idPartita,
-        idSquadra1: partite.idSquadra1,
-        idSquadra2: partite.idSquadra2,
+        idSquadra1: sq1.nome,
+        idSquadra2: sq2.nome,
         risultatoSquadra1: partite.risultatoSquadra1,
         risultatoSquadra2: partite.risultatoSquadra2,
         dataOra: partite.dataOra,
         girone: partite.girone,
       })
       .from(partite)
-      .innerJoin(squadre, eq(partite.idSquadra1, squadre.idSquadra))
-      .where(eq(squadre.idTorneo, idTorn));
-
-    for (const result3 of result) {
-      const nomeSqd1 = await db
-        .select({ nome: squadre.nome })
-        .from(squadre)
-        .where(eq(squadre.idSquadra, result3.idSquadra1));
-      if (nomeSqd1[0]) {
-        result3.idSquadra1 = nomeSqd1[0].nome;
-      }
-      const nomeSqd2 = await db
-        .select({ nome: squadre.nome })
-        .from(squadre)
-        .where(eq(squadre.idSquadra, result3.idSquadra2));
-      if (nomeSqd2[0]) {
-        result3.idSquadra2 = nomeSqd2[0].nome;
-      }
-    }
-
-    console.log(`Fetched ${result.length} records from tornei table.`);
+      .innerJoin(sq1, eq(partite.idSquadra1, sq1.idSquadra))
+      .innerJoin(sq2, eq(partite.idSquadra2, sq2.idSquadra))
+      .where(eq(sq1.idTorneo, idTorn));
 
     if (result.length === 0) {
       console.log("No records found in the partite table.");
       return [];
     }
 
-    return result.map((partite) => ({
-      idPartita: partite.idPartita,
-      idSquadra1: partite.idSquadra1,
-      idSquadra2: partite.idSquadra2,
-      risultatoSquadra1: partite.risultatoSquadra1,
-      risultatoSquadra2: partite.risultatoSquadra2,
-      dataOra: new Date(partite.dataOra),
-      girone: partite.girone,
+    return result.map((partita) => ({
+      idPartita: partita.idPartita,
+      idSquadra1: partita.idSquadra1,
+      idSquadra2: partita.idSquadra2,
+      risultatoSquadra1: partita.risultatoSquadra1,
+      risultatoSquadra2: partita.risultatoSquadra2,
+      dataOra: new Date(partita.dataOra),
+      girone: partita.girone,
     }));
+
   } catch (error) {
     console.error("Error fetching partite:", error);
   }
